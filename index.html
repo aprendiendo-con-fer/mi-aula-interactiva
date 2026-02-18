@@ -1,197 +1,2153 @@
 <!doctype html>
 <html lang="es" class="h-full">
-<head>
+ <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal Encarta - Escuela Primaria Venustiano Carranza</title>
-
-  <!-- Tailwind CSS -->
+  <title>Mi Aula Interactiva</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-
-  <!-- SDKs -->
   <script src="/_sdk/element_sdk.js"></script>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
-
-  <!-- Fuentes -->
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&amp;family=Nunito:wght@400;700;800&amp;display=swap" rel="stylesheet">
-
-  <!-- Estilos personalizados -->
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&amp;family=Comfortaa:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <style>
-    /* Fuentes */
-    * { font-family: 'Nunito', sans-serif; }
-    .title-font { font-family: 'Fredoka One', cursive; }
-
-    /* Animaciones */
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
+    * { font-family: 'Quicksand', sans-serif; }
+    .font-cursive { font-family: 'Comfortaa', cursive; }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #E8D5F2 0%, #D4E8E5 50%, #FCE8DC 100%);
     }
-    @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 20px rgba(255, 165, 0, 0.5); }
-      50% { box-shadow: 0 0 40px rgba(255, 165, 0, 0.8); }
+    
+    .card-hover {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    @keyframes bounce-in {
-      0% { transform: scale(0); opacity: 0; }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); opacity: 1; }
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
     }
-    @keyframes star-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    @keyframes rainbow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
-
-    /* Clases de animación */
-    .float-animation { animation: float 3s ease-in-out infinite; }
-    .pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
-    .bounce-in { animation: bounce-in 0.6s ease-out forwards; }
-    .star-spin { animation: star-spin 4s linear infinite; }
-    .rainbow-bg { animation: rainbow 5s linear infinite; }
-
-    /* Estilo retro / pixel */
-    .pixel-border {
-      border: 4px solid #000;
-      box-shadow: 4px 4px 0 #000, -2px -2px 0 rgba(255,255,255,0.3) inset, 2px 2px 0 rgba(0,0,0,0.3) inset;
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #B8A4C9 0%, #9B8AB8 100%);
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #9B8AB8 0%, #8A7AA8 100%);
+      transform: scale(1.02);
+    }
+    
+    .page-transition {
+      animation: fadeIn 0.4s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .pattern-bg {
+      background-image: radial-gradient(circle at 20px 20px, rgba(184, 164, 201, 0.1) 2px, transparent 2px);
+      background-size: 40px 40px;
+    }
+    
+    .heart-icon { color: #E8A4A4; }
+    .timer-icon { color: #A4C9B8; }
+    
+    .progress-ring {
+      transform: rotate(-90deg);
+    }
+    
+    .game-card {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .vocab-card {
+      perspective: 1000px;
+    }
+    .vocab-card-inner {
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+    .vocab-card.flipped .vocab-card-inner {
+      transform: rotateY(180deg);
+    }
+    .vocab-card-front, .vocab-card-back {
+      backface-visibility: hidden;
+    }
+    .vocab-card-back {
+      transform: rotateY(180deg);
+    }
+    
+    .fraction-slice {
+      transition: all 0.3s ease;
+    }
+    .fraction-slice:hover {
+      filter: brightness(1.1);
+    }
+    .fraction-slice.selected {
+      filter: brightness(0.9);
+      stroke-width: 3;
+    }
+    
+    .water-cycle-element {
+      transition: all 0.4s ease;
+    }
+    .water-cycle-element:hover {
+      transform: scale(1.05);
+    }
+    
+    .timeline-dot {
+      transition: all 0.3s ease;
+    }
+    .timeline-dot:hover {
+      transform: scale(1.3);
+    }
+    
+    .planet {
+      transition: all 0.4s ease;
+      cursor: pointer;
+    }
+    .planet:hover {
+      transform: scale(1.15);
+      filter: brightness(1.2);
+    }
+    
+    .multiplication-cell {
+      transition: all 0.2s ease;
+    }
+    .multiplication-cell:hover {
+      background: #B8A4C9;
+      color: white;
+    }
+    
+    .body-system {
+      transition: all 0.3s ease;
+    }
+    .body-system:hover {
+      opacity: 1 !important;
     }
 
-    /* Botones retro */
-    .retro-btn {
-      position: relative;
-      border: 4px solid #000;
-      box-shadow: 6px 6px 0 #000;
-      transition: all 0.1s ease;
+    .sonora-region {
+      transition: all 0.3s ease;
+      cursor: pointer;
     }
-    .retro-btn:hover { transform: translate(2px, 2px); box-shadow: 4px 4px 0 #000; }
-    .retro-btn:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0 #000; }
-
-    /* Scanlines estilo retro */
-    .scanlines { position: relative; }
-    .scanlines::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-      pointer-events: none;
+    .sonora-region:hover {
+      filter: brightness(1.2);
     }
-
-    /* Semáforo de emociones */
-    .traffic-light { width: 80px; height: 200px; background: #333; border-radius: 20px; padding: 15px; display: flex; flex-direction: column; justify-content: space-around; align-items: center; border: 4px solid #000; }
-    .light { width: 50px; height: 50px; border-radius: 50%; border: 3px solid #000; cursor: pointer; transition: all 0.3s ease; }
-    .light-red { background: #440000; }
-    .light-yellow { background: #444400; }
-    .light-green { background: #004400; }
-    .light-red.active { background: #ff0000; box-shadow: 0 0 30px #ff0000; }
-    .light-yellow.active { background: #ffff00; box-shadow: 0 0 30px #ffff00; }
-    .light-green.active { background: #00ff00; box-shadow: 0 0 30px #00ff00; }
-
-    /* Mapa interactivo */
-    .map-region { cursor: pointer; transition: all 0.3s ease; }
-    .map-region:hover { transform: scale(1.05); filter: brightness(1.2); }
-
-    /* Imprimibles */
-    .printable { border: 2px dashed #666; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.02) 10px, rgba(0,0,0,0.02) 20px); }
-    .cut-line { border: 2px dashed #999; position: relative; }
-    .cut-line::before { content: '✂'; position: absolute; left: -15px; top: 50%; transform: translateY(-50%); font-size: 20px; }
-
-    body { box-sizing: border-box; }
+    .sonora-region.selected {
+      stroke: #5D4E6D;
+      stroke-width: 3;
+    }
   </style>
-</head>
-
-<body class="h-full bg-gradient-to-br from-blue-400 via-purple-400 to-orange-400 overflow-auto scanlines">
-  <div id="app" class="h-full w-full">
-
-    <!-- ======================= Page 1: Home ======================= -->
-    <div id="page-1" class="page h-full w-full flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-500 via-green-400 to-orange-500">
-
-      <!-- Estrellas decorativas -->
-      <div class="absolute top-10 left-10 text-6xl star-spin">⭐</div>
-      <div class="absolute top-20 right-20 text-4xl star-spin" style="animation-delay: -1s;">🌟</div>
-      <div class="absolute bottom-20 left-20 text-5xl star-spin" style="animation-delay: -2s;">✨</div>
-      <div class="absolute bottom-10 right-10 text-4xl star-spin" style="animation-delay: -0.5s;">⭐</div>
-
-      <!-- Tarjeta principal -->
-      <div class="pixel-border bg-white rounded-3xl p-8 max-w-4xl w-full text-center mb-8 float-animation">
-        <div class="text-2xl mb-2">🏫📚✏️</div>
-        <h1 id="school-title" class="title-font text-3xl md:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-green-500 to-orange-500 mb-4 rainbow-bg">Portal Encarta</h1>
-        <h2 id="school-subtitle" class="title-font text-xl md:text-3xl text-gray-800 mb-4">Escuela Primaria Venustiano Carranza</h2>
-        <p class="text-lg text-gray-600 font-bold">26DPR1320W</p>
-
-        <div class="mt-6 pixel-border bg-gradient-to-r from-yellow-200 to-orange-200 rounded-xl p-4">
-          <p class="text-lg font-bold text-gray-700">🎨 Creado por</p>
-          <p id="teacher-display" class="title-font text-xl md:text-2xl text-orange-600">Maestra María Fernanda Flores Valenzuela</p>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body class="h-full overflow-auto">
+  <div id="app" class="min-h-full gradient-bg pattern-bg"><!-- Game HUD -->
+   <div id="game-hud" class="fixed top-0 left-0 right-0 z-50 hidden">
+    <div class="flex justify-between items-center p-4 bg-white/80 backdrop-blur-md shadow-sm"><button onclick="goToMenu()" class="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg><span class="text-sm font-medium">Menú</span> </button>
+     <div class="flex items-center gap-6"><!-- Lives -->
+      <div class="flex items-center gap-1"><span id="lives-display" class="flex gap-1">
+        <svg class="w-6 h-6 heart-icon" fill="currentColor" viewbox="0 0 24 24">
+         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+        </svg>
+        <svg class="w-6 h-6 heart-icon" fill="currentColor" viewbox="0 0 24 24">
+         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+        </svg>
+        <svg class="w-6 h-6 heart-icon" fill="currentColor" viewbox="0 0 24 24">
+         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+        </svg></span>
+      </div><!-- Timer -->
+      <div class="flex items-center gap-2 timer-icon">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2" /> <path stroke-linecap="round" stroke-width="2" d="M12 6v6l4 2" />
+       </svg><span id="timer-display" class="font-mono text-sm font-semibold text-gray-700">00:00</span>
+      </div><!-- Score -->
+      <div class="flex items-center gap-2 bg-gradient-to-r from-amber-100 to-yellow-100 px-3 py-1 rounded-full">
+       <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+       </svg><span id="score-display" class="font-bold text-amber-700">0</span>
+      </div>
+     </div>
+    </div>
+   </div><!-- Page: Home -->
+   <div id="page-home" class="page min-h-full flex flex-col items-center justify-center p-6 page-transition">
+    <div class="text-center max-w-2xl mx-auto"><!-- Logo/Icon -->
+     <div class="mb-8 relative">
+      <div class="w-32 h-32 mx-auto bg-white rounded-3xl shadow-xl flex items-center justify-center transform rotate-3 hover:rotate-0 transition-transform duration-500">
+       <svg class="w-20 h-20" viewbox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="35" fill="#E8D5F2" /> <path d="M25 30h30v25a5 5 0 01-5 5H30a5 5 0 01-5-5V30z" fill="#B8A4C9" /> <path d="M25 25a5 5 0 015-5h20a5 5 0 015 5v5H25v-5z" fill="#9B8AB8" /> <circle cx="32" cy="40" r="4" fill="white" /> <circle cx="48" cy="40" r="4" fill="white" /> <path d="M35 50c2.5 3 7.5 3 10 0" stroke="white" stroke-width="2" stroke-linecap="round" /> <path d="M20 25l5-8M60 25l-5-8" stroke="#9B8AB8" stroke-width="2" stroke-linecap="round" />
+       </svg>
+      </div>
+      <div class="absolute -top-2 -right-2 w-8 h-8 bg-coral-200 rounded-full flex items-center justify-center" style="background: #FCE8DC;"><span class="text-lg">✨</span>
+      </div>
+     </div>
+     <h1 id="main-title" class="text-4xl md:text-5xl font-bold text-gray-800 mb-3">Mi Aula Interactiva</h1>
+     <p id="school-name-display" class="text-lg text-gray-600 mb-2">Esc. Primaria Venustiano Carranza</p>
+     <p id="teacher-name-display" class="font-cursive text-sm text-gray-500 mb-12">Creado por Mtra. María Fernanda Flores Valenzuela</p><!-- Phase Buttons -->
+     <div class="grid grid-cols-2 gap-4 max-w-md mx-auto"><button onclick="showPage('page-fase3')" class="card-hover game-card rounded-2xl p-6 text-left group">
+       <div class="w-12 h-12 rounded-xl mb-3 flex items-center justify-center" style="background: linear-gradient(135deg, #E8D5F2, #D4B8E8);"><span class="text-2xl">🌱</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Fase 3</h3><p class="text-xs text-gray-500">1º y 2º grado</p></button> <button onclick="showPage('page-fase4')" class="card-hover game-card rounded-2xl p-6 text-left group">
+       <div class="w-12 h-12 rounded-xl mb-3 flex items-center justify-center" style="background: linear-gradient(135deg, #D4E8E5, #A4D4C9);"><span class="text-2xl">🌿</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Fase 4</h3><p class="text-xs text-gray-500">3º y 4º grado</p></button> <button onclick="showPage('page-fase5')" class="card-hover game-card rounded-2xl p-6 text-left group">
+       <div class="w-12 h-12 rounded-xl mb-3 flex items-center justify-center" style="background: linear-gradient(135deg, #FCE8DC, #F8D4C4);"><span class="text-2xl">🌳</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Fase 5</h3><p class="text-xs text-gray-500">5º y 6º grado</p></button> <button onclick="showPage('page-ingles')" class="card-hover game-card rounded-2xl p-6 text-left group">
+       <div class="w-12 h-12 rounded-xl mb-3 flex items-center justify-center" style="background: linear-gradient(135deg, #FFF8DC, #F8E8A4);"><span class="text-2xl">🌍</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Inglés</h3><p class="text-xs text-gray-500">All grades</p></button>
+     </div><!-- Progress indicator -->
+     <div class="mt-12 flex items-center justify-center gap-2"><span class="text-sm text-gray-500">Tu progreso:</span>
+      <div class="w-32 h-2 bg-white/50 rounded-full overflow-hidden">
+       <div id="total-progress" class="h-full rounded-full transition-all duration-500" style="width: 0%; background: linear-gradient(90deg, #B8A4C9, #A4C9B8);"></div>
+      </div><span id="progress-percent" class="text-sm font-medium text-gray-600">0%</span>
+     </div>
+    </div>
+   </div><!-- Page: Fase 3 Menu -->
+   <div id="page-fase3" class="page hidden min-h-full p-6 pt-20 page-transition">
+    <div class="max-w-4xl mx-auto">
+     <div class="flex items-center gap-4 mb-8"><button onclick="goToMenu()" class="w-10 h-10 rounded-xl bg-white/80 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
+       <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+       </svg></button>
+      <div>
+       <h2 class="text-2xl font-bold text-gray-800">Fase 3</h2>
+       <p class="text-sm text-gray-500">1º y 2º grado • 5 juegos</p>
+      </div>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"><button onclick="startGame('vocales')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #E8D5F2;">
+         🔤
+        </div><span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 font-medium">Fácil</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Vocales y Nombre</h3><p class="text-sm text-gray-500">Identifica las vocales</p></button> <button onclick="startGame('conteo')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #D4E8E5;">
+         🔢
+        </div><span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 font-medium">Fácil</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Conteo 1-100</h3><p class="text-sm text-gray-500">Aprende a contar</p></button> <button onclick="startGame('descripcion')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #FCE8DC;">
+         📝
+        </div><span class="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 font-medium">Medio</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Descripción</h3><p class="text-sm text-gray-500">Describe objetos</p></button> <button onclick="startGame('centenas')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #FFF8DC;">
+         💯
+        </div><span class="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 font-medium">Medio</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Centenas</h3><p class="text-sm text-gray-500">Números hasta 1000</p></button> <button onclick="startGame('sentidos')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #E8D5F2;">
+         🌸
+        </div><span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 font-medium">Fácil</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Sentidos y Plantas</h3><p class="text-sm text-gray-500">Ciencias naturales</p></button>
+     </div>
+    </div>
+   </div><!-- Page: Fase 4 Menu -->
+   <div id="page-fase4" class="page hidden min-h-full p-6 pt-20 page-transition">
+    <div class="max-w-4xl mx-auto">
+     <div class="flex items-center gap-4 mb-8"><button onclick="goToMenu()" class="w-10 h-10 rounded-xl bg-white/80 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
+       <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+       </svg></button>
+      <div>
+       <h2 class="text-2xl font-bold text-gray-800">Fase 4</h2>
+       <p class="text-sm text-gray-500">3º y 4º grado • 5 juegos</p>
+      </div>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"><button onclick="startGame('fracciones')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #FCE8DC;">
+         🍕
+        </div><span class="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 font-medium">Medio</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Pizza de Fracciones</h3><p class="text-sm text-gray-500">Aprende fracciones</p></button> <button onclick="startGame('cicloagua')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #D4E8E5;">
+         💧
+        </div><span class="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 font-medium">Medio</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Ciclo del Agua</h3><p class="text-sm text-gray-500">Ciencias naturales</p></button> <button onclick="startGame('oficios')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #E8D5F2;">
+         👷
+        </div><span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 font-medium">Fácil</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Oficios y Profesiones</h3><p class="text-sm text-gray-500">Conoce las profesiones</p></button> <button onclick="startGame('sonora')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #FFF8DC;">
+         🗺️
+        </div><span class="text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-700 font-medium">Difícil</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Mapa de Sonora</h3><p class="text-sm text-gray-500">Geografía regional</p></button> <button onclick="startGame('multiplicaciones')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #FCE8DC;">
+         ⚔️
+        </div><span class="text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-700 font-medium">Difícil</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Batalla Matemática</h3><p class="text-sm text-gray-500">Multiplicación y división</p></button>
+     </div>
+    </div>
+   </div><!-- Page: Fase 5 Menu -->
+   <div id="page-fase5" class="page hidden min-h-full p-6 pt-20 page-transition">
+    <div class="max-w-4xl mx-auto">
+     <div class="flex items-center gap-4 mb-8"><button onclick="goToMenu()" class="w-10 h-10 rounded-xl bg-white/80 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
+       <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+       </svg></button>
+      <div>
+       <h2 class="text-2xl font-bold text-gray-800">Fase 5</h2>
+       <p class="text-sm text-gray-500">5º y 6º grado • 5 juegos</p>
+      </div>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"><button onclick="startGame('sistemas')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #FCE8DC;">
+         🫀
+        </div><span class="text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-700 font-medium">Difícil</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Sistemas del Cuerpo</h3><p class="text-sm text-gray-500">Anatomía humana</p></button> <button onclick="startGame('historia')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #E8D5F2;">
+         📜
+        </div><span class="text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-700 font-medium">Difícil</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Línea del Tiempo</h3><p class="text-sm text-gray-500">Historia de México</p></button> <button onclick="startGame('porcentajes')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #D4E8E5;">
+         📊
+        </div><span class="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 font-medium">Medio</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Porcentajes</h3><p class="text-sm text-gray-500">Decimales y porcentajes</p></button> <button onclick="startGame('universo')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #2D2654;">
+         🪐
+        </div><span class="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 font-medium">Medio</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">El Universo</h3><p class="text-sm text-gray-500">Sistema solar</p></button> <button onclick="startGame('cientifico')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #FFF8DC;">
+         🔬
+        </div><span class="text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-700 font-medium">Difícil</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Comprensión Científica</h3><p class="text-sm text-gray-500">Método científico</p></button>
+     </div>
+    </div>
+   </div><!-- Page: English Menu -->
+   <div id="page-ingles" class="page hidden min-h-full p-6 pt-20 page-transition">
+    <div class="max-w-4xl mx-auto">
+     <div class="flex items-center gap-4 mb-8"><button onclick="goToMenu()" class="w-10 h-10 rounded-xl bg-white/80 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
+       <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+       </svg></button>
+      <div>
+       <h2 class="text-2xl font-bold text-gray-800">English</h2>
+       <p class="text-sm text-gray-500">Vocabulary • 4 categories</p>
+      </div>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><button onclick="startGame('animals')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #D4E8E5;">
+         🦁
+        </div><span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 font-medium">Easy</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Animals</h3><p class="text-sm text-gray-500">Learn animal names</p></button> <button onclick="startGame('body')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #FCE8DC;">
+         🫳
+        </div><span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 font-medium">Easy</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Body Parts</h3><p class="text-sm text-gray-500">Parts of the body</p></button> <button onclick="startGame('days')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: #E8D5F2;">
+         📅
+        </div><span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 font-medium">Easy</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Days &amp; Months</h3><p class="text-sm text-gray-500">Calendar vocabulary</p></button> <button onclick="startGame('colors')" class="card-hover game-card rounded-2xl p-6 text-left">
+       <div class="flex items-start justify-between mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl" style="background: linear-gradient(135deg, #E8D5F2, #D4E8E5, #FCE8DC);">
+         🎨
+        </div><span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 font-medium">Easy</span>
+       </div><h3 class="font-bold text-gray-800 mb-1">Colors &amp; Shapes</h3><p class="text-sm text-gray-500">Visual vocabulary</p></button>
+     </div>
+    </div>
+   </div><!-- Game: Vocales -->
+   <div id="game-vocales" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-2xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">🔤 Vocales y Nombre</h2>
+     <p class="text-gray-500 mb-8">Toca todas las vocales que encuentres</p>
+     <div id="vocales-word" class="game-card rounded-3xl p-8 mb-6">
+      <p class="text-sm text-gray-500 mb-4">Encuentra las vocales en:</p>
+      <div id="vocales-letters" class="flex flex-wrap justify-center gap-3"></div>
+     </div>
+     <div class="flex justify-center gap-4"><button onclick="checkVocales()" class="btn-primary text-white px-8 py-3 rounded-xl font-semibold shadow-lg"> Verificar ✓ </button> <button onclick="nextVocalesWord()" class="bg-white text-gray-700 px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-shadow"> Siguiente → </button>
+     </div>
+    </div>
+   </div><!-- Game: Conteo -->
+   <div id="game-conteo" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-2xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">🔢 Conteo 1-100</h2>
+     <p class="text-gray-500 mb-8">¿Cuál número sigue en la secuencia?</p>
+     <div class="game-card rounded-3xl p-8 mb-6">
+      <div id="conteo-sequence" class="flex justify-center items-center gap-4 mb-6 flex-wrap"><!-- Numbers will be inserted here -->
+      </div>
+      <div id="conteo-options" class="flex justify-center gap-3 flex-wrap"><!-- Options will be inserted here -->
+      </div>
+     </div>
+     <div id="conteo-feedback" class="text-lg font-medium mb-4"></div>
+    </div>
+   </div><!-- Game: Descripción -->
+   <div id="game-descripcion" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-2xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">📝 Descripción</h2>
+     <p class="text-gray-500 mb-8">Une cada objeto con su descripción</p>
+     <div class="game-card rounded-3xl p-8">
+      <div class="grid grid-cols-2 gap-6">
+       <div id="desc-objects" class="space-y-3"><!-- Objects -->
+       </div>
+       <div id="desc-descriptions" class="space-y-3"><!-- Descriptions -->
+       </div>
+      </div>
+     </div>
+     <div id="desc-feedback" class="text-lg font-medium mt-6"></div>
+    </div>
+   </div><!-- Game: Centenas -->
+   <div id="game-centenas" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-2xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">💯 Centenas</h2>
+     <p class="text-gray-500 mb-8">Escribe el número en forma numérica</p>
+     <div class="game-card rounded-3xl p-8 mb-6">
+      <p id="centenas-word" class="text-2xl font-bold text-gray-800 mb-6"></p>
+      <div class="flex justify-center items-center gap-4"><input type="number" id="centenas-input" class="w-32 text-center text-2xl font-bold p-4 rounded-xl border-2 border-gray-200 focus:border-purple-400 focus:outline-none" placeholder="?"> <button onclick="checkCentenas()" class="btn-primary text-white px-6 py-4 rounded-xl font-semibold"> ✓ </button>
+      </div>
+     </div>
+     <div id="centenas-feedback" class="text-lg font-medium"></div>
+    </div>
+   </div><!-- Game: Sentidos y Plantas -->
+   <div id="game-sentidos" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-3xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">🌸 Sentidos y Plantas</h2>
+     <p class="text-gray-500 mb-8">Relaciona cada sentido con su órgano</p>
+     <div class="game-card rounded-3xl p-8">
+      <div class="grid grid-cols-5 gap-4 mb-8">
+       <div class="text-center">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-purple-100 flex items-center justify-center text-3xl mb-2">
+         👁️
         </div>
+        <p class="text-sm font-medium">Vista</p>
+       </div>
+       <div class="text-center">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-green-100 flex items-center justify-center text-3xl mb-2">
+         👂
+        </div>
+        <p class="text-sm font-medium">Oído</p>
+       </div>
+       <div class="text-center">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-coral-100 flex items-center justify-center text-3xl mb-2" style="background: #FCE8DC;">
+         👃
+        </div>
+        <p class="text-sm font-medium">Olfato</p>
+       </div>
+       <div class="text-center">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-yellow-100 flex items-center justify-center text-3xl mb-2">
+         👅
+        </div>
+        <p class="text-sm font-medium">Gusto</p>
+       </div>
+       <div class="text-center">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-blue-100 flex items-center justify-center text-3xl mb-2">
+         🤚
+        </div>
+        <p class="text-sm font-medium">Tacto</p>
+       </div>
       </div>
-
-      <!-- Botones de fases -->
-      <div class="flex flex-wrap justify-center gap-6">
-        <button onclick="navigateTo(7)" class="retro-btn bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-2xl p-6 w-48 pulse-glow">
-          <div class="text-5xl mb-2">🎮</div>
-          <div class="title-font text-2xl">FASE 3</div>
-          <div class="text-sm mt-2">1º y 2º Grado</div>
-        </button>
-
-        <button onclick="navigateTo(2)" class="retro-btn bg-gradient-to-br from-green-400 to-green-600 text-white rounded-2xl p-6 w-48 pulse-glow" style="animation-delay: 0.3s;">
-          <div class="text-5xl mb-2">🚀</div>
-          <div class="title-font text-2xl">FASE 4</div>
-          <div class="text-sm mt-2">3º y 4º Grado</div>
-        </button>
-
-        <button onclick="navigateTo(8)" class="retro-btn bg-gradient-to-br from-orange-400 to-orange-600 text-white rounded-2xl p-6 w-48 pulse-glow" style="animation-delay: 0.6s;">
-          <div class="text-5xl mb-2">🏆</div>
-          <div class="title-font text-2xl">FASE 5</div>
-          <div class="text-sm mt-2">5º y 6º Grado</div>
-        </button>
+      <div class="border-t pt-6">
+       <p class="text-sm text-gray-500 mb-4">Partes de una planta:</p>
+       <div class="flex justify-center gap-4 flex-wrap" id="plant-parts"><span class="px-4 py-2 rounded-full bg-green-100 text-green-700 font-medium">🌱 Raíz</span> <span class="px-4 py-2 rounded-full bg-green-200 text-green-800 font-medium">🌿 Tallo</span> <span class="px-4 py-2 rounded-full bg-green-300 text-green-900 font-medium">🍃 Hojas</span> <span class="px-4 py-2 rounded-full bg-pink-100 text-pink-700 font-medium">🌸 Flor</span> <span class="px-4 py-2 rounded-full bg-red-100 text-red-700 font-medium">🍎 Fruto</span>
+       </div>
       </div>
-
-      <!-- Botón Materiales Recortables -->
-      <button onclick="navigateTo(10)" class="mt-8 retro-btn bg-gradient-to-r from-pink-400 to-purple-500 text-white rounded-xl px-8 py-4">
-        <span class="text-2xl mr-2">✂️</span>
-        <span class="title-font text-xl">Materiales Recortables</span>
-      </button>
-
+     </div><button onclick="completeSentidos()" class="btn-primary text-white px-8 py-3 rounded-xl font-semibold shadow-lg mt-6"> ¡Completado! ✓ </button>
     </div>
-    <!-- ======================= END Page 1 ======================= -->
-
-    <!-- ======================= Page 2: Fase 4 Menu ======================= -->
-    <div id="page-2" class="page h-full w-full hidden flex-col items-center p-4 bg-gradient-to-br from-green-400 via-teal-400 to-blue-500 overflow-auto">
-      <button onclick="navigateTo(1)" class="self-start retro-btn bg-yellow-400 text-black rounded-xl px-6 py-3 mb-4">
-        <span class="text-xl">🏠</span> Inicio
-      </button>
-
-      <div class="pixel-border bg-white rounded-3xl p-6 mb-8">
-        <h1 class="title-font text-4xl text-center text-green-600">🚀 FASE 4 - Menú Principal</h1>
-        <p class="text-center text-gray-600 mt-2">3º y 4º Grado - ¡Elige tu aventura!</p>
-      </div>
-
-      <div class="grid grid-cols-2 gap-6 max-w-2xl">
-        <!-- Botones de actividades -->
-        <button onclick="navigateTo(3)" class="retro-btn bg-gradient-to-br from-pink-400 to-red-400 text-white rounded-2xl p-6 bounce-in" style="animation-delay: 0.1s;">
-          <div class="text-6xl mb-3">😊</div>
-          <div class="title-font text-xl">Emociones</div>
-          <div class="text-sm mt-2">Semáforo Emocional</div>
-        </button>
-
-        <button onclick="navigateTo(4)" class="retro-btn bg-gradient-to-br from-blue-400 to-indigo-500 text-white rounded-2xl p-6 bounce-in" style="animation-delay: 0.2s;">
-          <div class="text-6xl mb-3">🧮</div>
-          <div class="title-font text-xl">Cálculo Mental</div>
-          <div class="text-sm mt-2">Reto SISAT</div>
-        </button>
-
-        <button onclick="navigateTo(5)" class="retro-btn bg-gradient-to-br from-yellow-400 to-orange-400 text-white rounded-2xl p-6 bounce-in" style="animation-delay: 0.3s;">
-          <div class="text-6xl mb-3">🗺️</div>
-          <div class="title-font text-xl">Sonora</div>
-          <div class="text-sm mt-2">Mapa Interactivo</div>
-        </button>
-
-        <button onclick="navigateTo(6)" class="retro-btn bg-gradient-to-br from-green-400 to-emerald-500 text-white rounded-2xl p-6 bounce-in" style="animation-delay: 0.4s;">
-          <div class="text-6xl mb-3">🌳</div>
-          <div class="title-font text-xl">Medio Ambiente</div>
-          <div class="text-sm mt-2">Misión Ecológica</div>
-        </button>
-      </div>
+   </div><!-- Game: Fracciones (Pizza) -->
+   <div id="game-fracciones" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-2xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">🍕 Pizza de Fracciones</h2>
+     <p class="text-gray-500 mb-4">Selecciona las rebanadas para mostrar la fracción</p>
+     <div id="fraction-target" class="text-3xl font-bold text-purple-600 mb-6"></div>
+     <div class="game-card rounded-3xl p-8 mb-6">
+      <svg id="pizza-svg" viewbox="0 0 200 200" class="w-64 h-64 mx-auto"><!-- Pizza will be rendered here -->
+      </svg>
+     </div>
+     <div class="flex justify-center gap-4"><button onclick="checkFraction()" class="btn-primary text-white px-8 py-3 rounded-xl font-semibold shadow-lg"> Verificar ✓ </button> <button onclick="nextFraction()" class="bg-white text-gray-700 px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-shadow"> Nueva Fracción → </button>
+     </div>
+     <div id="fraction-feedback" class="text-lg font-medium mt-4"></div>
     </div>
-    <!-- ======================= END Page 2 ======================= -->
-
-    <!-- ======================= Aquí seguiría Page 3, Page 4, Page 5, etc ======================= -->
-    <!-- ... -->
-
+   </div><!-- Game: Ciclo del Agua -->
+   <div id="game-cicloagua" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-3xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">💧 Ciclo del Agua</h2>
+     <p class="text-gray-500 mb-8">Arrastra cada etapa a su posición correcta</p>
+     <div class="game-card rounded-3xl p-8 relative" style="min-height: 400px;">
+      <svg viewbox="0 0 400 300" class="w-full h-auto"><!-- Background elements --> <defs>
+        <lineargradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+         <stop offset="0%" style="stop-color:#87CEEB" />
+         <stop offset="100%" style="stop-color:#E0F4FF" />
+        </lineargradient>
+       </defs> <rect fill="url(#skyGrad)" width="400" height="200" /> <ellipse cx="320" cy="50" rx="40" ry="20" fill="white" opacity="0.8" /> <ellipse cx="330" cy="45" rx="30" ry="15" fill="white" opacity="0.9" /> <!-- Sun --> <circle cx="60" cy="50" r="25" fill="#FFD93D" /> <g stroke="#FFD93D" stroke-width="3">
+        <line x1="60" y1="15" x2="60" y2="5" />
+        <line x1="60" y1="85" x2="60" y2="95" />
+        <line x1="25" y1="50" x2="15" y2="50" />
+        <line x1="95" y1="50" x2="105" y2="50" />
+       </g> <!-- Mountain --> <polygon points="250,200 350,200 300,120" fill="#8B9A6E" /> <polygon points="280,200 350,200 315,150" fill="#A4B88C" /> <!-- Water/Ocean --> <rect y="200" width="400" height="100" fill="#4A90B8" /> <ellipse cx="100" cy="220" rx="80" ry="10" fill="#5BA3CC" opacity="0.5" /> <!-- Labels --> <text x="60" y="140" text-anchor="middle" fill="#666" font-size="10" font-weight="bold">
+        ☀️ Evaporación
+       </text> <text x="200" y="30" text-anchor="middle" fill="#666" font-size="10" font-weight="bold">
+        ☁️ Condensación
+       </text> <text x="320" y="100" text-anchor="middle" fill="#666" font-size="10" font-weight="bold">
+        🌧️ Precipitación
+       </text> <text x="300" y="250" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">
+        💧 Acumulación
+       </text> <!-- Arrows --> <path d="M80 180 Q 100 100 180 60" stroke="#4A90B8" stroke-width="2" fill="none" stroke-dasharray="5,5" /> <path d="M220 50 Q 280 40 310 80" stroke="#888" stroke-width="2" fill="none" stroke-dasharray="5,5" /> <path d="M320 120 L 320 180" stroke="#4A90B8" stroke-width="2" fill="none" stroke-dasharray="5,5" />
+      </svg>
+     </div><button onclick="completeCicloAgua()" class="btn-primary text-white px-8 py-3 rounded-xl font-semibold shadow-lg mt-6"> ¡Entendido! ✓ </button>
+    </div>
+   </div><!-- Game: Oficios -->
+   <div id="game-oficios" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-3xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">👷 Oficios y Profesiones</h2>
+     <p class="text-gray-500 mb-8">Une cada profesión con su herramienta</p>
+     <div class="game-card rounded-3xl p-8">
+      <div id="oficios-game" class="grid grid-cols-2 gap-8">
+       <div id="oficios-left" class="space-y-4"><!-- Professions -->
+       </div>
+       <div id="oficios-right" class="space-y-4"><!-- Tools -->
+       </div>
+      </div>
+     </div>
+     <div id="oficios-feedback" class="text-lg font-medium mt-6"></div>
+    </div>
+   </div><!-- Game: Mapa de Sonora -->
+   <div id="game-sonora" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-3xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">🗺️ Mapa de Sonora</h2>
+     <p class="text-gray-500 mb-4">Identifica las regiones del estado</p>
+     <div id="sonora-question" class="text-lg font-semibold text-purple-600 mb-4"></div>
+     <div class="game-card rounded-3xl p-8 mb-6">
+      <svg id="sonora-map" viewbox="0 0 400 350" class="w-full max-w-md mx-auto"><!-- Sonora State Map - Simplified regions --> <defs>
+        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+         <fedropshadow dx="2" dy="2" stddeviation="3" flood-opacity="0.2" />
+        </filter>
+       </defs> <!-- Region: Norte (Nogales, San Luis, etc) --> <path id="region-norte" class="sonora-region" d="M50,30 L180,20 L200,50 L220,30 L350,40 L340,100 L200,120 L60,100 Z" fill="#B8A4C9" stroke="#5D4E6D" stroke-width="1" filter="url(#shadow)" onclick="selectRegion('norte')" /> <text x="200" y="70" text-anchor="middle" fill="#5D4E6D" font-size="12" font-weight="bold" pointer-events="none">
+        Norte
+       </text> <!-- Region: Centro (Hermosillo) --> <path id="region-centro" class="sonora-region" d="M60,100 L200,120 L340,100 L330,180 L200,200 L70,180 Z" fill="#A4C9B8" stroke="#5D4E6D" stroke-width="1" filter="url(#shadow)" onclick="selectRegion('centro')" /> <text x="200" y="155" text-anchor="middle" fill="#5D4E6D" font-size="12" font-weight="bold" pointer-events="none">
+        Centro
+       </text> <text x="200" y="170" text-anchor="middle" fill="#5D4E6D" font-size="9" pointer-events="none">
+        ★ Hermosillo
+       </text> <!-- Region: Costa (Guaymas, Empalme) --> <path id="region-costa" class="sonora-region" d="M30,180 L70,180 L80,260 L50,300 L20,280 Z" fill="#F8D4C4" stroke="#5D4E6D" stroke-width="1" filter="url(#shadow)" onclick="selectRegion('costa')" /> <text x="50" y="235" text-anchor="middle" fill="#5D4E6D" font-size="10" font-weight="bold" pointer-events="none">
+        Costa
+       </text> <!-- Region: Sur (Cd. Obregón, Navojoa) --> <path id="region-sur" class="sonora-region" d="M70,180 L200,200 L220,280 L180,320 L80,300 L80,260 Z" fill="#FFF8DC" stroke="#5D4E6D" stroke-width="1" filter="url(#shadow)" onclick="selectRegion('sur')" /> <text x="150" y="260" text-anchor="middle" fill="#5D4E6D" font-size="12" font-weight="bold" pointer-events="none">
+        Sur
+       </text> <!-- Region: Sierra (Este) --> <path id="region-sierra" class="sonora-region" d="M200,200 L330,180 L360,250 L300,310 L220,280 Z" fill="#D4E8E5" stroke="#5D4E6D" stroke-width="1" filter="url(#shadow)" onclick="selectRegion('sierra')" /> <text x="280" y="245" text-anchor="middle" fill="#5D4E6D" font-size="12" font-weight="bold" pointer-events="none">
+        Sierra
+       </text> <!-- Compass --> <g transform="translate(360, 30)">
+        <circle r="20" fill="white" stroke="#ccc" />
+        <text y="-8" text-anchor="middle" font-size="10" fill="#666">
+         N
+        </text>
+        <text y="14" text-anchor="middle" font-size="8" fill="#999">
+         S
+        </text>
+        <text x="-12" y="3" text-anchor="middle" font-size="8" fill="#999">
+         O
+        </text>
+        <text x="12" y="3" text-anchor="middle" font-size="8" fill="#999">
+         E
+        </text>
+       </g>
+      </svg>
+     </div>
+     <div id="sonora-feedback" class="text-lg font-medium"></div>
+    </div>
+   </div><!-- Game: Multiplicaciones -->
+   <div id="game-multiplicaciones" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-2xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">⚔️ Batalla Matemática</h2>
+     <p class="text-gray-500 mb-8">Resuelve la operación antes que se acabe el tiempo</p>
+     <div class="game-card rounded-3xl p-8 mb-6">
+      <div id="math-problem" class="text-4xl font-bold text-gray-800 mb-6"></div>
+      <div id="math-options" class="grid grid-cols-2 gap-4 max-w-xs mx-auto"><!-- Options will be inserted here -->
+      </div>
+     </div>
+     <div id="math-feedback" class="text-lg font-medium"></div>
+     <div class="mt-6 flex justify-center gap-4">
+      <div class="text-center">
+       <p class="text-sm text-gray-500">Correctas</p>
+       <p id="math-correct" class="text-2xl font-bold text-green-600">0</p>
+      </div>
+      <div class="text-center">
+       <p class="text-sm text-gray-500">Racha</p>
+       <p id="math-streak" class="text-2xl font-bold text-purple-600">0</p>
+      </div>
+     </div>
+    </div>
+   </div><!-- Game: Sistemas del Cuerpo -->
+   <div id="game-sistemas" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-3xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">🫀 Sistemas del Cuerpo</h2>
+     <p class="text-gray-500 mb-4">Selecciona el sistema correcto</p>
+     <div id="sistemas-question" class="text-lg font-semibold text-purple-600 mb-6"></div>
+     <div class="game-card rounded-3xl p-8">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="sistemas-options"><button onclick="selectSistema('circulatorio')" class="body-system p-4 rounded-2xl bg-red-50 hover:bg-red-100 transition-colors">
+        <div class="text-4xl mb-2">
+         🫀
+        </div><p class="font-medium text-gray-700">Circulatorio</p></button> <button onclick="selectSistema('respiratorio')" class="body-system p-4 rounded-2xl bg-blue-50 hover:bg-blue-100 transition-colors">
+        <div class="text-4xl mb-2">
+         🫁
+        </div><p class="font-medium text-gray-700">Respiratorio</p></button> <button onclick="selectSistema('digestivo')" class="body-system p-4 rounded-2xl bg-yellow-50 hover:bg-yellow-100 transition-colors">
+        <div class="text-4xl mb-2">
+         🍽️
+        </div><p class="font-medium text-gray-700">Digestivo</p></button> <button onclick="selectSistema('nervioso')" class="body-system p-4 rounded-2xl bg-purple-50 hover:bg-purple-100 transition-colors">
+        <div class="text-4xl mb-2">
+         🧠
+        </div><p class="font-medium text-gray-700">Nervioso</p></button> <button onclick="selectSistema('oseo')" class="body-system p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors">
+        <div class="text-4xl mb-2">
+         🦴
+        </div><p class="font-medium text-gray-700">Óseo</p></button> <button onclick="selectSistema('muscular')" class="body-system p-4 rounded-2xl bg-orange-50 hover:bg-orange-100 transition-colors">
+        <div class="text-4xl mb-2">
+         💪
+        </div><p class="font-medium text-gray-700">Muscular</p></button>
+      </div>
+     </div>
+     <div id="sistemas-feedback" class="text-lg font-medium mt-6"></div>
+    </div>
+   </div><!-- Game: Historia (Timeline) -->
+   <div id="game-historia" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-4xl mx-auto">
+     <div class="text-center mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">📜 Línea del Tiempo</h2>
+      <p class="text-gray-500">Ordena los eventos históricos de México</p>
+     </div>
+     <div class="game-card rounded-3xl p-8">
+      <div class="relative"><!-- Timeline line -->
+       <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-purple-200 via-green-200 to-coral-200" style="background: linear-gradient(to bottom, #E8D5F2, #D4E8E5, #FCE8DC);"></div>
+       <div id="timeline-events" class="space-y-8 relative"><!-- Events will be rendered here -->
+       </div>
+      </div>
+     </div>
+     <div class="text-center mt-6"><button onclick="checkTimeline()" class="btn-primary text-white px-8 py-3 rounded-xl font-semibold shadow-lg"> Verificar Orden ✓ </button>
+     </div>
+     <div id="timeline-feedback" class="text-lg font-medium text-center mt-4"></div>
+    </div>
+   </div><!-- Game: Porcentajes -->
+   <div id="game-porcentajes" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-2xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">📊 Porcentajes y Decimales</h2>
+     <p class="text-gray-500 mb-8">Convierte entre porcentajes, decimales y fracciones</p>
+     <div class="game-card rounded-3xl p-8 mb-6">
+      <div id="percent-question" class="text-xl font-semibold text-gray-800 mb-6"></div>
+      <div id="percent-visual" class="w-full h-8 bg-gray-100 rounded-full overflow-hidden mb-6">
+       <div id="percent-bar" class="h-full transition-all duration-500" style="background: linear-gradient(90deg, #B8A4C9, #A4C9B8);"></div>
+      </div>
+      <div id="percent-options" class="grid grid-cols-2 gap-4"><!-- Options -->
+      </div>
+     </div>
+     <div id="percent-feedback" class="text-lg font-medium"></div>
+    </div>
+   </div><!-- Game: Universo -->
+   <div id="game-universo" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-4xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">🪐 El Universo</h2>
+     <p class="text-gray-500 mb-4">Aprende sobre el sistema solar</p>
+     <div id="universe-question" class="text-lg font-semibold text-purple-600 mb-6"></div>
+     <div class="game-card rounded-3xl p-8" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
+      <div class="flex items-center justify-center gap-2 md:gap-4 flex-wrap"><!-- Sun -->
+       <div class="planet" onclick="selectPlanet('sol')" data-planet="sol">
+        <div class="w-16 h-16 rounded-full bg-yellow-400 shadow-lg shadow-yellow-400/50 flex items-center justify-center"><span class="text-2xl">☀️</span>
+        </div>
+        <p class="text-xs text-white mt-2">Sol</p>
+       </div><!-- Planets -->
+       <div class="planet" onclick="selectPlanet('mercurio')" data-planet="mercurio">
+        <div class="w-6 h-6 rounded-full bg-gray-400"></div>
+        <p class="text-xs text-white mt-2">Mercurio</p>
+       </div>
+       <div class="planet" onclick="selectPlanet('venus')" data-planet="venus">
+        <div class="w-8 h-8 rounded-full bg-orange-300"></div>
+        <p class="text-xs text-white mt-2">Venus</p>
+       </div>
+       <div class="planet" onclick="selectPlanet('tierra')" data-planet="tierra">
+        <div class="w-8 h-8 rounded-full bg-blue-500 shadow-lg shadow-blue-500/30"></div>
+        <p class="text-xs text-white mt-2">Tierra</p>
+       </div>
+       <div class="planet" onclick="selectPlanet('marte')" data-planet="marte">
+        <div class="w-7 h-7 rounded-full bg-red-500"></div>
+        <p class="text-xs text-white mt-2">Marte</p>
+       </div>
+       <div class="planet" onclick="selectPlanet('jupiter')" data-planet="jupiter">
+        <div class="w-14 h-14 rounded-full bg-amber-600 shadow-lg"></div>
+        <p class="text-xs text-white mt-2">Júpiter</p>
+       </div>
+       <div class="planet" onclick="selectPlanet('saturno')" data-planet="saturno">
+        <div class="relative">
+         <div class="w-12 h-12 rounded-full bg-yellow-600"></div>
+         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-4 border-2 border-yellow-400 rounded-full opacity-60"></div>
+        </div>
+        <p class="text-xs text-white mt-2">Saturno</p>
+       </div>
+       <div class="planet" onclick="selectPlanet('urano')" data-planet="urano">
+        <div class="w-10 h-10 rounded-full bg-cyan-400"></div>
+        <p class="text-xs text-white mt-2">Urano</p>
+       </div>
+       <div class="planet" onclick="selectPlanet('neptuno')" data-planet="neptuno">
+        <div class="w-10 h-10 rounded-full bg-blue-700"></div>
+        <p class="text-xs text-white mt-2">Neptuno</p>
+       </div>
+      </div>
+     </div>
+     <div id="universe-feedback" class="text-lg font-medium mt-6"></div>
+    </div>
+   </div><!-- Game: Científico -->
+   <div id="game-cientifico" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-2xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">🔬 Método Científico</h2>
+     <p class="text-gray-500 mb-8">Ordena los pasos del método científico</p>
+     <div class="game-card rounded-3xl p-8 mb-6">
+      <div id="cientifico-steps" class="space-y-3"><!-- Steps will be rendered here -->
+      </div>
+     </div><button onclick="checkCientifico()" class="btn-primary text-white px-8 py-3 rounded-xl font-semibold shadow-lg"> Verificar Orden ✓ </button>
+     <div id="cientifico-feedback" class="text-lg font-medium mt-4"></div>
+    </div>
+   </div><!-- Game: Animals (English) -->
+   <div id="game-animals" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-3xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">🦁 Animals</h2>
+     <p class="text-gray-500 mb-8">Tap the cards to learn animal names</p>
+     <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="animals-cards"><!-- Cards will be rendered here -->
+     </div><button onclick="completeAnimals()" class="btn-primary text-white px-8 py-3 rounded-xl font-semibold shadow-lg mt-8"> Complete! ✓ </button>
+    </div>
+   </div><!-- Game: Body Parts (English) -->
+   <div id="game-body" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-2xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">🫳 Body Parts</h2>
+     <p class="text-gray-500 mb-8">Match the body part with its name</p>
+     <div class="game-card rounded-3xl p-8">
+      <div id="body-question" class="text-6xl mb-6"></div>
+      <p id="body-prompt" class="text-lg text-gray-600 mb-4"></p>
+      <div id="body-options" class="grid grid-cols-2 gap-4"><!-- Options -->
+      </div>
+     </div>
+     <div id="body-feedback" class="text-lg font-medium mt-6"></div>
+    </div>
+   </div><!-- Game: Days (English) -->
+   <div id="game-days" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-2xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">📅 Days &amp; Months</h2>
+     <p class="text-gray-500 mb-8">Learn the days and months in English</p>
+     <div class="game-card rounded-3xl p-8 mb-6">
+      <div class="mb-8">
+       <h3 class="font-bold text-gray-700 mb-4">Days of the Week</h3>
+       <div class="flex flex-wrap justify-center gap-2"><span class="px-4 py-2 rounded-full bg-purple-100 text-purple-700 font-medium">Sunday</span> <span class="px-4 py-2 rounded-full bg-purple-100 text-purple-700 font-medium">Monday</span> <span class="px-4 py-2 rounded-full bg-purple-100 text-purple-700 font-medium">Tuesday</span> <span class="px-4 py-2 rounded-full bg-purple-100 text-purple-700 font-medium">Wednesday</span> <span class="px-4 py-2 rounded-full bg-purple-100 text-purple-700 font-medium">Thursday</span> <span class="px-4 py-2 rounded-full bg-purple-100 text-purple-700 font-medium">Friday</span> <span class="px-4 py-2 rounded-full bg-purple-100 text-purple-700 font-medium">Saturday</span>
+       </div>
+      </div>
+      <div>
+       <h3 class="font-bold text-gray-700 mb-4">Months of the Year</h3>
+       <div class="flex flex-wrap justify-center gap-2"><span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">January</span> <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">February</span> <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">March</span> <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">April</span> <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">May</span> <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">June</span> <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">July</span> <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">August</span> <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">September</span> <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">October</span> <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">November</span> <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">December</span>
+       </div>
+      </div>
+     </div>
+     <div id="days-quiz" class="game-card rounded-3xl p-6">
+      <p id="days-question" class="text-lg font-semibold text-gray-800 mb-4"></p>
+      <div id="days-options" class="grid grid-cols-2 gap-3"></div>
+     </div>
+     <div id="days-feedback" class="text-lg font-medium mt-4"></div>
+    </div>
+   </div><!-- Game: Colors (English) -->
+   <div id="game-colors" class="page hidden min-h-full p-6 pt-24 page-transition">
+    <div class="max-w-3xl mx-auto text-center">
+     <h2 class="text-2xl font-bold text-gray-800 mb-2">🎨 Colors &amp; Shapes</h2>
+     <p class="text-gray-500 mb-8">Learn colors and shapes in English</p>
+     <div class="game-card rounded-3xl p-8 mb-6">
+      <div class="mb-8">
+       <h3 class="font-bold text-gray-700 mb-4">Colors</h3>
+       <div class="flex flex-wrap justify-center gap-3">
+        <div class="text-center">
+         <div class="w-12 h-12 rounded-xl bg-red-500 mx-auto mb-1"></div><span class="text-sm">Red</span>
+        </div>
+        <div class="text-center">
+         <div class="w-12 h-12 rounded-xl bg-blue-500 mx-auto mb-1"></div><span class="text-sm">Blue</span>
+        </div>
+        <div class="text-center">
+         <div class="w-12 h-12 rounded-xl bg-green-500 mx-auto mb-1"></div><span class="text-sm">Green</span>
+        </div>
+        <div class="text-center">
+         <div class="w-12 h-12 rounded-xl bg-yellow-400 mx-auto mb-1"></div><span class="text-sm">Yellow</span>
+        </div>
+        <div class="text-center">
+         <div class="w-12 h-12 rounded-xl bg-purple-500 mx-auto mb-1"></div><span class="text-sm">Purple</span>
+        </div>
+        <div class="text-center">
+         <div class="w-12 h-12 rounded-xl bg-orange-500 mx-auto mb-1"></div><span class="text-sm">Orange</span>
+        </div>
+        <div class="text-center">
+         <div class="w-12 h-12 rounded-xl bg-pink-400 mx-auto mb-1"></div><span class="text-sm">Pink</span>
+        </div>
+        <div class="text-center">
+         <div class="w-12 h-12 rounded-xl bg-gray-800 mx-auto mb-1"></div><span class="text-sm">Black</span>
+        </div>
+        <div class="text-center">
+         <div class="w-12 h-12 rounded-xl bg-white border-2 mx-auto mb-1"></div><span class="text-sm">White</span>
+        </div>
+       </div>
+      </div>
+      <div>
+       <h3 class="font-bold text-gray-700 mb-4">Shapes</h3>
+       <div class="flex flex-wrap justify-center gap-4">
+        <div class="text-center">
+         <div class="w-12 h-12 bg-purple-300 mx-auto mb-1"></div><span class="text-sm">Square</span>
+        </div>
+        <div class="text-center">
+         <div class="w-12 h-12 rounded-full bg-green-300 mx-auto mb-1"></div><span class="text-sm">Circle</span>
+        </div>
+        <div class="text-center">
+         <div class="w-0 h-0 border-l-[24px] border-r-[24px] border-b-[42px] border-l-transparent border-r-transparent border-b-coral-300 mx-auto mb-1" style="border-bottom-color: #FCE8DC;"></div><span class="text-sm">Triangle</span>
+        </div>
+        <div class="text-center">
+         <div class="w-16 h-10 bg-yellow-300 mx-auto mb-1"></div><span class="text-sm">Rectangle</span>
+        </div>
+        <div class="text-center">
+         <svg class="w-12 h-12 mx-auto mb-1" viewbox="0 0 50 50"><polygon points="25,5 45,20 38,45 12,45 5,20" fill="#E8D5F2" />
+         </svg><span class="text-sm">Pentagon</span>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div id="colors-quiz" class="game-card rounded-3xl p-6">
+      <p id="colors-question" class="text-lg font-semibold text-gray-800 mb-4"></p>
+      <div id="colors-options" class="flex flex-wrap justify-center gap-3"></div>
+     </div>
+     <div id="colors-feedback" class="text-lg font-medium mt-4"></div>
+    </div>
+   </div><!-- Success Modal -->
+   <div id="success-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+    <div class="bg-white rounded-3xl p-8 max-w-sm mx-4 text-center transform scale-95 opacity-0 transition-all duration-300" id="success-content">
+     <div class="text-6xl mb-4">
+      🎉
+     </div>
+     <h3 class="text-2xl font-bold text-gray-800 mb-2">¡Excelente!</h3>
+     <p id="success-message" class="text-gray-600 mb-6">Has completado este juego</p>
+     <div class="flex gap-3 justify-center"><button onclick="closeSuccessModal()" class="bg-gray-100 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-colors"> Continuar </button>
+     </div>
+    </div>
+   </div>
   </div>
-</body>
+  <script>
+    // Game state
+    let currentGame = null;
+    let gameState = {
+      lives: 3,
+      score: 0,
+      timer: 0,
+      timerInterval: null
+    };
+    let progressData = [];
+    
+    // Default config
+    const defaultConfig = {
+      school_name: 'Esc. Primaria Venustiano Carranza',
+      teacher_name: 'Mtra. María Fernanda Flores Valenzuela',
+      background_color: '#E8D5F2',
+      surface_color: '#FFFFFF',
+      text_color: '#1F2937',
+      primary_action_color: '#B8A4C9',
+      secondary_action_color: '#A4C9B8'
+    };
+
+    // Data handler for progress persistence
+    const dataHandler = {
+      onDataChanged(data) {
+        progressData = data;
+        updateProgressDisplay();
+      }
+    };
+
+    // Initialize SDKs
+    async function initApp() {
+      // Initialize Element SDK
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (config) => {
+            document.getElementById('school-name-display').textContent = config.school_name || defaultConfig.school_name;
+            document.getElementById('teacher-name-display').textContent = 'Creado por ' + (config.teacher_name || defaultConfig.teacher_name);
+          },
+          mapToCapabilities: (config) => ({
+            recolorables: [
+              {
+                get: () => config.background_color || defaultConfig.background_color,
+                set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+              },
+              {
+                get: () => config.surface_color || defaultConfig.surface_color,
+                set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
+              },
+              {
+                get: () => config.text_color || defaultConfig.text_color,
+                set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+              },
+              {
+                get: () => config.primary_action_color || defaultConfig.primary_action_color,
+                set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); }
+              },
+              {
+                get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+                set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); }
+              }
+            ],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ['school_name', config.school_name || defaultConfig.school_name],
+            ['teacher_name', config.teacher_name || defaultConfig.teacher_name]
+          ])
+        });
+      }
+
+      // Initialize Data SDK
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) {
+          console.error('Failed to initialize data SDK');
+        }
+      }
+    }
+
+    initApp();
+
+    // Update progress display
+    function updateProgressDisplay() {
+      const totalGames = 19;
+      const completedGames = progressData.filter(p => p.completed).length;
+      const percent = Math.round((completedGames / totalGames) * 100);
+      
+      document.getElementById('total-progress').style.width = percent + '%';
+      document.getElementById('progress-percent').textContent = percent + '%';
+    }
+
+    // Save game progress
+    async function saveProgress(gameId, score, completed) {
+      if (!window.dataSdk) return;
+      
+      const existing = progressData.find(p => p.game_id === gameId);
+      
+      if (existing) {
+        const result = await window.dataSdk.update({
+          ...existing,
+          score: Math.max(existing.score, score),
+          completed: existing.completed || completed,
+          last_played: new Date().toISOString()
+        });
+        if (!result.isOk) console.error('Failed to update progress');
+      } else {
+        if (progressData.length >= 999) {
+          showToast('Límite de registros alcanzado');
+          return;
+        }
+        const result = await window.dataSdk.create({
+          game_id: gameId,
+          score: score,
+          lives_remaining: gameState.lives,
+          completed: completed,
+          best_time: gameState.timer,
+          last_played: new Date().toISOString()
+        });
+        if (!result.isOk) console.error('Failed to save progress');
+      }
+    }
+
+    // Navigation
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+      document.getElementById(pageId).classList.remove('hidden');
+      document.getElementById('game-hud').classList.add('hidden');
+      
+      if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+        gameState.timerInterval = null;
+      }
+    }
+
+    function goToMenu() {
+      showPage('page-home');
+      currentGame = null;
+    }
+
+    // Timer functions
+    function startTimer() {
+      gameState.timer = 0;
+      updateTimerDisplay();
+      
+      if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+      
+      gameState.timerInterval = setInterval(() => {
+        gameState.timer++;
+        updateTimerDisplay();
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(gameState.timer / 60).toString().padStart(2, '0');
+      const secs = (gameState.timer % 60).toString().padStart(2, '0');
+      document.getElementById('timer-display').textContent = `${mins}:${secs}`;
+    }
+
+    // Lives display
+    function updateLivesDisplay() {
+      const container = document.getElementById('lives-display');
+      container.innerHTML = '';
+      for (let i = 0; i < 3; i++) {
+        const heart = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        heart.setAttribute('class', `w-6 h-6 ${i < gameState.lives ? 'heart-icon' : 'text-gray-300'}`);
+        heart.setAttribute('fill', 'currentColor');
+        heart.setAttribute('viewBox', '0 0 24 24');
+        heart.innerHTML = '<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>';
+        container.appendChild(heart);
+      }
+    }
+
+    function loseLife() {
+      gameState.lives--;
+      updateLivesDisplay();
+      
+      if (gameState.lives <= 0) {
+        showSuccessModal('¡Fin del juego!', 'Se acabaron tus vidas. ¡Inténtalo de nuevo!');
+        setTimeout(() => {
+          gameState.lives = 3;
+          updateLivesDisplay();
+        }, 2000);
+      }
+    }
+
+    function addScore(points) {
+      gameState.score += points;
+      document.getElementById('score-display').textContent = gameState.score;
+    }
+
+    // Toast notification
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-xl shadow-lg z-50 transition-opacity duration-300';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 2000);
+    }
+
+    // Success modal
+    function showSuccessModal(title, message) {
+      const modal = document.getElementById('success-modal');
+      const content = document.getElementById('success-content');
+      
+      document.querySelector('#success-modal h3').textContent = title || '¡Excelente!';
+      document.getElementById('success-message').textContent = message || 'Has completado este juego';
+      
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      
+      setTimeout(() => {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+      }, 10);
+    }
+
+    function closeSuccessModal() {
+      const modal = document.getElementById('success-modal');
+      const content = document.getElementById('success-content');
+      
+      content.classList.add('scale-95', 'opacity-0');
+      content.classList.remove('scale-100', 'opacity-100');
+      
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        goToMenu();
+      }, 300);
+    }
+
+    // Start game function
+    function startGame(gameId) {
+      currentGame = gameId;
+      gameState.lives = 3;
+      gameState.score = 0;
+      
+      document.getElementById('score-display').textContent = '0';
+      updateLivesDisplay();
+      
+      showPage('game-' + gameId);
+      document.getElementById('game-hud').classList.remove('hidden');
+      startTimer();
+      
+      // Initialize specific game
+      switch(gameId) {
+        case 'vocales': initVocales(); break;
+        case 'conteo': initConteo(); break;
+        case 'descripcion': initDescripcion(); break;
+        case 'centenas': initCentenas(); break;
+        case 'fracciones': initFracciones(); break;
+        case 'oficios': initOficios(); break;
+        case 'sonora': initSonora(); break;
+        case 'multiplicaciones': initMultiplicaciones(); break;
+        case 'sistemas': initSistemas(); break;
+        case 'historia': initHistoria(); break;
+        case 'porcentajes': initPorcentajes(); break;
+        case 'universo': initUniverso(); break;
+        case 'cientifico': initCientifico(); break;
+        case 'animals': initAnimals(); break;
+        case 'body': initBody(); break;
+        case 'days': initDays(); break;
+        case 'colors': initColors(); break;
+      }
+    }
+
+    // ===== GAME: VOCALES =====
+    const vocalesWords = ['MARIPOSA', 'ELEFANTE', 'UNIVERSO', 'ARCOIRIS', 'ESCUELA'];
+    let currentVocalesWord = 0;
+    let selectedVocales = new Set();
+
+    function initVocales() {
+      currentVocalesWord = 0;
+      renderVocalesWord();
+    }
+
+    function renderVocalesWord() {
+      selectedVocales.clear();
+      const word = vocalesWords[currentVocalesWord];
+      const container = document.getElementById('vocales-letters');
+      container.innerHTML = '';
+      
+      word.split('').forEach((letter, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'w-12 h-12 rounded-xl text-xl font-bold transition-all duration-200 bg-gray-100 hover:bg-gray-200 text-gray-800';
+        btn.textContent = letter;
+        btn.dataset.index = i;
+        btn.onclick = () => toggleVocalSelection(btn, letter, i);
+        container.appendChild(btn);
+      });
+    }
+
+    function toggleVocalSelection(btn, letter, index) {
+      const key = `${index}-${letter}`;
+      if (selectedVocales.has(key)) {
+        selectedVocales.delete(key);
+        btn.classList.remove('bg-purple-400', 'text-white');
+        btn.classList.add('bg-gray-100', 'text-gray-800');
+      } else {
+        selectedVocales.add(key);
+        btn.classList.add('bg-purple-400', 'text-white');
+        btn.classList.remove('bg-gray-100', 'text-gray-800');
+      }
+    }
+
+    function checkVocales() {
+      const word = vocalesWords[currentVocalesWord];
+      const vocales = 'AEIOU';
+      let correct = true;
+      
+      word.split('').forEach((letter, i) => {
+        const key = `${i}-${letter}`;
+        const isVocal = vocales.includes(letter);
+        const isSelected = selectedVocales.has(key);
+        
+        if (isVocal !== isSelected) correct = false;
+      });
+      
+      if (correct) {
+        addScore(10);
+        showToast('¡Correcto! +10 puntos');
+      } else {
+        loseLife();
+        showToast('¡Incorrecto! Las vocales son A, E, I, O, U');
+      }
+    }
+
+    function nextVocalesWord() {
+      currentVocalesWord = (currentVocalesWord + 1) % vocalesWords.length;
+      if (currentVocalesWord === 0 && gameState.score > 0) {
+        saveProgress('vocales', gameState.score, true);
+        showSuccessModal('¡Juego Completado!', `Puntuación: ${gameState.score}`);
+      } else {
+        renderVocalesWord();
+      }
+    }
+
+    // ===== GAME: CONTEO =====
+    let conteoCorrectAnswer = 0;
+
+    function initConteo() {
+      generateConteoQuestion();
+    }
+
+    function generateConteoQuestion() {
+      const start = Math.floor(Math.random() * 90) + 1;
+      const sequence = [start, start + 1, start + 2];
+      conteoCorrectAnswer = start + 3;
+      
+      const container = document.getElementById('conteo-sequence');
+      container.innerHTML = '';
+      
+      sequence.forEach(num => {
+        const span = document.createElement('span');
+        span.className = 'w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center text-2xl font-bold text-purple-700';
+        span.textContent = num;
+        container.appendChild(span);
+      });
+      
+      const questionMark = document.createElement('span');
+      questionMark.className = 'w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center text-2xl font-bold text-gray-400';
+      questionMark.textContent = '?';
+      container.appendChild(questionMark);
+      
+      // Generate options
+      const options = [conteoCorrectAnswer];
+      while (options.length < 4) {
+        const wrong = conteoCorrectAnswer + Math.floor(Math.random() * 10) - 5;
+        if (!options.includes(wrong) && wrong > 0) options.push(wrong);
+      }
+      options.sort(() => Math.random() - 0.5);
+      
+      const optionsContainer = document.getElementById('conteo-options');
+      optionsContainer.innerHTML = '';
+      
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'px-6 py-3 rounded-xl bg-white shadow-md hover:shadow-lg transition-all font-bold text-gray-700';
+        btn.textContent = opt;
+        btn.onclick = () => checkConteo(opt);
+        optionsContainer.appendChild(btn);
+      });
+      
+      document.getElementById('conteo-feedback').textContent = '';
+    }
+
+    function checkConteo(answer) {
+      const feedback = document.getElementById('conteo-feedback');
+      
+      if (answer === conteoCorrectAnswer) {
+        feedback.textContent = '¡Correcto! 🎉';
+        feedback.className = 'text-lg font-medium text-green-600';
+        addScore(10);
+        setTimeout(generateConteoQuestion, 1500);
+      } else {
+        feedback.textContent = `Incorrecto. Era ${conteoCorrectAnswer}`;
+        feedback.className = 'text-lg font-medium text-red-500';
+        loseLife();
+        setTimeout(generateConteoQuestion, 2000);
+      }
+    }
+
+    // ===== GAME: DESCRIPCION =====
+    const descripcionPairs = [
+      { object: '🍎', name: 'Manzana', desc: 'Fruta roja y dulce' },
+      { object: '🌞', name: 'Sol', desc: 'Estrella que nos da luz' },
+      { object: '📚', name: 'Libro', desc: 'Tiene páginas para leer' },
+      { object: '🐕', name: 'Perro', desc: 'Animal que ladra' }
+    ];
+    let descSelection = { left: null, right: null };
+    let descMatched = new Set();
+
+    function initDescripcion() {
+      descMatched.clear();
+      descSelection = { left: null, right: null };
+      
+      const shuffledDescs = [...descripcionPairs].sort(() => Math.random() - 0.5);
+      
+      const leftContainer = document.getElementById('desc-objects');
+      const rightContainer = document.getElementById('desc-descriptions');
+      
+      leftContainer.innerHTML = '';
+      rightContainer.innerHTML = '';
+      
+      descripcionPairs.forEach((pair, i) => {
+        const leftBtn = document.createElement('button');
+        leftBtn.className = 'w-full p-4 rounded-xl bg-purple-50 hover:bg-purple-100 transition-all flex items-center gap-3';
+        leftBtn.innerHTML = `<span class="text-3xl">${pair.object}</span><span class="font-medium">${pair.name}</span>`;
+        leftBtn.dataset.index = i;
+        leftBtn.onclick = () => selectDescItem('left', i, leftBtn);
+        leftContainer.appendChild(leftBtn);
+      });
+      
+      shuffledDescs.forEach((pair, i) => {
+        const rightBtn = document.createElement('button');
+        rightBtn.className = 'w-full p-4 rounded-xl bg-green-50 hover:bg-green-100 transition-all text-left';
+        rightBtn.innerHTML = `<span class="text-sm font-medium">${pair.desc}</span>`;
+        rightBtn.dataset.original = descripcionPairs.indexOf(pair);
+        rightBtn.onclick = () => selectDescItem('right', descripcionPairs.indexOf(pair), rightBtn);
+        rightContainer.appendChild(rightBtn);
+      });
+    }
+
+    function selectDescItem(side, index, btn) {
+      // Remove previous selection
+      document.querySelectorAll(`#desc-${side === 'left' ? 'objects' : 'descriptions'} button`).forEach(b => {
+        b.classList.remove('ring-2', 'ring-purple-400');
+      });
+      
+      btn.classList.add('ring-2', 'ring-purple-400');
+      descSelection[side] = index;
+      
+      // Check match
+      if (descSelection.left !== null && descSelection.right !== null) {
+        if (descSelection.left === descSelection.right) {
+          addScore(15);
+          descMatched.add(descSelection.left);
+          showToast('¡Correcto! +15 puntos');
+          
+          // Hide matched items
+          document.querySelectorAll('#desc-objects button, #desc-descriptions button').forEach(b => {
+            b.classList.remove('ring-2', 'ring-purple-400');
+          });
+          
+          if (descMatched.size === descripcionPairs.length) {
+            saveProgress('descripcion', gameState.score, true);
+            showSuccessModal('¡Juego Completado!', `Puntuación: ${gameState.score}`);
+          }
+        } else {
+          loseLife();
+          showToast('¡Incorrecto! Intenta de nuevo');
+        }
+        
+        descSelection = { left: null, right: null };
+        document.querySelectorAll('#desc-objects button, #desc-descriptions button').forEach(b => {
+          b.classList.remove('ring-2', 'ring-purple-400');
+        });
+      }
+    }
+
+    // ===== GAME: CENTENAS =====
+    const centenasNumbers = [
+      { word: 'Ciento veintitrés', number: 123 },
+      { word: 'Doscientos cuarenta y cinco', number: 245 },
+      { word: 'Trescientos setenta y ocho', number: 378 },
+      { word: 'Cuatrocientos cincuenta y seis', number: 456 },
+      { word: 'Quinientos noventa y dos', number: 592 },
+      { word: 'Seiscientos ochenta y cuatro', number: 684 },
+      { word: 'Setecientos quince', number: 715 },
+      { word: 'Ochocientos treinta y uno', number: 831 },
+      { word: 'Novecientos sesenta y siete', number: 967 }
+    ];
+    let currentCentenas = 0;
+
+    function initCentenas() {
+      currentCentenas = Math.floor(Math.random() * centenasNumbers.length);
+      document.getElementById('centenas-word').textContent = centenasNumbers[currentCentenas].word;
+      document.getElementById('centenas-input').value = '';
+      document.getElementById('centenas-feedback').textContent = '';
+    }
+
+    function checkCentenas() {
+      const input = parseInt(document.getElementById('centenas-input').value);
+      const correct = centenasNumbers[currentCentenas].number;
+      const feedback = document.getElementById('centenas-feedback');
+      
+      if (input === correct) {
+        feedback.textContent = '¡Correcto! 🎉';
+        feedback.className = 'text-lg font-medium text-green-600';
+        addScore(15);
+        setTimeout(initCentenas, 1500);
+      } else {
+        feedback.textContent = `Incorrecto. Era ${correct}`;
+        feedback.className = 'text-lg font-medium text-red-500';
+        loseLife();
+        setTimeout(initCentenas, 2000);
+      }
+    }
+
+    // ===== GAME: SENTIDOS =====
+    function completeSentidos() {
+      addScore(20);
+      saveProgress('sentidos', gameState.score, true);
+      showSuccessModal('¡Excelente!', '¡Has aprendido sobre los sentidos y las plantas!');
+    }
+
+    // ===== GAME: FRACCIONES =====
+    let fractionTarget = { numerator: 1, denominator: 4 };
+    let selectedSlices = new Set();
+
+    function initFracciones() {
+      generateFraction();
+    }
+
+    function generateFraction() {
+      selectedSlices.clear();
+      const denominators = [2, 3, 4, 6, 8];
+      fractionTarget.denominator = denominators[Math.floor(Math.random() * denominators.length)];
+      fractionTarget.numerator = Math.floor(Math.random() * (fractionTarget.denominator - 1)) + 1;
+      
+      document.getElementById('fraction-target').textContent = `Selecciona ${fractionTarget.numerator}/${fractionTarget.denominator}`;
+      renderPizza();
+    }
+
+    function renderPizza() {
+      const svg = document.getElementById('pizza-svg');
+      svg.innerHTML = '';
+      
+      const slices = fractionTarget.denominator;
+      const anglePerSlice = 360 / slices;
+      
+      for (let i = 0; i < slices; i++) {
+        const startAngle = i * anglePerSlice - 90;
+        const endAngle = (i + 1) * anglePerSlice - 90;
+        
+        const x1 = 100 + 80 * Math.cos(startAngle * Math.PI / 180);
+        const y1 = 100 + 80 * Math.sin(startAngle * Math.PI / 180);
+        const x2 = 100 + 80 * Math.cos(endAngle * Math.PI / 180);
+        const y2 = 100 + 80 * Math.sin(endAngle * Math.PI / 180);
+        
+        const largeArc = anglePerSlice > 180 ? 1 : 0;
+        
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', `M100,100 L${x1},${y1} A80,80 0 ${largeArc},1 ${x2},${y2} Z`);
+        path.setAttribute('fill', selectedSlices.has(i) ? '#B8A4C9' : '#FCE8DC');
+        path.setAttribute('stroke', '#5D4E6D');
+        path.setAttribute('stroke-width', '2');
+        path.setAttribute('class', 'fraction-slice cursor-pointer');
+        path.onclick = () => toggleSlice(i);
+        svg.appendChild(path);
+      }
+      
+      // Pizza center
+      const center = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      center.setAttribute('cx', '100');
+      center.setAttribute('cy', '100');
+      center.setAttribute('r', '15');
+      center.setAttribute('fill', '#F8D4C4');
+      center.setAttribute('stroke', '#5D4E6D');
+      svg.appendChild(center);
+    }
+
+    function toggleSlice(index) {
+      if (selectedSlices.has(index)) {
+        selectedSlices.delete(index);
+      } else {
+        selectedSlices.add(index);
+      }
+      renderPizza();
+    }
+
+    function checkFraction() {
+      const feedback = document.getElementById('fraction-feedback');
+      
+      if (selectedSlices.size === fractionTarget.numerator) {
+        feedback.textContent = '¡Correcto! 🍕';
+        feedback.className = 'text-lg font-medium text-green-600';
+        addScore(15);
+      } else {
+        feedback.textContent = `Seleccionaste ${selectedSlices.size}/${fractionTarget.denominator}. Necesitabas ${fractionTarget.numerator}`;
+        feedback.className = 'text-lg font-medium text-red-500';
+        loseLife();
+      }
+    }
+
+    function nextFraction() {
+      document.getElementById('fraction-feedback').textContent = '';
+      generateFraction();
+      
+      if (gameState.score >= 60) {
+        saveProgress('fracciones', gameState.score, true);
+        showSuccessModal('¡Excelente!', `Puntuación: ${gameState.score}`);
+      }
+    }
+
+    // ===== GAME: CICLO DEL AGUA =====
+    function completeCicloAgua() {
+      addScore(20);
+      saveProgress('cicloagua', gameState.score, true);
+      showSuccessModal('¡Excelente!', '¡Has aprendido sobre el ciclo del agua!');
+    }
+
+    // ===== GAME: OFICIOS =====
+    const oficiosPairs = [
+      { profession: '👨‍⚕️ Doctor', tool: '💉 Jeringa' },
+      { profession: '👨‍🍳 Chef', tool: '🍳 Sartén' },
+      { profession: '👷 Constructor', tool: '🔨 Martillo' },
+      { profession: '👨‍🏫 Maestro', tool: '📚 Libros' }
+    ];
+    let oficiosSelection = { left: null, right: null };
+    let oficiosMatched = new Set();
+
+    function initOficios() {
+      oficiosMatched.clear();
+      oficiosSelection = { left: null, right: null };
+      
+      const shuffledTools = [...oficiosPairs].sort(() => Math.random() - 0.5);
+      
+      const leftContainer = document.getElementById('oficios-left');
+      const rightContainer = document.getElementById('oficios-right');
+      
+      leftContainer.innerHTML = '';
+      rightContainer.innerHTML = '';
+      
+      oficiosPairs.forEach((pair, i) => {
+        const leftBtn = document.createElement('button');
+        leftBtn.className = 'w-full p-4 rounded-xl bg-purple-50 hover:bg-purple-100 transition-all text-left font-medium';
+        leftBtn.textContent = pair.profession;
+        leftBtn.dataset.index = i;
+        leftBtn.onclick = () => selectOficioItem('left', i, leftBtn);
+        leftContainer.appendChild(leftBtn);
+      });
+      
+      shuffledTools.forEach((pair, i) => {
+        const rightBtn = document.createElement('button');
+        rightBtn.className = 'w-full p-4 rounded-xl bg-green-50 hover:bg-green-100 transition-all text-left font-medium';
+        rightBtn.textContent = pair.tool;
+        rightBtn.dataset.original = oficiosPairs.indexOf(pair);
+        rightBtn.onclick = () => selectOficioItem('right', oficiosPairs.indexOf(pair), rightBtn);
+        rightContainer.appendChild(rightBtn);
+      });
+    }
+
+    function selectOficioItem(side, index, btn) {
+      document.querySelectorAll(`#oficios-${side === 'left' ? 'left' : 'right'} button`).forEach(b => {
+        b.classList.remove('ring-2', 'ring-purple-400');
+      });
+      
+      btn.classList.add('ring-2', 'ring-purple-400');
+      oficiosSelection[side] = index;
+      
+      if (oficiosSelection.left !== null && oficiosSelection.right !== null) {
+        if (oficiosSelection.left === oficiosSelection.right) {
+          addScore(15);
+          oficiosMatched.add(oficiosSelection.left);
+          showToast('¡Correcto! +15 puntos');
+          
+          if (oficiosMatched.size === oficiosPairs.length) {
+            saveProgress('oficios', gameState.score, true);
+            showSuccessModal('¡Juego Completado!', `Puntuación: ${gameState.score}`);
+          }
+        } else {
+          loseLife();
+          showToast('¡Incorrecto!');
+        }
+        
+        oficiosSelection = { left: null, right: null };
+        document.querySelectorAll('#oficios-left button, #oficios-right button').forEach(b => {
+          b.classList.remove('ring-2', 'ring-purple-400');
+        });
+      }
+    }
+
+    // ===== GAME: SONORA =====
+    const sonoraQuestions = [
+      { question: '¿Dónde está la capital Hermosillo?', answer: 'centro' },
+      { question: '¿Qué región tiene frontera con EE.UU.?', answer: 'norte' },
+      { question: '¿Dónde está Ciudad Obregón?', answer: 'sur' },
+      { question: '¿Qué región tiene las montañas?', answer: 'sierra' },
+      { question: '¿Dónde está Guaymas?', answer: 'costa' }
+    ];
+    let currentSonoraQ = 0;
+
+    function initSonora() {
+      currentSonoraQ = 0;
+      showSonoraQuestion();
+    }
+
+    function showSonoraQuestion() {
+      document.getElementById('sonora-question').textContent = sonoraQuestions[currentSonoraQ].question;
+      document.getElementById('sonora-feedback').textContent = '';
+      
+      // Reset regions
+      document.querySelectorAll('.sonora-region').forEach(r => {
+        r.classList.remove('selected');
+      });
+    }
+
+    function selectRegion(region) {
+      const feedback = document.getElementById('sonora-feedback');
+      const correct = sonoraQuestions[currentSonoraQ].answer;
+      
+      if (region === correct) {
+        feedback.textContent = '¡Correcto! 🎉';
+        feedback.className = 'text-lg font-medium text-green-600';
+        addScore(20);
+        
+        document.getElementById('region-' + region).classList.add('selected');
+        
+        currentSonoraQ++;
+        if (currentSonoraQ >= sonoraQuestions.length) {
+          saveProgress('sonora', gameState.score, true);
+          setTimeout(() => showSuccessModal('¡Excelente!', '¡Conoces bien Sonora!'), 1500);
+        } else {
+          setTimeout(showSonoraQuestion, 1500);
+        }
+      } else {
+        feedback.textContent = '¡Incorrecto! Intenta otra región';
+        feedback.className = 'text-lg font-medium text-red-500';
+        loseLife();
+      }
+    }
+
+    // ===== GAME: MULTIPLICACIONES =====
+    let mathCorrectAnswer = 0;
+    let mathCorrectCount = 0;
+    let mathStreak = 0;
+
+    function initMultiplicaciones() {
+      mathCorrectCount = 0;
+      mathStreak = 0;
+      document.getElementById('math-correct').textContent = '0';
+      document.getElementById('math-streak').textContent = '0';
+      generateMathProblem();
+    }
+
+    function generateMathProblem() {
+      const isMultiplication = Math.random() > 0.3;
+      let a, b, operation, answer;
+      
+      if (isMultiplication) {
+        a = Math.floor(Math.random() * 10) + 2;
+        b = Math.floor(Math.random() * 10) + 2;
+        operation = '×';
+        answer = a * b;
+      } else {
+        b = Math.floor(Math.random() * 10) + 2;
+        answer = Math.floor(Math.random() * 10) + 2;
+        a = b * answer;
+        operation = '÷';
+      }
+      
+      mathCorrectAnswer = answer;
+      
+      document.getElementById('math-problem').textContent = `${a} ${operation} ${b} = ?`;
+      
+      // Generate options
+      const options = [answer];
+      while (options.length < 4) {
+        const wrong = answer + Math.floor(Math.random() * 20) - 10;
+        if (!options.includes(wrong) && wrong > 0) options.push(wrong);
+      }
+      options.sort(() => Math.random() - 0.5);
+      
+      const container = document.getElementById('math-options');
+      container.innerHTML = '';
+      
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'p-4 rounded-xl bg-white shadow-md hover:shadow-lg transition-all font-bold text-xl text-gray-700';
+        btn.textContent = opt;
+        btn.onclick = () => checkMath(opt);
+        container.appendChild(btn);
+      });
+      
+      document.getElementById('math-feedback').textContent = '';
+    }
+
+    function checkMath(answer) {
+      const feedback = document.getElementById('math-feedback');
+      
+      if (answer === mathCorrectAnswer) {
+        mathCorrectCount++;
+        mathStreak++;
+        addScore(10 + mathStreak * 2);
+        
+        document.getElementById('math-correct').textContent = mathCorrectCount;
+        document.getElementById('math-streak').textContent = mathStreak;
+        
+        feedback.textContent = `¡Correcto! Racha: ${mathStreak} 🔥`;
+        feedback.className = 'text-lg font-medium text-green-600';
+        
+        if (mathCorrectCount >= 10) {
+          saveProgress('multiplicaciones', gameState.score, true);
+          showSuccessModal('¡Victoria!', `¡Resolviste 10 operaciones! Puntuación: ${gameState.score}`);
+        } else {
+          setTimeout(generateMathProblem, 1000);
+        }
+      } else {
+        mathStreak = 0;
+        document.getElementById('math-streak').textContent = '0';
+        
+        feedback.textContent = `Incorrecto. Era ${mathCorrectAnswer}`;
+        feedback.className = 'text-lg font-medium text-red-500';
+        loseLife();
+        setTimeout(generateMathProblem, 1500);
+      }
+    }
+
+    // ===== GAME: SISTEMAS =====
+    const sistemasQuestions = [
+      { question: '¿Qué sistema bombea sangre por el cuerpo?', answer: 'circulatorio' },
+      { question: '¿Qué sistema nos permite respirar?', answer: 'respiratorio' },
+      { question: '¿Qué sistema procesa los alimentos?', answer: 'digestivo' },
+      { question: '¿Qué sistema controla nuestros pensamientos?', answer: 'nervioso' },
+      { question: '¿Qué sistema forma nuestro esqueleto?', answer: 'oseo' },
+      { question: '¿Qué sistema nos permite movernos?', answer: 'muscular' }
+    ];
+    let currentSistemasQ = 0;
+
+    function initSistemas() {
+      currentSistemasQ = 0;
+      showSistemasQuestion();
+    }
+
+    function showSistemasQuestion() {
+      document.getElementById('sistemas-question').textContent = sistemasQuestions[currentSistemasQ].question;
+      document.getElementById('sistemas-feedback').textContent = '';
+    }
+
+    function selectSistema(sistema) {
+      const feedback = document.getElementById('sistemas-feedback');
+      const correct = sistemasQuestions[currentSistemasQ].answer;
+      
+      if (sistema === correct) {
+        feedback.textContent = '¡Correcto! 🎉';
+        feedback.className = 'text-lg font-medium text-green-600';
+        addScore(15);
+        
+        currentSistemasQ++;
+        if (currentSistemasQ >= sistemasQuestions.length) {
+          saveProgress('sistemas', gameState.score, true);
+          setTimeout(() => showSuccessModal('¡Excelente!', `Puntuación: ${gameState.score}`), 1500);
+        } else {
+          setTimeout(showSistemasQuestion, 1500);
+        }
+      } else {
+        feedback.textContent = '¡Incorrecto! Intenta de nuevo';
+        feedback.className = 'text-lg font-medium text-red-500';
+        loseLife();
+      }
+    }
+
+    // ===== GAME: HISTORIA =====
+    const historiaEvents = [
+      { year: 1810, event: 'Inicio de la Independencia', emoji: '🔔' },
+      { year: 1821, event: 'Consumación de la Independencia', emoji: '🇲🇽' },
+      { year: 1862, event: 'Batalla de Puebla', emoji: '⚔️' },
+      { year: 1910, event: 'Inicio de la Revolución', emoji: '🎺' },
+      { year: 1917, event: 'Constitución Mexicana', emoji: '📜' }
+    ];
+
+    function initHistoria() {
+      const container = document.getElementById('timeline-events');
+      const shuffled = [...historiaEvents].sort(() => Math.random() - 0.5);
+      
+      container.innerHTML = '';
+      
+      shuffled.forEach((event, i) => {
+        const div = document.createElement('div');
+        div.className = 'flex items-center gap-4 cursor-move';
+        div.draggable = true;
+        div.dataset.year = event.year;
+        div.innerHTML = `
+          <div class="flex-1 text-right">
+            <div class="inline-block bg-white rounded-xl p-4 shadow-md">
+              <span class="text-2xl mr-2">${event.emoji}</span>
+              <span class="font-medium">${event.event}</span>
+            </div>
+          </div>
+          <div class="timeline-dot w-4 h-4 rounded-full bg-purple-400 z-10"></div>
+          <div class="flex-1 text-left">
+            <span class="text-sm text-gray-500">${event.year}</span>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function checkTimeline() {
+      const container = document.getElementById('timeline-events');
+      const items = container.querySelectorAll('[data-year]');
+      const years = Array.from(items).map(i => parseInt(i.dataset.year));
+      const sorted = [...years].sort((a, b) => a - b);
+      const isCorrect = JSON.stringify(years) === JSON.stringify(sorted);
+      
+      const feedback = document.getElementById('timeline-feedback');
+      
+      if (isCorrect) {
+        feedback.textContent = '¡Correcto! Los eventos están en orden cronológico 🎉';
+        feedback.className = 'text-lg font-medium text-green-600';
+        addScore(25);
+        saveProgress('historia', gameState.score, true);
+        setTimeout(() => showSuccessModal('¡Excelente!', '¡Conoces la historia de México!'), 1500);
+      } else {
+        feedback.textContent = 'El orden no es correcto. ¡Intenta de nuevo!';
+        feedback.className = 'text-lg font-medium text-red-500';
+        loseLife();
+      }
+    }
+
+    // ===== GAME: PORCENTAJES =====
+    const porcentajesQuestions = [
+      { question: '¿Cuánto es 50% de 100?', answer: 50, options: [25, 50, 75, 100], visual: 50 },
+      { question: '¿Cuánto es 25% de 80?', answer: 20, options: [10, 15, 20, 40], visual: 25 },
+      { question: '0.75 es igual a:', answer: '75%', options: ['25%', '50%', '75%', '100%'], visual: 75 },
+      { question: '¿Qué fracción es 50%?', answer: '1/2', options: ['1/4', '1/2', '3/4', '1/3'], visual: 50 },
+      { question: '¿Cuánto es 10% de 200?', answer: 20, options: [10, 20, 30, 50], visual: 10 }
+    ];
+    let currentPercentQ = 0;
+
+    function initPorcentajes() {
+      currentPercentQ = 0;
+      showPercentQuestion();
+    }
+
+    function showPercentQuestion() {
+      const q = porcentajesQuestions[currentPercentQ];
+      document.getElementById('percent-question').textContent = q.question;
+      document.getElementById('percent-bar').style.width = q.visual + '%';
+      
+      const container = document.getElementById('percent-options');
+      container.innerHTML = '';
+      
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'p-4 rounded-xl bg-white shadow-md hover:shadow-lg transition-all font-bold text-gray-700';
+        btn.textContent = opt;
+        btn.onclick = () => checkPercent(opt);
+        container.appendChild(btn);
+      });
+      
+      document.getElementById('percent-feedback').textContent = '';
+    }
+
+    function checkPercent(answer) {
+      const q = porcentajesQuestions[currentPercentQ];
+      const feedback = document.getElementById('percent-feedback');
+      
+      if (answer == q.answer) {
+        feedback.textContent = '¡Correcto! 🎉';
+        feedback.className = 'text-lg font-medium text-green-600';
+        addScore(15);
+        
+        currentPercentQ++;
+        if (currentPercentQ >= porcentajesQuestions.length) {
+          saveProgress('porcentajes', gameState.score, true);
+          setTimeout(() => showSuccessModal('¡Excelente!', `Puntuación: ${gameState.score}`), 1500);
+        } else {
+          setTimeout(showPercentQuestion, 1500);
+        }
+      } else {
+        feedback.textContent = `Incorrecto. La respuesta era ${q.answer}`;
+        feedback.className = 'text-lg font-medium text-red-500';
+        loseLife();
+        setTimeout(showPercentQuestion, 2000);
+      }
+    }
+
+    // ===== GAME: UNIVERSO =====
+    const universoQuestions = [
+      { question: '¿Cuál es el planeta más grande del sistema solar?', answer: 'jupiter' },
+      { question: '¿Qué planeta es conocido como el planeta rojo?', answer: 'marte' },
+      { question: '¿Qué planeta tiene anillos visibles?', answer: 'saturno' },
+      { question: '¿En qué planeta vivimos?', answer: 'tierra' },
+      { question: '¿Cuál es el planeta más cercano al Sol?', answer: 'mercurio' }
+    ];
+    let currentUniversoQ = 0;
+
+    function initUniverso() {
+      currentUniversoQ = 0;
+      showUniversoQuestion();
+    }
+
+    function showUniversoQuestion() {
+      document.getElementById('universe-question').textContent = universoQuestions[currentUniversoQ].question;
+      document.getElementById('universe-feedback').textContent = '';
+      
+      // Reset planet highlights
+      document.querySelectorAll('.planet').forEach(p => {
+        p.style.transform = '';
+        p.style.filter = '';
+      });
+    }
+
+    function selectPlanet(planet) {
+      const feedback = document.getElementById('universe-feedback');
+      const correct = universoQuestions[currentUniversoQ].answer;
+      
+      if (planet === correct) {
+        feedback.textContent = '¡Correcto! 🌟';
+        feedback.className = 'text-lg font-medium text-green-400';
+        addScore(15);
+        
+        // Highlight correct planet
+        document.querySelector(`[data-planet="${planet}"]`).style.transform = 'scale(1.3)';
+        
+        currentUniversoQ++;
+        if (currentUniversoQ >= universoQuestions.length) {
+          saveProgress('universo', gameState.score, true);
+          setTimeout(() => showSuccessModal('¡Excelente!', '¡Eres un experto del espacio!'), 1500);
+        } else {
+          setTimeout(showUniversoQuestion, 1500);
+        }
+      } else {
+        feedback.textContent = '¡Incorrecto! Intenta otro planeta';
+        feedback.className = 'text-lg font-medium text-red-400';
+        loseLife();
+      }
+    }
+
+    // ===== GAME: CIENTIFICO =====
+    const cientificoSteps = [
+      { id: 1, text: '🔍 Observación', correct: 1 },
+      { id: 2, text: '❓ Pregunta', correct: 2 },
+      { id: 3, text: '💡 Hipótesis', correct: 3 },
+      { id: 4, text: '🧪 Experimentación', correct: 4 },
+      { id: 5, text: '📊 Análisis', correct: 5 },
+      { id: 6, text: '✅ Conclusión', correct: 6 }
+    ];
+
+    function initCientifico() {
+      const shuffled = [...cientificoSteps].sort(() => Math.random() - 0.5);
+      const container = document.getElementById('cientifico-steps');
+      container.innerHTML = '';
+      
+      shuffled.forEach((step, i) => {
+        const div = document.createElement('div');
+        div.className = 'flex items-center gap-4 p-4 bg-white rounded-xl shadow-md cursor-move';
+        div.draggable = true;
+        div.dataset.correct = step.correct;
+        div.innerHTML = `
+          <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-500">${i + 1}</span>
+          <span class="font-medium">${step.text}</span>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function checkCientifico() {
+      const container = document.getElementById('cientifico-steps');
+      const items = container.querySelectorAll('[data-correct]');
+      const order = Array.from(items).map(i => parseInt(i.dataset.correct));
+      const isCorrect = order.every((v, i) => v === i + 1);
+      
+      const feedback = document.getElementById('cientifico-feedback');
+      
+      if (isCorrect) {
+        feedback.textContent = '¡Perfecto! El método científico está en orden 🎉';
+        feedback.className = 'text-lg font-medium text-green-600';
+        addScore(25);
+        saveProgress('cientifico', gameState.score, true);
+        setTimeout(() => showSuccessModal('¡Excelente!', '¡Dominas el método científico!'), 1500);
+      } else {
+        feedback.textContent = 'El orden no es correcto. ¡Intenta de nuevo!';
+        feedback.className = 'text-lg font-medium text-red-500';
+        loseLife();
+      }
+    }
+
+    // ===== GAME: ANIMALS =====
+    const animalsData = [
+      { emoji: '🦁', english: 'Lion', spanish: 'León' },
+      { emoji: '🐘', english: 'Elephant', spanish: 'Elefante' },
+      { emoji: '🦒', english: 'Giraffe', spanish: 'Jirafa' },
+      { emoji: '🐒', english: 'Monkey', spanish: 'Mono' },
+      { emoji: '🦋', english: 'Butterfly', spanish: 'Mariposa' },
+      { emoji: '🐢', english: 'Turtle', spanish: 'Tortuga' },
+      { emoji: '🦅', english: 'Eagle', spanish: 'Águila' },
+      { emoji: '🐬', english: 'Dolphin', spanish: 'Delfín' }
+    ];
+
+    function initAnimals() {
+      const container = document.getElementById('animals-cards');
+      container.innerHTML = '';
+      
+      animalsData.forEach(animal => {
+        const card = document.createElement('div');
+        card.className = 'vocab-card h-40 cursor-pointer';
+        card.onclick = () => card.classList.toggle('flipped');
+        card.innerHTML = `
+          <div class="vocab-card-inner relative w-full h-full">
+            <div class="vocab-card-front absolute inset-0 bg-white rounded-2xl shadow-lg flex flex-col items-center justify-center">
+              <span class="text-5xl mb-2">${animal.emoji}</span>
+              <span class="text-sm text-gray-500">Tap to flip</span>
+            </div>
+            <div class="vocab-card-back absolute inset-0 bg-gradient-to-br from-purple-100 to-green-100 rounded-2xl shadow-lg flex flex-col items-center justify-center">
+              <span class="text-xl font-bold text-gray-800">${animal.english}</span>
+              <span class="text-sm text-gray-500">${animal.spanish}</span>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function completeAnimals() {
+      addScore(20);
+      saveProgress('animals', gameState.score, true);
+      showSuccessModal('Great job!', 'You learned animal vocabulary!');
+    }
+
+    // ===== GAME: BODY =====
+    const bodyPartsData = [
+      { emoji: '👁️', english: 'Eye', spanish: 'Ojo' },
+      { emoji: '👂', english: 'Ear', spanish: 'Oreja' },
+      { emoji: '👃', english: 'Nose', spanish: 'Nariz' },
+      { emoji: '👄', english: 'Mouth', spanish: 'Boca' },
+      { emoji: '🤚', english: 'Hand', spanish: 'Mano' },
+      { emoji: '🦶', english: 'Foot', spanish: 'Pie' }
+    ];
+    let currentBodyQ = 0;
+
+    function initBody() {
+      currentBodyQ = 0;
+      showBodyQuestion();
+    }
+
+    function showBodyQuestion() {
+      const part = bodyPartsData[currentBodyQ];
+      document.getElementById('body-question').textContent = part.emoji;
+      document.getElementById('body-prompt').textContent = `What is this called in English?`;
+      
+      const options = [part.english];
+      while (options.length < 4) {
+        const random = bodyPartsData[Math.floor(Math.random() * bodyPartsData.length)].english;
+        if (!options.includes(random)) options.push(random);
+      }
+      options.sort(() => Math.random() - 0.5);
+      
+      const container = document.getElementById('body-options');
+      container.innerHTML = '';
+      
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'p-4 rounded-xl bg-white shadow-md hover:shadow-lg transition-all font-semibold text-gray-700';
+        btn.textContent = opt;
+        btn.onclick = () => checkBody(opt);
+        container.appendChild(btn);
+      });
+      
+      document.getElementById('body-feedback').textContent = '';
+    }
+
+    function checkBody(answer) {
+      const correct = bodyPartsData[currentBodyQ].english;
+      const feedback = document.getElementById('body-feedback');
+      
+      if (answer === correct) {
+        feedback.textContent = 'Correct! 🎉';
+        feedback.className = 'text-lg font-medium text-green-600';
+        addScore(10);
+        
+        currentBodyQ++;
+        if (currentBodyQ >= bodyPartsData.length) {
+          saveProgress('body', gameState.score, true);
+          setTimeout(() => showSuccessModal('Excellent!', 'You know your body parts!'), 1500);
+        } else {
+          setTimeout(showBodyQuestion, 1500);
+        }
+      } else {
+        feedback.textContent = `Wrong! It's "${correct}"`;
+        feedback.className = 'text-lg font-medium text-red-500';
+        loseLife();
+        setTimeout(showBodyQuestion, 2000);
+      }
+    }
+
+    // ===== GAME: DAYS =====
+    const daysQuestions = [
+      { question: 'What day comes after Monday?', answer: 'Tuesday', options: ['Wednesday', 'Tuesday', 'Sunday', 'Friday'] },
+      { question: 'What is the first day of the week?', answer: 'Sunday', options: ['Monday', 'Sunday', 'Saturday', 'Friday'] },
+      { question: 'What month comes after January?', answer: 'February', options: ['March', 'February', 'April', 'December'] },
+      { question: 'How many days are in a week?', answer: 'Seven', options: ['Five', 'Six', 'Seven', 'Eight'] }
+    ];
+    let currentDaysQ = 0;
+
+    function initDays() {
+      currentDaysQ = 0;
+      showDaysQuestion();
+    }
+
+    function showDaysQuestion() {
+      const q = daysQuestions[currentDaysQ];
+      document.getElementById('days-question').textContent = q.question;
+      
+      const container = document.getElementById('days-options');
+      container.innerHTML = '';
+      
+      q.options.sort(() => Math.random() - 0.5).forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'p-3 rounded-xl bg-white shadow-md hover:shadow-lg transition-all font-medium text-gray-700';
+        btn.textContent = opt;
+        btn.onclick = () => checkDays(opt);
+        container.appendChild(btn);
+      });
+      
+      document.getElementById('days-feedback').textContent = '';
+    }
+
+    function checkDays(answer) {
+      const q = daysQuestions[currentDaysQ];
+      const feedback = document.getElementById('days-feedback');
+      
+      if (answer === q.answer) {
+        feedback.textContent = 'Correct! 🎉';
+        feedback.className = 'text-lg font-medium text-green-600';
+        addScore(10);
+        
+        currentDaysQ++;
+        if (currentDaysQ >= daysQuestions.length) {
+          saveProgress('days', gameState.score, true);
+          setTimeout(() => showSuccessModal('Great!', 'You know your days and months!'), 1500);
+        } else {
+          setTimeout(showDaysQuestion, 1500);
+        }
+      } else {
+        feedback.textContent = `Wrong! The answer is "${q.answer}"`;
+        feedback.className = 'text-lg font-medium text-red-500';
+        loseLife();
+        setTimeout(showDaysQuestion, 2000);
+      }
+    }
+
+    // ===== GAME: COLORS =====
+    const colorsQuestions = [
+      { question: 'What color is this?', color: '#ef4444', answer: 'Red', options: ['Red', 'Blue', 'Green', 'Yellow'] },
+      { question: 'What color is this?', color: '#3b82f6', answer: 'Blue', options: ['Red', 'Blue', 'Purple', 'Green'] },
+      { question: 'What shape is a circle?', shape: '⭕', answer: 'Round', options: ['Square', 'Round', 'Triangle', 'Rectangle'] },
+      { question: 'How many sides does a triangle have?', shape: '🔺', answer: 'Three', options: ['Two', 'Three', 'Four', 'Five'] }
+    ];
+    let currentColorsQ = 0;
+
+    function initColors() {
+      currentColorsQ = 0;
+      showColorsQuestion();
+    }
+
+    function showColorsQuestion() {
+      const q = colorsQuestions[currentColorsQ];
+      document.getElementById('colors-question').textContent = q.question;
+      
+      const container = document.getElementById('colors-options');
+      container.innerHTML = '';
+      
+      if (q.color) {
+        const colorBox = document.createElement('div');
+        colorBox.className = 'w-16 h-16 rounded-xl mx-auto mb-4';
+        colorBox.style.backgroundColor = q.color;
+        container.appendChild(colorBox);
+      }
+      
+      if (q.shape) {
+        const shapeBox = document.createElement('div');
+        shapeBox.className = 'text-5xl mb-4';
+        shapeBox.textContent = q.shape;
+        container.appendChild(shapeBox);
+      }
+      
+      const optionsDiv = document.createElement('div');
+      optionsDiv.className = 'flex flex-wrap justify-center gap-3';
+      
+      q.options.sort(() => Math.random() - 0.5).forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'px-6 py-3 rounded-xl bg-white shadow-md hover:shadow-lg transition-all font-medium text-gray-700';
+        btn.textContent = opt;
+        btn.onclick = () => checkColors(opt);
+        optionsDiv.appendChild(btn);
+      });
+      
+      container.appendChild(optionsDiv);
+      document.getElementById('colors-feedback').textContent = '';
+    }
+
+    function checkColors(answer) {
+      const q = colorsQuestions[currentColorsQ];
+      const feedback = document.getElementById('colors-feedback');
+      
+      if (answer === q.answer) {
+        feedback.textContent = 'Correct! 🎉';
+        feedback.className = 'text-lg font-medium text-green-600';
+        addScore(10);
+        
+        currentColorsQ++;
+        if (currentColorsQ >= colorsQuestions.length) {
+          saveProgress('colors', gameState.score, true);
+          setTimeout(() => showSuccessModal('Amazing!', 'You know your colors and shapes!'), 1500);
+        } else {
+          setTimeout(showColorsQuestion, 1500);
+        }
+      } else {
+        feedback.textContent = `Wrong! The answer is "${q.answer}"`;
+        feedback.className = 'text-lg font-medium text-red-500';
+        loseLife();
+        setTimeout(showColorsQuestion, 2000);
+      }
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d01497f25ad2efd',t:'MTc3MTQ1NzE2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
