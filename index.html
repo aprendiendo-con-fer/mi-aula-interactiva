@@ -3,253 +3,182 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌸 Mi Aula Interactiva 🌸</title>
+<title>Mi Aula Interactiva</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&display=swap" rel="stylesheet">
 
 <style>
-
 body{
-    margin:0;
-    font-family:'Quicksand',sans-serif;
-    background:linear-gradient(135deg,#F3E8FF,#E0F2FE,#FCE7F3);
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
+  font-family:'Baloo 2', cursive;
+  background: linear-gradient(135deg,#6a0dad,#00bfff,#39ff14);
+  background-size:400% 400%;
+  animation: bg 10s infinite alternate;
 }
+@keyframes bg{
+  0%{background-position:0% 50%;}
+  100%{background-position:100% 50%;}
+}
+.page{ display:none; }
+.page.active{ display:block; }
 
-/* Animación suave */
-@keyframes float{
-    0%{transform:translateY(0px);}
-    50%{transform:translateY(-8px);}
-    100%{transform:translateY(0px);}
+.btn{
+  background: linear-gradient(45deg,#ff00cc,#ff7b00);
+  padding:15px;
+  border-radius:20px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.2s;
 }
+.btn:hover{ transform:scale(1.05); }
 
-header{
-    margin-top:40px;
-    text-align:center;
-    animation:float 4s ease-in-out infinite;
+.option{
+  background:white;
+  color:black;
+  padding:10px;
+  border-radius:15px;
+  margin:8px;
+  cursor:pointer;
+  font-weight:bold;
 }
-
-h1{
-    font-family:'Fredoka',sans-serif;
-    color:#7C3AED;
-    font-size:32px;
-}
-
-.sub{
-    color:#8B5CF6;
-}
-
-.card{
-    background:white;
-    padding:30px;
-    border-radius:30px;
-    box-shadow:0 15px 35px rgba(0,0,0,0.08);
-    width:90%;
-    max-width:900px;
-    margin-top:30px;
-}
-
-.menu-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
-    gap:20px;
-}
-
-.btn-game{
-    background:linear-gradient(145deg,#ffffff,#f3f4f6);
-    border:none;
-    border-radius:25px;
-    padding:18px;
-    font-size:18px;
-    cursor:pointer;
-    transition:all .3s ease;
-    box-shadow:0 8px 20px rgba(0,0,0,0.08);
-}
-
-.btn-game:hover{
-    transform:translateY(-6px) scale(1.05);
-}
-
-.hidden{
-    display:none;
-}
-
-.score-box{
-    margin-top:15px;
-    font-weight:700;
-    color:#7C3AED;
-    font-size:18px;
-}
-
-.back-btn{
-    margin-top:20px;
-    padding:12px 25px;
-    border:none;
-    border-radius:25px;
-    background:#C4B5FD;
-    color:white;
-    font-weight:600;
-    cursor:pointer;
-}
-
-.game-area{
-    margin-top:25px;
-    text-align:center;
-}
-
-#answerOptions{
-    margin-top:20px;
-    display:flex;
-    justify-content:center;
-    gap:15px;
-    flex-wrap:wrap;
-}
-
-.feedback{
-    margin-top:15px;
-    font-weight:600;
-    font-size:18px;
-}
-
-.correct{
-    color:#16A34A;
-}
-
-.wrong{
-    color:#DC2626;
-}
+.option:hover{ background:#ffe0f7; }
 
 </style>
 </head>
 
-<body>
+<body class="text-white p-6">
 
-<header>
-<h1>🌸✨ Mi Aula Interactiva ✨🌸</h1>
-<p class="sub">Mtra. María Fernanda Flores Valenzuela</p>
-<p class="sub">Zona Escolar 105 | CCT: 26DPR1320W</p>
-</header>
+<h1 class="text-4xl text-center mb-6">✨ Mi Aula Interactiva ✨</h1>
 
-<!-- INICIO -->
-<div class="card" id="home">
-    <h2 style="text-align:center;color:#8B5CF6;">🚀🌈 Fase 3 - Exploradores 🌈🚀</h2>
-    <div style="text-align:center;margin-top:20px;">
-        <button class="btn-game" onclick="openFase3()">💖 Entrar 💖</button>
-    </div>
+<!-- HOME -->
+<div id="home" class="page active text-center">
+  <div class="btn" onclick="show('fase3')">🚀 Fase 3</div>
 </div>
 
-<!-- MENU JUEGOS -->
-<div class="card hidden" id="fase3">
+<!-- FASE 3 -->
+<div id="fase3" class="page text-center">
+  <div class="btn mb-4" onclick="show('home')">🏠 Volver</div>
 
-    <h2 style="text-align:center;color:#8B5CF6;">🎮🌟 Juegos Fase 3 🌟🎮</h2>
+  <h2 class="text-3xl mb-4">🌟 Juegos 🌟</h2>
 
-    <div class="score-box">
-        ⭐💎 Puntos Totales: <span id="totalScore">0</span>
-    </div>
+  <div class="btn mb-3" onclick="show('calculo')">🧠 Cálculo Mental</div>
+  <div class="btn mb-3" onclick="show('alfabetizacion')">🔤 Alfabetización</div>
+  <div class="btn mb-3" onclick="show('lectura')">📖 Comprensión</div>
+</div>
 
-    <div class="menu-grid" style="margin-top:25px;">
+<!-- CALCULO -->
+<div id="calculo" class="page text-center">
+  <div class="btn mb-4" onclick="show('fase3')">⬅ Volver</div>
+  <h2 class="text-3xl mb-4">🧠 ¿Cuánto es?</h2>
+  <h3 id="preguntaCalculo" class="text-2xl mb-4"></h3>
+  <div id="opcionesCalculo"></div>
+  <p class="mt-4 text-xl">Puntos: <span id="puntosCalculo">0</span></p>
+</div>
 
-        <button class="btn-game" onclick="startCalculo()">🧮✨ Cálculo Mental</button>
-        <button class="btn-game">✏💛 Alfabetización</button>
-        <button class="btn-game">📖💙 Comprensión Lectora</button>
-        <button class="btn-game">🪪💜 Escribe tu Nombre</button>
-        <button class="btn-game">📝💗 Completa la Oración</button>
-        <button class="btn-game">🌿💚 Medio Ambiente</button>
-        <button class="btn-game">🔺🧡 Figuras Geométricas</button>
-        <button class="btn-game">🛒💖 La Tiendita</button>
-        <button class="btn-game">🔄💛 Secuencia y Orden</button>
-        <button class="btn-game">🔤💙 Letras vs Números</button>
+<!-- ALFABETIZACION -->
+<div id="alfabetizacion" class="page text-center">
+  <div class="btn mb-4" onclick="show('fase3')">⬅ Volver</div>
+  <h2 class="text-3xl mb-4">🔤 ¿Cuál es una letra?</h2>
+  <div id="opcionesLetra"></div>
+  <p class="mt-4 text-xl">Puntos: <span id="puntosLetra">0</span></p>
+</div>
 
-    </div>
-
-    <!-- JUEGO CALCULO -->
-    <div id="calculoGame" class="game-area hidden">
-        <h3>🧮💜 Resuelve la operación 💜🧮</h3>
-        <p id="operation" style="font-size:22px;font-weight:700;"></p>
-
-        <div id="answerOptions"></div>
-
-        <p id="feedback" class="feedback"></p>
-    </div>
-
-    <div style="text-align:center;">
-        <button class="back-btn" onclick="goHome()">🏠 Volver al Inicio</button>
-    </div>
-
+<!-- LECTURA -->
+<div id="lectura" class="page text-center">
+  <div class="btn mb-4" onclick="show('fase3')">⬅ Volver</div>
+  <h2 class="text-3xl mb-4">📖 Comprensión</h2>
+  <p class="mb-4">El gato duerme en el sofá.</p>
+  <h3 class="mb-3">¿Dónde duerme el gato?</h3>
+  <div id="opcionesLectura"></div>
+  <p class="mt-4 text-xl">Puntos: <span id="puntosLectura">0</span></p>
 </div>
 
 <script>
-
-let totalScore = 0;
-let correctAnswer = 0;
-
-function openFase3(){
-    document.getElementById("home").classList.add("hidden");
-    document.getElementById("fase3").classList.remove("hidden");
+function show(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
-function goHome(){
-    document.getElementById("fase3").classList.add("hidden");
-    document.getElementById("home").classList.remove("hidden");
-}
+/* ================== CALCULO ================== */
+let puntosCalculo=0;
+function generarCalculo(){
+  let a=Math.floor(Math.random()*10);
+  let b=Math.floor(Math.random()*10);
+  let correcta=a+b;
+  document.getElementById("preguntaCalculo").innerText=`${a} + ${b} = ?`;
 
-function startCalculo(){
-    document.getElementById("calculoGame").classList.remove("hidden");
+  let opciones=[correcta, correcta+1, correcta-1];
+  opciones.sort(()=>Math.random()-0.5);
 
-    let num1 = Math.floor(Math.random()*10)+1;
-    let num2 = Math.floor(Math.random()*10)+1;
-    correctAnswer = num1 + num2;
-
-    document.getElementById("operation").textContent =
-        "✨ ¿Cuánto es " + num1 + " + " + num2 + " ? ✨";
-
-    generarOpciones(correctAnswer);
-}
-
-function generarOpciones(correct){
-
-    let opciones = [correct];
-
-    while(opciones.length < 3){
-        let opcion = correct + Math.floor(Math.random()*6) - 3;
-        if(opcion !== correct && opcion > 0 && !opciones.includes(opcion)){
-            opciones.push(opcion);
-        }
+  let cont=document.getElementById("opcionesCalculo");
+  cont.innerHTML="";
+  opciones.forEach(num=>{
+    let btn=document.createElement("div");
+    btn.className="option";
+    btn.innerText=num;
+    btn.onclick=function(){
+      if(num===correcta){
+        puntosCalculo++;
+        document.getElementById("puntosCalculo").innerText=puntosCalculo;
+      }
+      generarCalculo();
     }
-
-    opciones.sort(() => Math.random() - 0.5);
-
-    let container = document.getElementById("answerOptions");
-    container.innerHTML = "";
-
-    opciones.forEach(op => {
-        let btn = document.createElement("button");
-        btn.className = "btn-game";
-        btn.textContent = op;
-        btn.onclick = function(){ checkAnswer(op); };
-        container.appendChild(btn);
-    });
+    cont.appendChild(btn);
+  });
 }
+generarCalculo();
 
-function checkAnswer(selected){
-    let feedback = document.getElementById("feedback");
+/* ================== LETRAS ================== */
+let puntosLetra=0;
+function generarLetra(){
+  let opciones=["A","7","B","3"];
+  opciones.sort(()=>Math.random()-0.5);
 
-    if(selected === correctAnswer){
-        totalScore += 10;
-        document.getElementById("totalScore").textContent = totalScore;
-        feedback.textContent = "🎉✨ ¡Correcto! +10 puntos ✨🎉";
-        feedback.className = "feedback correct";
-        setTimeout(startCalculo,1000);
-    } else {
-        feedback.textContent = "💗 Intenta otra vez 💗";
-        feedback.className = "feedback wrong";
+  let cont=document.getElementById("opcionesLetra");
+  cont.innerHTML="";
+  opciones.forEach(item=>{
+    let btn=document.createElement("div");
+    btn.className="option";
+    btn.innerText=item;
+    btn.onclick=function(){
+      if(isNaN(item)){
+        puntosLetra++;
+        document.getElementById("puntosLetra").innerText=puntosLetra;
+      }
+      generarLetra();
     }
+    cont.appendChild(btn);
+  });
 }
+generarLetra();
+
+/* ================== LECTURA ================== */
+let puntosLectura=0;
+let opcionesLect=["En el techo","En el sofá","En la calle"];
+let correctaLect="En el sofá";
+
+function generarLectura(){
+  let cont=document.getElementById("opcionesLectura");
+  cont.innerHTML="";
+  opcionesLect.forEach(op=>{
+    let btn=document.createElement("div");
+    btn.className="option";
+    btn.innerText=op;
+    btn.onclick=function(){
+      if(op===correctaLect){
+        puntosLectura++;
+        document.getElementById("puntosLectura").innerText=puntosLectura;
+      }
+      generarLectura();
+    }
+    cont.appendChild(btn);
+  });
+}
+generarLectura();
 
 </script>
 
 </body>
 </html>
+
