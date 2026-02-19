@@ -1,184 +1,634 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mi Aula Interactiva</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&display=swap" rel="stylesheet">
-
-<style>
-body{
-  font-family:'Baloo 2', cursive;
-  background: linear-gradient(135deg,#6a0dad,#00bfff,#39ff14);
-  background-size:400% 400%;
-  animation: bg 10s infinite alternate;
-}
-@keyframes bg{
-  0%{background-position:0% 50%;}
-  100%{background-position:100% 50%;}
-}
-.page{ display:none; }
-.page.active{ display:block; }
-
-.btn{
-  background: linear-gradient(45deg,#ff00cc,#ff7b00);
-  padding:15px;
-  border-radius:20px;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-  transition:0.2s;
-}
-.btn:hover{ transform:scale(1.05); }
-
-.option{
-  background:white;
-  color:black;
-  padding:10px;
-  border-radius:15px;
-  margin:8px;
-  cursor:pointer;
-  font-weight:bold;
-}
-.option:hover{ background:#ffe0f7; }
-
-</style>
-</head>
-
-<body class="text-white p-6">
-
-<h1 class="text-4xl text-center mb-6">✨ Mi Aula Interactiva ✨</h1>
-
-<!-- HOME -->
-<div id="home" class="page active text-center">
-  <div class="btn" onclick="show('fase3')">🚀 Fase 3</div>
-</div>
-
-<!-- FASE 3 -->
-<div id="fase3" class="page text-center">
-  <div class="btn mb-4" onclick="show('home')">🏠 Volver</div>
-
-  <h2 class="text-3xl mb-4">🌟 Juegos 🌟</h2>
-
-  <div class="btn mb-3" onclick="show('calculo')">🧠 Cálculo Mental</div>
-  <div class="btn mb-3" onclick="show('alfabetizacion')">🔤 Alfabetización</div>
-  <div class="btn mb-3" onclick="show('lectura')">📖 Comprensión</div>
-</div>
-
-<!-- CALCULO -->
-<div id="calculo" class="page text-center">
-  <div class="btn mb-4" onclick="show('fase3')">⬅ Volver</div>
-  <h2 class="text-3xl mb-4">🧠 ¿Cuánto es?</h2>
-  <h3 id="preguntaCalculo" class="text-2xl mb-4"></h3>
-  <div id="opcionesCalculo"></div>
-  <p class="mt-4 text-xl">Puntos: <span id="puntosCalculo">0</span></p>
-</div>
-
-<!-- ALFABETIZACION -->
-<div id="alfabetizacion" class="page text-center">
-  <div class="btn mb-4" onclick="show('fase3')">⬅ Volver</div>
-  <h2 class="text-3xl mb-4">🔤 ¿Cuál es una letra?</h2>
-  <div id="opcionesLetra"></div>
-  <p class="mt-4 text-xl">Puntos: <span id="puntosLetra">0</span></p>
-</div>
-
-<!-- LECTURA -->
-<div id="lectura" class="page text-center">
-  <div class="btn mb-4" onclick="show('fase3')">⬅ Volver</div>
-  <h2 class="text-3xl mb-4">📖 Comprensión</h2>
-  <p class="mb-4">El gato duerme en el sofá.</p>
-  <h3 class="mb-3">¿Dónde duerme el gato?</h3>
-  <div id="opcionesLectura"></div>
-  <p class="mt-4 text-xl">Puntos: <span id="puntosLectura">0</span></p>
-</div>
-
-<script>
-function show(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-/* ================== CALCULO ================== */
-let puntosCalculo=0;
-function generarCalculo(){
-  let a=Math.floor(Math.random()*10);
-  let b=Math.floor(Math.random()*10);
-  let correcta=a+b;
-  document.getElementById("preguntaCalculo").innerText=`${a} + ${b} = ?`;
-
-  let opciones=[correcta, correcta+1, correcta-1];
-  opciones.sort(()=>Math.random()-0.5);
-
-  let cont=document.getElementById("opcionesCalculo");
-  cont.innerHTML="";
-  opciones.forEach(num=>{
-    let btn=document.createElement("div");
-    btn.className="option";
-    btn.innerText=num;
-    btn.onclick=function(){
-      if(num===correcta){
-        puntosCalculo++;
-        document.getElementById("puntosCalculo").innerText=puntosCalculo;
-      }
-      generarCalculo();
+<!doctype html>
+<html lang="es" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Aula Interactiva</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&amp;family=Comic+Neue:wght@400;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Fredoka', 'Comic Neue', cursive;
     }
-    cont.appendChild(btn);
-  });
-}
-generarCalculo();
-
-/* ================== LETRAS ================== */
-let puntosLetra=0;
-function generarLetra(){
-  let opciones=["A","7","B","3"];
-  opciones.sort(()=>Math.random()-0.5);
-
-  let cont=document.getElementById("opcionesLetra");
-  cont.innerHTML="";
-  opciones.forEach(item=>{
-    let btn=document.createElement("div");
-    btn.className="option";
-    btn.innerText=item;
-    btn.onclick=function(){
-      if(isNaN(item)){
-        puntosLetra++;
-        document.getElementById("puntosLetra").innerText=puntosLetra;
-      }
-      generarLetra();
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ee9ca7 100%);
     }
-    cont.appendChild(btn);
-  });
-}
-generarLetra();
-
-/* ================== LECTURA ================== */
-let puntosLectura=0;
-let opcionesLect=["En el techo","En el sofá","En la calle"];
-let correctaLect="En el sofá";
-
-function generarLectura(){
-  let cont=document.getElementById("opcionesLectura");
-  cont.innerHTML="";
-  opcionesLect.forEach(op=>{
-    let btn=document.createElement("div");
-    btn.className="option";
-    btn.innerText=op;
-    btn.onclick=function(){
-      if(op===correctaLect){
-        puntosLectura++;
-        document.getElementById("puntosLectura").innerText=puntosLectura;
-      }
-      generarLectura();
+    
+    .header-gradient {
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
-    cont.appendChild(btn);
-  });
-}
-generarLectura();
+    
+    .card-fase3 {
+      background: linear-gradient(145deg, #84fab0 0%, #8fd3f4 100%);
+    }
+    
+    .card-fase4 {
+      background: linear-gradient(145deg, #a8edea 0%, #fed6e3 100%);
+    }
+    
+    .card-fase5 {
+      background: linear-gradient(145deg, #ffecd2 0%, #fcb69f 100%);
+    }
+    
+    .card-ingles {
+      background: linear-gradient(145deg, #d299c2 0%, #fef9d7 100%);
+    }
+    
+    .btn-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    
+    .btn-card:hover {
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    }
+    
+    .floating {
+      animation: floating 3s ease-in-out infinite;
+    }
+    
+    .floating-delay {
+      animation: floating 3s ease-in-out infinite;
+      animation-delay: 1.5s;
+    }
+    
+    @keyframes floating {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    .sparkle {
+      animation: sparkle 2s ease-in-out infinite;
+    }
+    
+    @keyframes sparkle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.2); }
+    }
+    
+    .bounce-subtle {
+      animation: bounce-subtle 2s ease-in-out infinite;
+    }
+    
+    @keyframes bounce-subtle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="home-screen" class="min-h-full w-full gradient-bg overflow-auto relative">
+   <!-- Decorative Elements -->
+   <div class="absolute top-4 left-4 text-4xl floating opacity-80">
+    📚
+   </div>
+   <div class="absolute top-8 right-8 text-3xl floating-delay opacity-80">
+    ✏️
+   </div>
+   <div class="absolute top-20 left-20 text-2xl sparkle opacity-70">
+    ⭐
+   </div>
+   <div class="absolute top-16 right-24 text-2xl sparkle opacity-70" style="animation-delay: 0.5s;">
+    ✨
+   </div>
+   <div class="absolute bottom-20 left-12 text-3xl floating opacity-80">
+    🎨
+   </div>
+   <div class="absolute bottom-16 right-16 text-4xl floating-delay opacity-80">
+    🎒
+   </div>
+   <div class="absolute top-32 left-1/4 text-xl sparkle opacity-60">
+    🌟
+   </div>
+   <div class="absolute bottom-32 right-1/4 text-xl sparkle opacity-60" style="animation-delay: 1s;">
+    💫
+   </div><!-- Main Content -->
+   <div class="relative z-10 px-4 py-8 md:py-12">
+    <!-- Header Section -->
+    <header class="text-center mb-8 md:mb-12">
+     <div class="inline-block bg-white/80 backdrop-blur-sm rounded-3xl px-6 py-4 md:px-10 md:py-6 shadow-xl border-4 border-purple-200">
+      <!-- School Icon -->
+      <div class="text-5xl md:text-6xl mb-3 bounce-subtle">
+       🏫
+      </div><!-- Main Title -->
+      <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold header-gradient mb-3 leading-tight">Mi Aula Interactiva</h1><!-- School Name -->
+      <h2 class="text-lg md:text-xl lg:text-2xl font-semibold text-purple-700 mb-2">Escuela Primaria Venustiano Carranza 26DPR1320W</h2><!-- Zone -->
+      <p class="text-base md:text-lg text-purple-600 font-medium mb-3">📍 Zona Escolar 105</p><!-- Divider with hearts -->
+      <div class="flex items-center justify-center gap-2 mb-3">
+       <span class="text-pink-400">💜</span>
+       <div class="h-0.5 w-16 bg-gradient-to-r from-pink-300 to-purple-300 rounded-full"></div><span class="text-pink-400">💜</span>
+       <div class="h-0.5 w-16 bg-gradient-to-r from-purple-300 to-pink-300 rounded-full"></div><span class="text-pink-400">💜</span>
+      </div><!-- Creator Credit -->
+      <p class="text-sm md:text-base text-pink-600 font-medium flex items-center justify-center gap-2"><span>💕</span> Creado con amor por la Mtra. María Fernanda Flores Valenzuela <span>💕</span></p>
+     </div>
+    </header><!-- Buttons Section -->
+    <main class="max-w-5xl mx-auto">
+     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 px-4">
+      <!-- FASE 3 - Primero y Segundo --> <button class="btn-card card-fase3 rounded-3xl p-6 md:p-8 text-center cursor-pointer border-4 border-white/50 group">
+       <div class="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
+        🌱
+       </div><h3 class="text-xl md:text-2xl font-bold text-teal-800 mb-2">FASE 3</h3><p class="text-base md:text-lg font-semibold text-teal-700 mb-3">Primero y Segundo Grado</p>
+       <div class="flex justify-center gap-2 text-2xl">
+        <span>1️⃣</span> <span>2️⃣</span>
+       </div>
+       <div class="mt-3 text-sm text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        ¡Haz clic para entrar! 🚀
+       </div></button> <!-- FASE 4 - Tercero y Cuarto --> <button class="btn-card card-fase4 rounded-3xl p-6 md:p-8 text-center cursor-pointer border-4 border-white/50 group">
+       <div class="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
+        🌻
+       </div><h3 class="text-xl md:text-2xl font-bold text-pink-800 mb-2">FASE 4</h3><p class="text-base md:text-lg font-semibold text-pink-700 mb-3">Tercero y Cuarto Grado</p>
+       <div class="flex justify-center gap-2 text-2xl">
+        <span>3️⃣</span> <span>4️⃣</span>
+       </div>
+       <div class="mt-3 text-sm text-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        ¡Haz clic para entrar! 🚀
+       </div></button> <!-- FASE 5 - Quinto y Sexto --> <button class="btn-card card-fase5 rounded-3xl p-6 md:p-8 text-center cursor-pointer border-4 border-white/50 group">
+       <div class="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
+        🌳
+       </div><h3 class="text-xl md:text-2xl font-bold text-orange-800 mb-2">FASE 5</h3><p class="text-base md:text-lg font-semibold text-orange-700 mb-3">Quinto y Sexto Grado</p>
+       <div class="flex justify-center gap-2 text-2xl">
+        <span>5️⃣</span> <span>6️⃣</span>
+       </div>
+       <div class="mt-3 text-sm text-orange-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        ¡Haz clic para entrar! 🚀
+       </div></button> <!-- INGLÉS --> <button class="btn-card card-ingles rounded-3xl p-6 md:p-8 text-center cursor-pointer border-4 border-white/50 group">
+       <div class="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
+        🌎
+       </div><h3 class="text-xl md:text-2xl font-bold text-purple-800 mb-2">INGLÉS</h3><p class="text-base md:text-lg font-semibold text-purple-700 mb-3">English Class</p>
+       <div class="flex justify-center gap-2 text-2xl">
+        <span>🇺🇸</span> <span>🇬🇧</span>
+       </div>
+       <div class="mt-3 text-sm text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        Click to enter! 🚀
+       </div></button>
+     </div>
+    </main><!-- Footer Decorative -->
+    <footer class="text-center mt-10 md:mt-12">
+     <div class="flex items-center justify-center gap-3 text-2xl md:text-3xl">
+      <span class="floating">📖</span> <span class="floating-delay">🖍️</span> <span class="floating">📐</span> <span class="floating-delay">🔬</span> <span class="floating">🎵</span>
+     </div>
+     <p class="text-purple-600 text-sm mt-4 font-medium">¡Aprender es divertido! 🌈</p>
+    </footer>
+   </div>
+  </div><!-- FASE 3 SCREEN -->
+  <div id="fase3-screen" class="hidden min-h-full w-full gradient-bg overflow-auto relative">
+   <!-- Decorative Elements -->
+   <div class="absolute top-4 left-4 text-4xl floating opacity-80">
+    🌱
+   </div>
+   <div class="absolute top-8 right-8 text-3xl floating-delay opacity-80">
+    📚
+   </div>
+   <div class="absolute bottom-20 left-12 text-3xl floating opacity-80">
+    ✏️
+   </div>
+   <div class="absolute bottom-16 right-16 text-4xl floating-delay opacity-80">
+    🎨
+   </div>
+   <div class="relative z-10 px-4 py-8 md:py-12">
+    <!-- Header Section -->
+    <header class="text-center mb-8 md:mb-12">
+     <div class="inline-block bg-white/80 backdrop-blur-sm rounded-3xl px-6 py-4 md:px-10 md:py-6 shadow-xl border-4 border-teal-200">
+      <div class="text-5xl md:text-6xl mb-3 bounce-subtle">
+       🌱
+      </div>
+      <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold text-teal-700 mb-3 leading-tight">FASE 3</h1>
+      <p class="text-base md:text-lg text-teal-600 font-medium">Primero y Segundo Grado</p><button onclick="goHome()" class="mt-4 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-6 rounded-full transition-all duration-300 text-sm"> ← Volver al Inicio </button>
+     </div>
+    </header><!-- Subjects Grid -->
+    <main class="max-w-5xl mx-auto">
+     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 px-4">
+      <!-- CÁLCULO MENTAL -->
+      <div class="btn-card bg-gradient-to-br from-blue-300 to-blue-500 rounded-3xl p-6 md:p-8 text-center cursor-pointer border-4 border-white/50 group hover:shadow-2xl transition-all duration-300">
+       <div class="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
+        🧮
+       </div>
+       <h3 class="text-xl md:text-2xl font-bold text-blue-900 mb-2">Cálculo Mental</h3>
+       <p class="text-base md:text-lg font-semibold text-blue-800 mb-3">Matemáticas rápidas</p>
+       <div class="mt-3 text-sm text-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        ¡Entrena tu mente! 🚀
+       </div>
+      </div><!-- ALFABETIZACIÓN -->
+      <div class="btn-card bg-gradient-to-br from-pink-300 to-pink-500 rounded-3xl p-6 md:p-8 text-center cursor-pointer border-4 border-white/50 group hover:shadow-2xl transition-all duration-300">
+       <div class="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
+        📖
+       </div>
+       <h3 class="text-xl md:text-2xl font-bold text-pink-900 mb-2">Alfabetización</h3>
+       <p class="text-base md:text-lg font-semibold text-pink-800 mb-3">Lectura y escritura</p>
+       <div class="mt-3 text-sm text-pink-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        ¡Aprende a leer! 🚀
+       </div>
+      </div><!-- CIENCIAS -->
+      <div class="btn-card bg-gradient-to-br from-green-300 to-green-500 rounded-3xl p-6 md:p-8 text-center cursor-pointer border-4 border-white/50 group hover:shadow-2xl transition-all duration-300">
+       <div class="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
+        🔬
+       </div>
+       <h3 class="text-xl md:text-2xl font-bold text-green-900 mb-2">Ciencias</h3>
+       <p class="text-base md:text-lg font-semibold text-green-800 mb-3">Explora la naturaleza</p>
+       <div class="mt-3 text-sm text-green-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        ¡Descubre! 🚀
+       </div>
+      </div><!-- CONOCIENDO EL MUNDO -->
+      <div class="btn-card bg-gradient-to-br from-orange-300 to-orange-500 rounded-3xl p-6 md:p-8 text-center cursor-pointer border-4 border-white/50 group hover:shadow-2xl transition-all duration-300">
+       <div class="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
+        🌍
+       </div>
+       <h3 class="text-xl md:text-2xl font-bold text-orange-900 mb-2">Conociendo el Mundo</h3>
+       <p class="text-base md:text-lg font-semibold text-orange-800 mb-3">Geografía y cultura</p>
+       <div class="mt-3 text-sm text-orange-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        ¡Viaja! 🚀
+       </div>
+      </div>
+     </div>
+    </main><!-- Footer -->
+    <footer class="text-center mt-10 md:mt-12">
+     <div class="flex items-center justify-center gap-3 text-2xl md:text-3xl">
+      <span class="floating">🎓</span> <span class="floating-delay">✨</span> <span class="floating">💡</span>
+     </div>
+     <p class="text-teal-600 text-sm mt-4 font-medium">¡Sigue aprendiendo! 🌈</p>
+    </footer>
+   </div>
+  </div><!-- CÁLCULO MENTAL GAME SCREEN -->
+  <div id="calculo-screen" class="hidden min-h-full w-full overflow-auto relative" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);">
+   <div class="relative z-10 px-4 py-8 md:py-12"><!-- Header with Lives and Timer -->
+    <header class="flex justify-between items-center mb-6 px-4"><button onclick="goFase3()" class="bg-white/80 hover:bg-white text-purple-700 font-bold py-2 px-4 rounded-full transition-all text-sm"> ← Atrás </button>
+     <div class="flex items-center gap-3"><span id="lives" class="text-3xl">❤️❤️❤️</span>
+     </div>
+     <div id="timer" class="bg-white/80 rounded-full px-4 py-2 font-bold text-lg text-purple-700">
+      ⏱️ 00:00
+     </div>
+    </header><!-- Main Game Container -->
+    <main class="max-w-2xl mx-auto"><!-- Progress Bar with Steps -->
+     <div class="mb-8 bg-white/20 backdrop-blur-sm rounded-3xl p-6">
+      <div class="flex justify-between items-center mb-4">
+       <h2 class="text-white font-bold text-lg">Progreso</h2><span id="progress-text" class="text-white font-bold text-2xl">1/30</span>
+      </div>
+      <div id="progress-steps" class="flex justify-between gap-2 mb-4"><!-- Steps will be generated by JavaScript -->
+      </div>
+      <div class="w-full bg-white/30 rounded-full h-3 overflow-hidden">
+       <div id="progress-bar" class="bg-gradient-to-r from-yellow-300 to-pink-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+     </div><!-- Question Card -->
+     <div id="question-card" class="bg-white/90 backdrop-blur-sm rounded-3xl p-8 mb-6 shadow-2xl">
+      <div class="text-center mb-6">
+       <p class="text-purple-600 text-sm font-semibold mb-2">Pregunta <span id="question-num">1</span> de 30</p>
+       <div id="question-text" class="text-4xl md:text-5xl font-bold text-purple-800 mb-4">
+        5 + 3 = ?
+       </div>
+       <div id="question-type" class="text-sm text-purple-500 font-medium">
+        Suma sencilla
+       </div>
+      </div><!-- Answer Options -->
+      <div id="answer-options" class="grid grid-cols-2 gap-4 mb-6"><!-- Options will be generated by JavaScript -->
+      </div><!-- Time for this question -->
+      <div class="text-center">
+       <p class="text-sm text-gray-500">Tiempo por pregunta: <span id="question-timer">30</span>s</p>
+       <div class="w-full bg-gray-300 rounded-full h-2 mt-2 overflow-hidden">
+        <div id="question-progress" class="bg-gradient-to-r from-blue-400 to-blue-600 h-full transition-all duration-1000"></div>
+       </div>
+      </div>
+     </div><!-- Feedback Message -->
+     <div id="feedback" class="hidden text-center text-white text-2xl font-bold mb-6 animate-bounce"><!-- Will show success or error -->
+     </div><!-- Game Over Modal -->
+     <div id="game-over-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+      <div class="bg-white rounded-3xl p-8 max-w-md mx-auto text-center">
+       <div id="end-message" class="text-5xl mb-4">
+        🎉
+       </div>
+       <h2 id="end-title" class="text-3xl font-bold text-purple-700 mb-2">¡Lo Hiciste!</h2>
+       <p id="end-text" class="text-gray-600 mb-2">Preguntas acertadas: <span id="correct-count">0</span>/30</p>
+       <p id="end-time" class="text-gray-600 mb-6">Tiempo total: <span id="total-time">00:00</span></p>
+       <div class="flex gap-4"><button onclick="restartGame()" class="flex-1 bg-gradient-to-br from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-2xl transition-all"> 🔄 Reintentar </button> <button onclick="goFase3()" class="flex-1 bg-gradient-to-br from-pink-400 to-pink-600 hover:from-pink-500 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-2xl transition-all"> 🏠 Atrás </button>
+       </div>
+      </div>
+     </div>
+    </main>
+   </div>
+  </div>
+  <script>
+    // Game State
+    let gameState = {
+      currentQuestion: 0,
+      lives: 3,
+      correct: 0,
+      questions: [],
+      startTime: 0,
+      totalTime: 0,
+      gameActive: true,
+      questionStartTime: 0
+    };
 
-</script>
+    // Generate diverse questions for 1st and 2nd grade
+    function generateQuestions() {
+      const questions = [];
+      const types = ['suma', 'resta', 'complemento', 'secuencia', 'sumaMenor', 'restaMenor'];
+      
+      for (let i = 0; i < 30; i++) {
+        const type = types[i % types.length];
+        let question = {};
 
-</body>
+        switch(type) {
+          case 'suma':
+            const a1 = Math.floor(Math.random() * 8) + 1;
+            const b1 = Math.floor(Math.random() * 8) + 1;
+            question = {
+              text: `${a1} + ${b1} = ?`,
+              answer: a1 + b1,
+              type: 'Suma sencilla',
+              options: generateOptions(a1 + b1, 'number')
+            };
+            break;
+
+          case 'resta':
+            const a2 = Math.floor(Math.random() * 15) + 5;
+            const b2 = Math.floor(Math.random() * a2);
+            question = {
+              text: `${a2} - ${b2} = ?`,
+              answer: a2 - b2,
+              type: 'Resta sencilla',
+              options: generateOptions(a2 - b2, 'number')
+            };
+            break;
+
+          case 'complemento':
+            const start = Math.floor(Math.random() * 8) + 2;
+            const end = Math.floor(Math.random() * 10) + start;
+            question = {
+              text: `¿Cuánto le falta a ${start} para llegar a ${end}?`,
+              answer: end - start,
+              type: 'Completar a un número',
+              options: generateOptions(end - start, 'number')
+            };
+            break;
+
+          case 'secuencia':
+            const seq = Math.floor(Math.random() * 6) + 1;
+            const seqStart = Math.floor(Math.random() * 5);
+            question = {
+              text: `Secuencia: ${seqStart}, ${seqStart + seq}, ${seqStart + seq * 2}, ?`,
+              answer: seqStart + seq * 3,
+              type: 'Patrón de secuencia',
+              options: generateOptions(seqStart + seq * 3, 'number')
+            };
+            break;
+
+          case 'sumaMenor':
+            const m1 = Math.floor(Math.random() * 6) + 1;
+            const m2 = Math.floor(Math.random() * 6) + 1;
+            question = {
+              text: `${m1} + ${m2} = ?`,
+              answer: m1 + m2,
+              type: 'Suma muy sencilla',
+              options: generateOptions(m1 + m2, 'number')
+            };
+            break;
+
+          case 'restaMenor':
+            const r1 = Math.floor(Math.random() * 10) + 2;
+            const r2 = Math.floor(Math.random() * r1);
+            question = {
+              text: `${r1} - ${r2} = ?`,
+              answer: r1 - r2,
+              type: 'Resta muy sencilla',
+              options: generateOptions(r1 - r2, 'number')
+            };
+            break;
+        }
+
+        questions.push(question);
+      }
+
+      return questions;
+    }
+
+    function generateOptions(correct, type) {
+      const options = [correct];
+      
+      while (options.length < 4) {
+        let option;
+        if (type === 'number') {
+          option = correct + (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 3) + 1);
+        }
+        
+        if (option > 0 && !options.includes(option)) {
+          options.push(option);
+        }
+      }
+
+      return options.sort(() => Math.random() - 0.5);
+    }
+
+    function startGame() {
+      gameState.questions = generateQuestions();
+      gameState.startTime = Date.now();
+      gameState.currentQuestion = 0;
+      gameState.lives = 3;
+      gameState.correct = 0;
+      gameState.gameActive = true;
+      
+      generateProgressSteps();
+      showQuestion();
+      startTimer();
+    }
+
+    function generateProgressSteps() {
+      const container = document.getElementById('progress-steps');
+      container.innerHTML = '';
+      
+      for (let i = 0; i < 30; i++) {
+        const step = document.createElement('div');
+        step.className = `step-indicator w-2 h-8 rounded-full transition-all duration-300 ${i === 0 ? 'bg-yellow-300 scale-125' : 'bg-white/50'}`;
+        step.id = `step-${i}`;
+        container.appendChild(step);
+      }
+    }
+
+    function showQuestion() {
+      if (!gameState.gameActive) return;
+      
+      const q = gameState.questions[gameState.currentQuestion];
+      document.getElementById('question-num').textContent = gameState.currentQuestion + 1;
+      document.getElementById('question-text').textContent = q.text;
+      document.getElementById('question-type').textContent = q.type;
+      document.getElementById('progress-text').textContent = `${gameState.currentQuestion + 1}/30`;
+      
+      const percentage = (gameState.currentQuestion / 30) * 100;
+      document.getElementById('progress-bar').style.width = percentage + '%';
+
+      // Update progress steps
+      for (let i = 0; i < 30; i++) {
+        const step = document.getElementById(`step-${i}`);
+        if (i < gameState.currentQuestion) {
+          step.className = 'step-indicator w-2 h-8 rounded-full bg-green-400';
+        } else if (i === gameState.currentQuestion) {
+          step.className = 'step-indicator w-2 h-8 rounded-full bg-yellow-300 scale-125';
+        } else {
+          step.className = 'step-indicator w-2 h-8 rounded-full bg-white/50';
+        }
+      }
+
+      // Generate answer buttons
+      const optionsContainer = document.getElementById('answer-options');
+      optionsContainer.innerHTML = '';
+      
+      q.options.forEach(option => {
+        const btn = document.createElement('button');
+        btn.className = 'bg-gradient-to-br from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white font-bold text-2xl py-6 px-4 rounded-2xl transition-all transform hover:scale-105 active:scale-95';
+        btn.textContent = option;
+        btn.onclick = () => checkAnswer(option, q.answer);
+        optionsContainer.appendChild(btn);
+      });
+
+      // Reset question timer
+      startQuestionTimer();
+      updateLivesDisplay();
+    }
+
+    function checkAnswer(selected, correct) {
+      if (!gameState.gameActive) return;
+      
+      gameState.gameActive = false;
+      const feedback = document.getElementById('feedback');
+      
+      if (selected === correct) {
+        gameState.correct++;
+        feedback.textContent = '✅ ¡Correcto!';
+        feedback.classList.remove('hidden', 'text-red-400');
+        feedback.classList.add('text-green-400');
+      } else {
+        gameState.lives--;
+        feedback.textContent = '❌ ¡Incorrecto!';
+        feedback.classList.remove('hidden', 'text-green-400');
+        feedback.classList.add('text-red-400');
+      }
+
+      // Disable all buttons
+      document.querySelectorAll('#answer-options button').forEach(btn => {
+        btn.disabled = true;
+      });
+
+      setTimeout(() => {
+        if (gameState.lives <= 0) {
+          endGame();
+        } else if (gameState.currentQuestion < 29) {
+          gameState.currentQuestion++;
+          feedback.classList.add('hidden');
+          gameState.gameActive = true;
+          showQuestion();
+        } else {
+          endGame();
+        }
+      }, 1500);
+    }
+
+    function startQuestionTimer() {
+      let timeLeft = 30;
+      document.getElementById('question-timer').textContent = timeLeft;
+      
+      const interval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('question-timer').textContent = timeLeft;
+        document.getElementById('question-progress').style.width = ((30 - timeLeft) / 30 * 100) + '%';
+        
+        if (timeLeft <= 0 || !gameState.gameActive) {
+          clearInterval(interval);
+          if (gameState.gameActive && timeLeft <= 0) {
+            checkAnswer(null, -1); // Wrong answer
+          }
+        }
+      }, 1000);
+    }
+
+    function startTimer() {
+      const interval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+        const mins = Math.floor(elapsed / 60);
+        const secs = elapsed % 60;
+        document.getElementById('timer').textContent = `⏱️ ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        
+        if (!gameState.gameActive || gameState.currentQuestion >= 30) {
+          clearInterval(interval);
+        }
+      }, 1000);
+    }
+
+    function updateLivesDisplay() {
+      const hearts = '❤️'.repeat(gameState.lives);
+      document.getElementById('lives').textContent = hearts;
+    }
+
+    function endGame() {
+      gameState.gameActive = false;
+      const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+      const mins = Math.floor(elapsed / 60);
+      const secs = elapsed % 60;
+
+      document.getElementById('correct-count').textContent = gameState.correct;
+      document.getElementById('total-time').textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      
+      if (gameState.correct === 30) {
+        document.getElementById('end-message').textContent = '🏆';
+        document.getElementById('end-title').textContent = '¡Perfecto!';
+      } else if (gameState.correct >= 25) {
+        document.getElementById('end-message').textContent = '🌟';
+        document.getElementById('end-title').textContent = '¡Excelente!';
+      } else if (gameState.correct >= 20) {
+        document.getElementById('end-message').textContent = '😊';
+        document.getElementById('end-title').textContent = '¡Muy Bien!';
+      } else {
+        document.getElementById('end-message').textContent = '💪';
+        document.getElementById('end-title').textContent = 'Sigue Intentando';
+      }
+      
+      document.getElementById('game-over-modal').classList.remove('hidden');
+    }
+
+    function restartGame() {
+      document.getElementById('game-over-modal').classList.add('hidden');
+      startGame();
+    }
+
+    function goHome() {
+      document.getElementById('home-screen').classList.remove('hidden');
+      document.getElementById('fase3-screen').classList.add('hidden');
+      document.getElementById('calculo-screen').classList.add('hidden');
+    }
+
+    function goFase3() {
+      document.getElementById('home-screen').classList.add('hidden');
+      document.getElementById('fase3-screen').classList.remove('hidden');
+      document.getElementById('calculo-screen').classList.add('hidden');
+    }
+
+    // Script para manejar clics en los botones del inicio
+    document.addEventListener('DOMContentLoaded', function() {
+      const homeButtons = document.querySelectorAll('#home-screen main button');
+      homeButtons.forEach((button, index) => {
+        if (index === 0) { // FASE 3
+          button.addEventListener('click', goFase3);
+        }
+      });
+
+      // Cálculo Mental button
+      const calculoBtn = document.querySelector('#fase3-screen main > div > div:first-child');
+      if (calculoBtn) {
+        calculoBtn.addEventListener('click', function() {
+          document.getElementById('fase3-screen').classList.add('hidden');
+          document.getElementById('calculo-screen').classList.remove('hidden');
+          startGame();
+        });
+      }
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d02e988554f2efd',t:'MTc3MTQ3NDIwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
