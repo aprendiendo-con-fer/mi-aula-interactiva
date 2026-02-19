@@ -1,325 +1,220 @@
-<!doctype html>
-<html lang="es" class="h-full">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Aula Interactiva</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&amp;family=Fredoka:wght@400;500;600&amp;display=swap" rel="stylesheet">
-  <style>
-    * { font-family: 'Quicksand', sans-serif; }
-    .title-font { font-family: 'Fredoka', sans-serif; }
-    
-    /* Gradient background */
-    .gradient-bg {
-      background: linear-gradient(135deg, #E8E0F0 0%, #D4E5F7 50%, #F0E6F0 100%);
-    }
-    
-    /* Floating shapes animation */
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-15px) rotate(5deg); }
-    }
-    
-    @keyframes floatSlow {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-10px) rotate(-3deg); }
-    }
-    
-    .float-1 { animation: float 6s ease-in-out infinite; }
-    .float-2 { animation: floatSlow 8s ease-in-out infinite 1s; }
-    .float-3 { animation: float 7s ease-in-out infinite 2s; }
-    
-    /* Button hover effects */
-    .phase-btn {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-    
-    .phase-btn:hover {
-      transform: translateY(-5px) scale(1.05);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-    
-    /* Heart pulse animation */
-    @keyframes heartPulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-    
-    .heart:hover {
-      animation: heartPulse 0.6s ease-in-out infinite;
-    }
-    
-    /* Page transitions */
-    .page {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-      display: none;
-    }
-    
-    .page.active {
-      opacity: 1;
-      transform: translateY(0);
-      display: flex;
-    }
-  </style>
-  <style>body { box-sizing: border-box; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
- </head>
- <body class="h-full">
-  <div id="app-wrapper" class="h-full w-full gradient-bg relative overflow-auto"><!-- Decorative floating shapes -->
-   <div class="absolute inset-0 overflow-hidden pointer-events-none">
-    <div class="float-1 absolute top-16 left-8 w-16 h-16 bg-purple-200/40 rounded-full blur-sm"></div>
-    <div class="float-2 absolute top-32 right-12 w-24 h-24 bg-blue-200/40 rounded-full blur-sm"></div>
-    <div class="float-3 absolute bottom-32 left-16 w-20 h-20 bg-pink-200/40 rounded-full blur-sm"></div>
-    <div class="float-1 absolute bottom-48 right-20 w-14 h-14 bg-indigo-200/40 rounded-full blur-sm"></div>
-    <div class="float-2 absolute top-1/2 left-1/3 w-12 h-12 bg-violet-200/30 rounded-full blur-sm"></div>
-   </div><!-- Top right UI elements: Hearts & Timer -->
-   <div class="absolute top-4 right-4 flex items-center gap-3 z-10">
-    <div class="flex gap-1">
-     <svg class="heart w-5 h-5 cursor-pointer" viewbox="0 0 24 24" fill="#E57373"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-     </svg>
-     <svg class="heart w-5 h-5 cursor-pointer" viewbox="0 0 24 24" fill="#E57373"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-     </svg>
-     <svg class="heart w-5 h-5 cursor-pointer" viewbox="0 0 24 24" fill="#E57373"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-     </svg>
-    </div>
-    <svg class="w-6 h-6 text-gray-400" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" /> <path d="M12 6v6l4 2" />
-    </svg>
-   </div><!-- PAGE: Portada (Home) -->
-   <div id="page-home" class="page active flex-col items-center justify-center min-h-full px-6 py-16"><!-- School icon/logo -->
-    <div class="mb-6">
-     <div class="w-20 h-20 bg-white/70 rounded-2xl flex items-center justify-center shadow-lg backdrop-blur-sm">
-      <svg class="w-12 h-12 text-indigo-400" viewbox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z" />
-      </svg>
-     </div>
-    </div><!-- Main title -->
-    <h1 id="main-title" class="title-font text-2xl sm:text-3xl md:text-4xl font-semibold text-center text-indigo-800 mb-2 leading-tight max-w-2xl">Escuela Primaria Venustiano Carranza</h1>
-    <p id="school-code-display" class="text-lg sm:text-xl text-indigo-600/80 font-medium mb-6">26DPR1320W</p><!-- Decorative line -->
-    <div class="flex items-center gap-3 mb-6">
-     <div class="w-12 h-0.5 bg-gradient-to-r from-transparent to-purple-300 rounded-full"></div>
-     <div class="w-2 h-2 bg-purple-300 rounded-full"></div>
-     <div class="w-12 h-0.5 bg-gradient-to-l from-transparent to-purple-300 rounded-full"></div>
-    </div><!-- Teacher credit -->
-    <p id="teacher-credit" class="text-sm sm:text-base text-gray-600 mb-10 text-center">Elaborado por <span class="font-semibold text-indigo-600">Mtra. María Fernanda Flores Valenzuela</span></p><!-- Phase buttons grid -->
-    <div class="grid grid-cols-2 gap-6 sm:gap-8 max-w-3xl mb-8"><!-- Fase 3 --> <button onclick="navigateTo('fase3')" class="phase-btn group flex flex-col items-center justify-center w-40 h-40 sm:w-56 sm:h-56 bg-white/80 backdrop-blur-sm rounded-full border-4 border-purple-200 hover:border-purple-400"> <span class="text-6xl sm:text-7xl mb-3">📚</span> <span id="btn-fase3" class="title-font text-lg sm:text-2xl font-semibold text-purple-700 group-hover:text-purple-900">Fase 3</span> </button> <!-- Fase 4 --> <button onclick="navigateTo('fase4')" class="phase-btn group flex flex-col items-center justify-center w-40 h-40 sm:w-56 sm:h-56 bg-white/80 backdrop-blur-sm rounded-full border-4 border-blue-200 hover:border-blue-400"> <span class="text-6xl sm:text-7xl mb-3">✏️</span> <span id="btn-fase4" class="title-font text-lg sm:text-2xl font-semibold text-blue-700 group-hover:text-blue-900">Fase 4</span> </button> <!-- Fase 5 --> <button onclick="navigateTo('fase5')" class="phase-btn group flex flex-col items-center justify-center w-40 h-40 sm:w-56 sm:h-56 bg-white/80 backdrop-blur-sm rounded-full border-4 border-pink-200 hover:border-pink-400"> <span class="text-6xl sm:text-7xl mb-3">🎨</span> <span id="btn-fase5" class="title-font text-lg sm:text-2xl font-semibold text-pink-700 group-hover:text-pink-900">Fase 5</span> </button> <!-- Inglés --> <button onclick="navigateTo('ingles')" class="phase-btn group flex flex-col items-center justify-center w-40 h-40 sm:w-56 sm:h-56 bg-white/80 backdrop-blur-sm rounded-full border-4 border-teal-200 hover:border-teal-400"> <span class="text-6xl sm:text-7xl mb-3">🌎</span> <span id="btn-ingles" class="title-font text-lg sm:text-2xl font-semibold text-teal-700 group-hover:text-teal-900">Inglés</span> </button>
-    </div><!-- Subtitle -->
-    <p class="text-xs text-gray-400 mt-4">✨ Mi Aula Interactiva ✨</p>
-   </div><!-- PAGE: Fase 3 -->
-   <div id="page-fase3" class="page flex-col items-center justify-center min-h-full px-6 py-16">
-    <div class="bg-white/70 backdrop-blur-sm rounded-3xl p-8 sm:p-12 max-w-lg w-full shadow-xl border border-purple-100">
-     <div class="text-center"><span class="text-5xl mb-4 block">📚</span>
-      <h2 id="title-fase3" class="title-font text-3xl font-bold text-purple-700 mb-4">Fase 3</h2>
-      <p class="text-gray-600 mb-6">Contenido educativo para 1° y 2° grado</p>
-      <div class="w-full h-32 bg-purple-50 rounded-2xl flex items-center justify-center border-2 border-dashed border-purple-200">
-       <p class="text-purple-400 text-sm">Espacio para contenido</p>
-      </div>
-     </div>
-    </div>
-   </div><!-- PAGE: Fase 4 -->
-   <div id="page-fase4" class="page flex-col items-center justify-center min-h-full px-6 py-16">
-    <div class="bg-white/70 backdrop-blur-sm rounded-3xl p-8 sm:p-12 max-w-lg w-full shadow-xl border border-blue-100">
-     <div class="text-center"><span class="text-5xl mb-4 block">✏️</span>
-      <h2 id="title-fase4" class="title-font text-3xl font-bold text-blue-700 mb-4">Fase 4</h2>
-      <p class="text-gray-600 mb-6">Contenido educativo para 3° y 4° grado</p>
-      <div class="w-full h-32 bg-blue-50 rounded-2xl flex items-center justify-center border-2 border-dashed border-blue-200">
-       <p class="text-blue-400 text-sm">Espacio para contenido</p>
-      </div>
-     </div>
-    </div>
-   </div><!-- PAGE: Fase 5 -->
-   <div id="page-fase5" class="page flex-col items-center justify-center min-h-full px-6 py-16">
-    <div class="bg-white/70 backdrop-blur-sm rounded-3xl p-8 sm:p-12 max-w-lg w-full shadow-xl border border-pink-100">
-     <div class="text-center"><span class="text-5xl mb-4 block">🎨</span>
-      <h2 id="title-fase5" class="title-font text-3xl font-bold text-pink-700 mb-4">Fase 5</h2>
-      <p class="text-gray-600 mb-6">Contenido educativo para 5° y 6�� grado</p>
-      <div class="w-full h-32 bg-pink-50 rounded-2xl flex items-center justify-center border-2 border-dashed border-pink-200">
-       <p class="text-pink-400 text-sm">Espacio para contenido</p>
-      </div>
-     </div>
-    </div>
-   </div><!-- PAGE: Inglés -->
-   <div id="page-ingles" class="page flex-col items-center justify-center min-h-full px-6 py-16">
-    <div class="bg-white/70 backdrop-blur-sm rounded-3xl p-8 sm:p-12 max-w-lg w-full shadow-xl border border-teal-100">
-     <div class="text-center"><span class="text-5xl mb-4 block">🌎</span>
-      <h2 id="title-ingles" class="title-font text-3xl font-bold text-teal-700 mb-4">Inglés</h2>
-      <p class="text-gray-600 mb-6">English content for all grades</p>
-      <div class="w-full h-32 bg-teal-50 rounded-2xl flex items-center justify-center border-2 border-dashed border-teal-200">
-       <p class="text-teal-400 text-sm">Space for content</p>
-      </div>
-     </div>
-    </div>
-   </div><!-- Home button (visible on all pages except home) --> <button id="home-btn" onclick="navigateTo('home')" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm px-5 py-2.5 rounded-full shadow-lg border border-gray-200 flex items-center gap-2 hover:bg-white hover:shadow-xl transition-all duration-300 z-20" style="display: none;">
-    <svg class="w-4 h-4 text-indigo-500" viewbox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-    </svg><span class="text-sm font-medium text-indigo-600">Inicio</span> </button>
-  </div>
-  <script>
-    // Default configuration
-    const defaultConfig = {
-      school_title: 'Escuela Primaria Venustiano Carranza',
-      school_code: '26DPR1320W',
-      teacher_name: 'Mtra. María Fernanda Flores Valenzuela',
-      phase3_text: 'Fase 3',
-      phase4_text: 'Fase 4',
-      phase5_text: 'Fase 5',
-      english_text: 'Inglés',
-      primary_color: '#5C6BC0',
-      secondary_color: '#FFFFFF',
-      text_color: '#3730A3',
-      accent_color: '#E8E0F0',
-      button_color: '#D4E5F7',
-      font_family: 'Quicksand',
-      font_size: 16
-    };
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✨ Mi Aula Interactiva - Fase 3 ✨</title>
 
-    let currentPage = 'home';
+<style>
+body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:linear-gradient(135deg,#4b0082,#0077ff,#39ff14);
+    color:white;
+    text-align:center;
+}
 
-    // Navigation function
-    function navigateTo(pageId) {
-      // Hide all pages
-      document.querySelectorAll('.page').forEach(page => {
-        page.classList.remove('active');
-      });
-      
-      // Show target page
-      const targetPage = document.getElementById('page-' + pageId);
-      if (targetPage) {
-        targetPage.classList.add('active');
-      }
-      
-      // Show/hide home button
-      const homeBtn = document.getElementById('home-btn');
-      if (pageId === 'home') {
-        homeBtn.style.display = 'none';
-      } else {
-        homeBtn.style.display = 'flex';
-      }
-      
-      currentPage = pageId;
-    }
+header{
+    background:black;
+    padding:15px;
+    font-size:18px;
+}
 
-    // Update UI based on config
-    async function onConfigChange(config) {
-      const cfg = { ...defaultConfig, ...config };
-      
-      // Update main title
-      document.getElementById('main-title').textContent = cfg.school_title;
-      document.getElementById('school-code-display').textContent = cfg.school_code;
-      
-      // Update teacher credit
-      const teacherSpan = document.querySelector('#teacher-credit span');
-      if (teacherSpan) teacherSpan.textContent = cfg.teacher_name;
-      
-      // Update button labels
-      document.getElementById('btn-fase3').textContent = cfg.phase3_text;
-      document.getElementById('btn-fase4').textContent = cfg.phase4_text;
-      document.getElementById('btn-fase5').textContent = cfg.phase5_text;
-      document.getElementById('btn-ingles').textContent = cfg.english_text;
-      
-      // Update page titles
-      document.getElementById('title-fase3').textContent = cfg.phase3_text;
-      document.getElementById('title-fase4').textContent = cfg.phase4_text;
-      document.getElementById('title-fase5').textContent = cfg.phase5_text;
-      document.getElementById('title-ingles').textContent = cfg.english_text;
-      
-      // Apply font family
-      const fontStack = `${cfg.font_family}, sans-serif`;
-      document.body.style.fontFamily = fontStack;
-      
-      // Apply base font size scaling
-      const baseSize = cfg.font_size;
-      document.getElementById('main-title').style.fontSize = `${baseSize * 2}px`;
-      document.getElementById('school-code-display').style.fontSize = `${baseSize * 1.25}px`;
-    }
+h1{
+    margin:10px 0;
+}
 
-    // Map config to capabilities
-    function mapToCapabilities(config) {
-      const cfg = { ...defaultConfig, ...config };
-      return {
-        recolorables: [
-          {
-            get: () => cfg.accent_color,
-            set: (value) => {
-              cfg.accent_color = value;
-              if (window.elementSdk) window.elementSdk.setConfig({ accent_color: value });
-            }
-          },
-          {
-            get: () => cfg.secondary_color,
-            set: (value) => {
-              cfg.secondary_color = value;
-              if (window.elementSdk) window.elementSdk.setConfig({ secondary_color: value });
-            }
-          },
-          {
-            get: () => cfg.text_color,
-            set: (value) => {
-              cfg.text_color = value;
-              if (window.elementSdk) window.elementSdk.setConfig({ text_color: value });
-            }
-          },
-          {
-            get: () => cfg.primary_color,
-            set: (value) => {
-              cfg.primary_color = value;
-              if (window.elementSdk) window.elementSdk.setConfig({ primary_color: value });
-            }
-          },
-          {
-            get: () => cfg.button_color,
-            set: (value) => {
-              cfg.button_color = value;
-              if (window.elementSdk) window.elementSdk.setConfig({ button_color: value });
-            }
-          }
-        ],
-        borderables: [],
-        fontEditable: {
-          get: () => cfg.font_family,
-          set: (value) => {
-            cfg.font_family = value;
-            if (window.elementSdk) window.elementSdk.setConfig({ font_family: value });
-          }
-        },
-        fontSizeable: {
-          get: () => cfg.font_size,
-          set: (value) => {
-            cfg.font_size = value;
-            if (window.elementSdk) window.elementSdk.setConfig({ font_size: value });
-          }
+button{
+    padding:15px;
+    margin:10px;
+    font-size:16px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    background:#ff6f00;
+    color:white;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+.hidden{
+    display:none;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:15px;
+    padding:20px;
+}
+
+.game-box{
+    background:white;
+    color:black;
+    padding:20px;
+    border-radius:15px;
+    max-width:500px;
+    margin:20px auto;
+}
+
+#scoreBoard{
+    font-size:20px;
+    margin:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+Mtra. María Fernanda Flores Valenzuela | Zona Escolar 105 | CCT: 26DPR1320W
+</header>
+
+<h1>🚀 Fase 3 - Los Exploradores</h1>
+
+<div id="scoreBoard">
+⭐ Puntos Totales: <span id="totalScore">0</span>
+</div>
+
+<div id="menuFase3" class="grid">
+<button onclick="openGame('calculo')">🧮 Cálculo Mental</button>
+<button onclick="openGame('alfabetizacion')">✏ Alfabetización</button>
+<button onclick="openGame('lectura')">📖 Comprensión Lectora</button>
+<button onclick="openGame('nombre')">🪪 Escribe tu Nombre</button>
+<button onclick="openGame('oracion')">📝 Completa la Oración</button>
+<button onclick="openGame('medio')">🌿 Medio Ambiente</button>
+<button onclick="openGame('figuras')">🔺 Figuras Geométricas</button>
+<button onclick="openGame('tiendita')">🛒 La Tiendita</button>
+<button onclick="openGame('secuencia')">🔄 Secuencia y Orden</button>
+<button onclick="openGame('letras')">🔤 Letras vs Números</button>
+</div>
+
+<div id="gameArea"></div>
+
+<script>
+
+let totalScore = 0;
+let timer;
+let timeLeft = 30;
+
+function updateScore(points){
+    totalScore += points;
+    document.getElementById("totalScore").textContent = totalScore;
+}
+
+function startTimer(endCallback){
+    timeLeft = 30;
+    const gameArea = document.getElementById("gameArea");
+    const timerDisplay = document.createElement("p");
+    timerDisplay.id="timer";
+    timerDisplay.textContent = "⏱ Tiempo: 30";
+    gameArea.appendChild(timerDisplay);
+
+    timer = setInterval(()=>{
+        timeLeft--;
+        timerDisplay.textContent = "⏱ Tiempo: " + timeLeft;
+        if(timeLeft<=0){
+            clearInterval(timer);
+            endCallback();
         }
-      };
+    },1000);
+}
+
+function openGame(game){
+    document.getElementById("menuFase3").classList.add("hidden");
+    const area = document.getElementById("gameArea");
+    area.innerHTML="";
+
+    if(game==="calculo"){ calculoMental(); }
+    if(game==="letras"){ letrasVsNumeros(); }
+    else if(game!=="calculo" && game!=="letras"){
+        area.innerHTML="<div class='game-box'><h2>🎮 Juego en construcción</h2><button onclick='goBack()'>Volver</button></div>";
+    }
+}
+
+function goBack(){
+    clearInterval(timer);
+    document.getElementById("gameArea").innerHTML="";
+    document.getElementById("menuFase3").classList.remove("hidden");
+}
+
+//////////////////////////////
+// 🧮 CÁLCULO MENTAL
+//////////////////////////////
+
+function calculoMental(){
+    const area=document.getElementById("gameArea");
+    let localScore=0;
+
+    area.innerHTML="<div class='game-box'><h2>🧮 Cálculo Mental</h2><div id='question'></div><input id='answer' type='number'><br><button onclick='checkAnswer()'>Responder</button><div id='feedback'></div><button onclick='goBack()'>Salir</button></div>";
+
+    startTimer(endGame);
+
+    function newQuestion(){
+        let a=Math.floor(Math.random()*20);
+        let b=Math.floor(Math.random()*20);
+        let op=Math.random()>0.5?"+":"-";
+        window.currentAnswer = op==="+"?a+b:a-b;
+        document.getElementById("question").textContent = `${a} ${op} ${b} = ?`;
     }
 
-    // Map config to edit panel values
-    function mapToEditPanelValues(config) {
-      const cfg = { ...defaultConfig, ...config };
-      return new Map([
-        ['school_title', cfg.school_title],
-        ['school_code', cfg.school_code],
-        ['teacher_name', cfg.teacher_name],
-        ['phase3_text', cfg.phase3_text],
-        ['phase4_text', cfg.phase4_text],
-        ['phase5_text', cfg.phase5_text],
-        ['english_text', cfg.english_text]
-      ]);
+    window.checkAnswer=function(){
+        let val=parseInt(document.getElementById("answer").value);
+        if(val===window.currentAnswer){
+            updateScore(10);
+            localScore+=10;
+            document.getElementById("feedback").textContent="✅ Correcto!";
+        }else{
+            document.getElementById("feedback").textContent="❌ Intenta de nuevo";
+        }
+        document.getElementById("answer").value="";
+        newQuestion();
     }
 
-    // Initialize Element SDK
-    if (window.elementSdk) {
-      window.elementSdk.init({
-        defaultConfig,
-        onConfigChange,
-        mapToCapabilities,
-        mapToEditPanelValues
-      });
+    function endGame(){
+        area.innerHTML="<div class='game-box'><h2>🎉 ¡Excelente! Has completado la actividad</h2><p>Puntos ganados: "+localScore+"</p><button onclick='goBack()'>Volver</button></div>";
     }
 
-    // Initial render
-    onConfigChange(defaultConfig);
-  </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d02a2f1619b6e2c',t:'MTc3MTQ3MTMxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    newQuestion();
+}
+
+//////////////////////////////
+// 🔤 LETRAS VS NÚMEROS
+//////////////////////////////
+
+function letrasVsNumeros(){
+    const area=document.getElementById("gameArea");
+    let localScore=0;
+    let characters=["A","3","M","7","B","!","K","9","P","?"];
+
+    area.innerHTML="<div class='game-box'><h2>🔤 Letras vs Números</h2><div id='charContainer'></div><div id='feedback'></div><button onclick='goBack()'>Salir</button></div>";
+
+    const container=document.getElementById("charContainer");
+
+    characters.forEach(char=>{
+        const btn=document.createElement("button");
+        btn.textContent=char;
+        btn.onclick=function(){
+            if(/[A-Za-z]/.test(char)){
+                updateScore(5);
+                localScore+=5;
+                document.getElementById("feedback").textContent="✅ Correcto";
+            }else{
+                document.getElementById("feedback").textContent="❌ No es letra";
+            }
+        }
+        container.appendChild(btn);
+    });
+
+    startTimer(()=>{
+        area.innerHTML="<div class='game-box'><h2>🎉 ¡Excelente! Has completado la actividad</h2><p>Puntos ganados: "+localScore+"</p><button onclick='goBack()'>Volver</button></div>";
+    });
+}
+
+</script>
+</body>
 </html>
