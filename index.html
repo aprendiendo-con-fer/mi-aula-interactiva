@@ -3,218 +3,151 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>✨ Mi Aula Interactiva - Fase 3 ✨</title>
+<title>✨ Mi Aula Interactiva ✨</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
 
 <style>
+
 body{
     margin:0;
-    font-family:Arial, Helvetica, sans-serif;
-    background:linear-gradient(135deg,#4b0082,#0077ff,#39ff14);
-    color:white;
-    text-align:center;
+    font-family:'Quicksand',sans-serif;
+    background:linear-gradient(135deg,#E8E0F0,#D4E5F7,#F0E6F0);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 }
 
 header{
-    background:black;
-    padding:15px;
-    font-size:18px;
+    margin-top:40px;
+    text-align:center;
 }
 
 h1{
+    font-family:'Fredoka',sans-serif;
+    color:#5C4B8A;
     margin:10px 0;
 }
 
-button{
-    padding:15px;
-    margin:10px;
-    font-size:16px;
-    border:none;
-    border-radius:12px;
-    cursor:pointer;
-    background:#ff6f00;
-    color:white;
-    font-weight:bold;
-    transition:0.3s;
+.sub{
+    color:#7A6FA1;
 }
 
-button:hover{
-    transform:scale(1.05);
+.card{
+    background:white;
+    padding:30px;
+    border-radius:25px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+    width:90%;
+    max-width:900px;
+    margin-top:30px;
+}
+
+.menu-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:20px;
+}
+
+.btn-game{
+    background:#ffffff;
+    border:3px solid #E0D7F5;
+    border-radius:20px;
+    padding:20px;
+    font-size:16px;
+    cursor:pointer;
+    transition:all .3s ease;
+    box-shadow:0 6px 15px rgba(0,0,0,0.05);
+}
+
+.btn-game:hover{
+    transform:translateY(-5px);
+    border-color:#B39DDB;
 }
 
 .hidden{
     display:none;
 }
 
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-    gap:15px;
-    padding:20px;
+.score-box{
+    margin-top:20px;
+    font-weight:600;
+    color:#5C4B8A;
 }
 
-.game-box{
-    background:white;
-    color:black;
-    padding:20px;
-    border-radius:15px;
-    max-width:500px;
-    margin:20px auto;
+.back-btn{
+    margin-top:20px;
+    padding:10px 20px;
+    border:none;
+    border-radius:20px;
+    background:#B39DDB;
+    color:white;
+    cursor:pointer;
 }
 
-#scoreBoard{
-    font-size:20px;
-    margin:10px;
-}
 </style>
 </head>
 
 <body>
 
 <header>
-Mtra. María Fernanda Flores Valenzuela | Zona Escolar 105 | CCT: 26DPR1320W
+<h1>✨ Mi Aula Interactiva ✨</h1>
+<p class="sub">Mtra. María Fernanda Flores Valenzuela</p>
+<p class="sub">Zona Escolar 105 | CCT: 26DPR1320W</p>
 </header>
 
-<h1>🚀 Fase 3 - Los Exploradores</h1>
-
-<div id="scoreBoard">
-⭐ Puntos Totales: <span id="totalScore">0</span>
+<div class="card" id="home">
+    <h2 style="text-align:center;color:#6A5ACD;">🚀 Fase 3 - Exploradores</h2>
+    <div style="text-align:center;margin-top:20px;">
+        <button class="btn-game" onclick="openFase3()">Entrar</button>
+    </div>
 </div>
 
-<div id="menuFase3" class="grid">
-<button onclick="openGame('calculo')">🧮 Cálculo Mental</button>
-<button onclick="openGame('alfabetizacion')">✏ Alfabetización</button>
-<button onclick="openGame('lectura')">📖 Comprensión Lectora</button>
-<button onclick="openGame('nombre')">🪪 Escribe tu Nombre</button>
-<button onclick="openGame('oracion')">📝 Completa la Oración</button>
-<button onclick="openGame('medio')">🌿 Medio Ambiente</button>
-<button onclick="openGame('figuras')">🔺 Figuras Geométricas</button>
-<button onclick="openGame('tiendita')">🛒 La Tiendita</button>
-<button onclick="openGame('secuencia')">🔄 Secuencia y Orden</button>
-<button onclick="openGame('letras')">🔤 Letras vs Números</button>
-</div>
+<div class="card hidden" id="fase3">
 
-<div id="gameArea"></div>
+    <h2 style="text-align:center;color:#6A5ACD;">🎮 Juegos Fase 3</h2>
+
+    <div class="score-box">
+        ⭐ Puntos Totales: <span id="totalScore">0</span>
+    </div>
+
+    <div class="menu-grid" style="margin-top:25px;">
+
+        <button class="btn-game">🧮 Cálculo Mental</button>
+        <button class="btn-game">✏ Alfabetización</button>
+        <button class="btn-game">📖 Comprensión Lectora</button>
+        <button class="btn-game">🪪 Escribe tu Nombre</button>
+        <button class="btn-game">📝 Completa la Oración</button>
+        <button class="btn-game">🌿 Medio Ambiente</button>
+        <button class="btn-game">🔺 Figuras Geométricas</button>
+        <button class="btn-game">🛒 La Tiendita</button>
+        <button class="btn-game">🔄 Secuencia y Orden</button>
+        <button class="btn-game">🔤 Letras vs Números</button>
+
+    </div>
+
+    <div style="text-align:center;">
+        <button class="back-btn" onclick="goHome()">Volver al Inicio</button>
+    </div>
+
+</div>
 
 <script>
 
 let totalScore = 0;
-let timer;
-let timeLeft = 30;
 
-function updateScore(points){
-    totalScore += points;
-    document.getElementById("totalScore").textContent = totalScore;
+function openFase3(){
+    document.getElementById("home").classList.add("hidden");
+    document.getElementById("fase3").classList.remove("hidden");
 }
 
-function startTimer(endCallback){
-    timeLeft = 30;
-    const gameArea = document.getElementById("gameArea");
-    const timerDisplay = document.createElement("p");
-    timerDisplay.id="timer";
-    timerDisplay.textContent = "⏱ Tiempo: 30";
-    gameArea.appendChild(timerDisplay);
-
-    timer = setInterval(()=>{
-        timeLeft--;
-        timerDisplay.textContent = "⏱ Tiempo: " + timeLeft;
-        if(timeLeft<=0){
-            clearInterval(timer);
-            endCallback();
-        }
-    },1000);
-}
-
-function openGame(game){
-    document.getElementById("menuFase3").classList.add("hidden");
-    const area = document.getElementById("gameArea");
-    area.innerHTML="";
-
-    if(game==="calculo"){ calculoMental(); }
-    if(game==="letras"){ letrasVsNumeros(); }
-    else if(game!=="calculo" && game!=="letras"){
-        area.innerHTML="<div class='game-box'><h2>🎮 Juego en construcción</h2><button onclick='goBack()'>Volver</button></div>";
-    }
-}
-
-function goBack(){
-    clearInterval(timer);
-    document.getElementById("gameArea").innerHTML="";
-    document.getElementById("menuFase3").classList.remove("hidden");
-}
-
-//////////////////////////////
-// 🧮 CÁLCULO MENTAL
-//////////////////////////////
-
-function calculoMental(){
-    const area=document.getElementById("gameArea");
-    let localScore=0;
-
-    area.innerHTML="<div class='game-box'><h2>🧮 Cálculo Mental</h2><div id='question'></div><input id='answer' type='number'><br><button onclick='checkAnswer()'>Responder</button><div id='feedback'></div><button onclick='goBack()'>Salir</button></div>";
-
-    startTimer(endGame);
-
-    function newQuestion(){
-        let a=Math.floor(Math.random()*20);
-        let b=Math.floor(Math.random()*20);
-        let op=Math.random()>0.5?"+":"-";
-        window.currentAnswer = op==="+"?a+b:a-b;
-        document.getElementById("question").textContent = `${a} ${op} ${b} = ?`;
-    }
-
-    window.checkAnswer=function(){
-        let val=parseInt(document.getElementById("answer").value);
-        if(val===window.currentAnswer){
-            updateScore(10);
-            localScore+=10;
-            document.getElementById("feedback").textContent="✅ Correcto!";
-        }else{
-            document.getElementById("feedback").textContent="❌ Intenta de nuevo";
-        }
-        document.getElementById("answer").value="";
-        newQuestion();
-    }
-
-    function endGame(){
-        area.innerHTML="<div class='game-box'><h2>🎉 ¡Excelente! Has completado la actividad</h2><p>Puntos ganados: "+localScore+"</p><button onclick='goBack()'>Volver</button></div>";
-    }
-
-    newQuestion();
-}
-
-//////////////////////////////
-// 🔤 LETRAS VS NÚMEROS
-//////////////////////////////
-
-function letrasVsNumeros(){
-    const area=document.getElementById("gameArea");
-    let localScore=0;
-    let characters=["A","3","M","7","B","!","K","9","P","?"];
-
-    area.innerHTML="<div class='game-box'><h2>🔤 Letras vs Números</h2><div id='charContainer'></div><div id='feedback'></div><button onclick='goBack()'>Salir</button></div>";
-
-    const container=document.getElementById("charContainer");
-
-    characters.forEach(char=>{
-        const btn=document.createElement("button");
-        btn.textContent=char;
-        btn.onclick=function(){
-            if(/[A-Za-z]/.test(char)){
-                updateScore(5);
-                localScore+=5;
-                document.getElementById("feedback").textContent="✅ Correcto";
-            }else{
-                document.getElementById("feedback").textContent="❌ No es letra";
-            }
-        }
-        container.appendChild(btn);
-    });
-
-    startTimer(()=>{
-        area.innerHTML="<div class='game-box'><h2>🎉 ¡Excelente! Has completado la actividad</h2><p>Puntos ganados: "+localScore+"</p><button onclick='goBack()'>Volver</button></div>";
-    });
+function goHome(){
+    document.getElementById("fase3").classList.add("hidden");
+    document.getElementById("home").classList.remove("hidden");
 }
 
 </script>
+
 </body>
 </html>
