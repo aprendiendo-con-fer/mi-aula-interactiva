@@ -9,93 +9,224 @@
 
 <style>
 body{
-    background: linear-gradient(135deg,#6a00f4,#00c3ff,#39ff14);
-    background-size: 400% 400%;
-    animation: fondo 12s ease infinite;
-}
-@keyframes fondo{
-    0%{background-position:0% 50%;}
-    50%{background-position:100% 50%;}
-    100%{background-position:0% 50%;}
+  background: linear-gradient(135deg,#6a00f4,#00b4ff,#39ff14);
+  min-height:100vh;
 }
 .card{
-    transition: all .3s ease;
+  transition: all .3s ease;
 }
 .card:hover{
-    transform: scale(1.08);
-    box-shadow: 0 0 25px #ffffff;
+  transform: scale(1.05);
 }
+.hidden{ display:none; }
 </style>
 </head>
 
-<body class="text-white font-bold min-h-screen">
+<body class="text-white font-bold">
 
-<!-- ENCABEZADO -->
-<header class="text-center p-6 bg-black bg-opacity-40 backdrop-blur-md">
-    <h1 class="text-4xl md:text-5xl">✨ Mi Aula Interactiva ✨</h1>
-    <h2 class="text-2xl mt-2 text-yellow-300">Exploradores del Saber</h2>
-    <p class="mt-3 text-sm md:text-base">
-        Mtra. María Fernanda Flores Valenzuela | Zona Escolar 105 | CCT: 26DPR1320W
-    </p>
-</header>
+<div class="text-center p-6">
+  <h1 class="text-4xl">✨ Mi Aula Interactiva - Exploradores del Saber ✨</h1>
+  <p class="mt-2">Mtra. María Fernanda Flores Valenzuela | Zona Escolar 105 | CCT: 26DPR1320W</p>
+</div>
 
-<!-- CONTENIDO -->
-<main class="p-10">
+<!-- MENU PRINCIPAL -->
+<div id="menu" class="grid grid-cols-1 md:grid-cols-2 gap-6 p-8">
 
-    <!-- FASE 3 -->
-    <section class="text-center">
+  <div onclick="showSection('fase3')" class="card bg-pink-500 p-6 rounded-2xl shadow-xl text-center cursor-pointer">
+    <h2 class="text-2xl">🌸 FASE 3</h2>
+    <p>Alfabetización - Cálculo Mental - Comprensión</p>
+  </div>
 
-        <div class="mb-10">
-            <h2 class="text-5xl mb-2">🌸 FASE 3</h2>
-            <p class="text-xl text-yellow-200">1º y 2º Grado</p>
-        </div>
+  <div onclick="showSection('english')" class="card bg-blue-500 p-6 rounded-2xl shadow-xl text-center cursor-pointer">
+    <h2 class="text-2xl">🇬🇧 English Vocabulary</h2>
+    <p>Animals Game</p>
+  </div>
 
-        <!-- CUADRÍCULA -->
-        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+</div>
 
-            <!-- Alfabetización -->
-            <div class="card bg-pink-500 rounded-3xl p-8 shadow-xl cursor-pointer">
-                <div class="text-6xl mb-4">📝</div>
-                <h3 class="text-2xl mb-2">Alfabetización</h3>
-                <p class="mb-4">Lectura y escritura básica</p>
-                <div class="bg-black bg-opacity-40 rounded-xl p-3 text-sm">
-                    ⭐ Puntuación: 0<br>
-                    ⏱ Tiempo: 00:00
-                </div>
-            </div>
+<!-- FASE 3 -->
+<div id="fase3" class="hidden text-center p-6">
+  <button onclick="goBack()" class="bg-black px-4 py-2 rounded mb-4">⬅ Volver</button>
+  <h2 class="text-3xl mb-6">🌸 FASE 3</h2>
 
-            <!-- Comprensión -->
-            <div class="card bg-orange-500 rounded-3xl p-8 shadow-xl cursor-pointer">
-                <div class="text-6xl mb-4">📖</div>
-                <h3 class="text-2xl mb-2">Comprensión Lectora</h3>
-                <p class="mb-4">Entender textos sencillos</p>
-                <div class="bg-black bg-opacity-40 rounded-xl p-3 text-sm">
-                    ⭐ Puntuación: 0<br>
-                    ⏱ Tiempo: 00:00
-                </div>
-            </div>
+  <div class="grid md:grid-cols-3 gap-6">
 
-            <!-- Cálculo Mental -->
-            <div class="card bg-green-500 rounded-3xl p-8 shadow-xl cursor-pointer">
-                <div class="text-6xl mb-4">🧮</div>
-                <h3 class="text-2xl mb-2">Cálculo Mental</h3>
-                <p class="mb-4">Operaciones rápidas</p>
-                <div class="bg-black bg-opacity-40 rounded-xl p-3 text-sm">
-                    ⭐ Puntuación: 0<br>
-                    ⏱ Tiempo: 00:00
-                </div>
-            </div>
+    <div onclick="startGame('alfa')" class="card bg-purple-600 p-6 rounded-2xl cursor-pointer">
+      📝 Alfabetización
+    </div>
 
-        </div>
+    <div onclick="startGame('math')" class="card bg-orange-500 p-6 rounded-2xl cursor-pointer">
+      🧮 Cálculo Mental
+    </div>
 
-    </section>
+    <div onclick="startGame('reading')" class="card bg-green-500 p-6 rounded-2xl cursor-pointer">
+      📖 Comprensión Lectora
+    </div>
 
-</main>
+  </div>
+</div>
 
-<!-- FOOTER -->
-<footer class="text-center p-6 bg-black bg-opacity-40 mt-10">
-    © 2026 Mi Aula Interactiva | Exploradores del Saber
-</footer>
+<!-- ENGLISH -->
+<div id="english" class="hidden text-center p-6">
+  <button onclick="goBack()" class="bg-black px-4 py-2 rounded mb-4">⬅ Volver</button>
+  <h2 class="text-3xl mb-6">🇬🇧 English Vocabulary</h2>
+
+  <div id="englishGame" class="bg-white text-black p-6 rounded-2xl max-w-xl mx-auto">
+    <img id="animalImg" class="mx-auto mb-4" width="150">
+    <div id="options"></div>
+  </div>
+</div>
+
+<!-- AREA DE JUEGO -->
+<div id="gameArea" class="hidden text-center p-6">
+  <button onclick="goBack()" class="bg-black px-4 py-2 rounded mb-4">⬅ Volver</button>
+
+  <h2 id="gameTitle" class="text-3xl mb-4"></h2>
+
+  <p>⏱ Tiempo: <span id="time">30</span></p>
+  <p>⭐ Puntuación: <span id="score">0</span></p>
+
+  <div id="question" class="mt-6 text-xl"></div>
+  <div id="answers" class="mt-4"></div>
+</div>
+
+<script>
+
+let score=0;
+let time=30;
+let timer;
+
+function showSection(id){
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById(id).classList.remove("hidden");
+}
+
+function goBack(){
+  clearInterval(timer);
+  location.reload();
+}
+
+/* ------------------ FASE 3 ------------------ */
+
+function startGame(type){
+  document.getElementById("fase3").classList.add("hidden");
+  document.getElementById("gameArea").classList.remove("hidden");
+
+  score=0;
+  time=30;
+  document.getElementById("score").innerText=score;
+  document.getElementById("time").innerText=time;
+
+  if(type==="alfa"){
+    document.getElementById("gameTitle").innerText="📝 Alfabetización";
+    generateLetter();
+  }
+  if(type==="math"){
+    document.getElementById("gameTitle").innerText="🧮 Cálculo Mental";
+    generateMath();
+  }
+  if(type==="reading"){
+    document.getElementById("gameTitle").innerText="📖 Comprensión Lectora";
+    generateReading();
+  }
+
+  timer=setInterval(()=>{
+    time--;
+    document.getElementById("time").innerText=time;
+    if(time<=0){
+      clearInterval(timer);
+      alert("¡Excelente! Has completado la actividad ⭐ Puntuación: "+score);
+      goBack();
+    }
+  },1000);
+}
+
+function generateLetter(){
+  const letters=["A","E","I","O","U"];
+  const correct=letters[Math.floor(Math.random()*letters.length)];
+  document.getElementById("question").innerText="Selecciona la vocal: "+correct;
+
+  let html="";
+  letters.sort(()=>Math.random()-0.5).forEach(l=>{
+    html+=`<button onclick="check('${l}','${correct}','alfa')" class="bg-white text-black m-2 px-4 py-2 rounded">${l}</button>`;
+  });
+  document.getElementById("answers").innerHTML=html;
+}
+
+function generateMath(){
+  let a=Math.floor(Math.random()*10);
+  let b=Math.floor(Math.random()*10);
+  let correct=a+b;
+  document.getElementById("question").innerText=`${a} + ${b} = ?`;
+
+  let html="";
+  for(let i=0;i<3;i++){
+    let val=i===0?correct:correct+Math.floor(Math.random()*5)+1;
+    html+=`<button onclick="check(${val},${correct},'math')" class="bg-white text-black m-2 px-4 py-2 rounded">${val}</button>`;
+  }
+  document.getElementById("answers").innerHTML=html;
+}
+
+function generateReading(){
+  const question="El gato duerme en la cama.";
+  document.getElementById("question").innerText=question+" ¿Dónde duerme el gato?";
+  let correct="En la cama";
+
+  let options=["En la mesa","En la cama","En el parque"];
+  let html="";
+  options.forEach(o=>{
+    html+=`<button onclick="check('${o}','${correct}','reading')" class="bg-white text-black m-2 px-4 py-2 rounded">${o}</button>`;
+  });
+  document.getElementById("answers").innerHTML=html;
+}
+
+function check(answer,correct,type){
+  if(answer==correct){
+    score+=10;
+    document.getElementById("score").innerText=score;
+
+    if(type==="alfa") generateLetter();
+    if(type==="math") generateMath();
+    if(type==="reading") generateReading();
+  }
+}
+
+/* ------------------ ENGLISH GAME ------------------ */
+
+const animals=[
+{img:"https://i.imgur.com/4AiXzf8.jpeg",correct:"lion",options:["lion","rat","cat"]},
+{img:"https://i.imgur.com/jTqC2qL.jpeg",correct:"dog",options:["bird","dog","fish"]},
+{img:"https://i.imgur.com/8Km9tLL.jpeg",correct:"cat",options:["cat","cow","horse"]}
+];
+
+let current=0;
+
+function showEnglish(){
+  document.getElementById("englishGame").classList.remove("hidden");
+}
+
+function loadAnimal(){
+  let a=animals[current];
+  document.getElementById("animalImg").src=a.img;
+  let html="";
+  a.options.forEach(o=>{
+    html+=`<button onclick="checkAnimal('${o}')" class="bg-blue-500 text-white m-2 px-4 py-2 rounded">${o}</button>`;
+  });
+  document.getElementById("options").innerHTML=html;
+}
+
+function checkAnimal(answer){
+  if(answer===animals[current].correct){
+    alert("¡Excelente! ⭐");
+    current=(current+1)%animals.length;
+    loadAnimal();
+  }
+}
+
+document.querySelector("[onclick=\"showSection('english')\"]")
+.addEventListener("click",()=>setTimeout(loadAnimal,300));
+
+</script>
 
 </body>
 </html>
