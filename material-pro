@@ -358,7 +358,6 @@
   document.getElementById('password').value = '';
   mostrarPantalla('login');
 });
-    });
 
     document.getElementById('view-terms-btn').addEventListener('click', function() {
       mostrarPantalla('terms');
