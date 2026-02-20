@@ -1,0 +1,1704 @@
+<!doctype html>
+<html lang="es" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enciclopedia Interactiva</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Nunito', sans-serif; }
+    .title-font { font-family: 'Fredoka One', cursive; }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes pulse-heart {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+    @keyframes bounce-in {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    @keyframes confetti {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100px) rotate(720deg); opacity: 0; }
+    }
+    @keyframes star-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes rainbow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .float { animation: float 3s ease-in-out infinite; }
+    .pulse-heart { animation: pulse-heart 1s ease-in-out infinite; }
+    .bounce-in { animation: bounce-in 0.5s ease-out; }
+    .shake { animation: shake 0.5s ease-in-out; }
+    .star-spin { animation: star-spin 2s linear infinite; }
+    
+    .rainbow-bg {
+      background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #54a0ff, #5f27cd);
+      background-size: 400% 400%;
+      animation: rainbow 3s ease infinite;
+    }
+    
+    .game-card {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .game-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+    
+    .btn-game {
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-game:hover {
+      transform: scale(1.05);
+    }
+    .btn-game:active {
+      transform: scale(0.95);
+    }
+    
+    .level-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    
+    .progress-bar {
+      height: 12px;
+      border-radius: 6px;
+      background: #e0e0e0;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.5s ease;
+    }
+    
+    .match-card {
+      perspective: 1000px;
+      cursor: pointer;
+    }
+    .match-card-inner {
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+    .match-card.flipped .match-card-inner {
+      transform: rotateY(180deg);
+    }
+    .match-card-front, .match-card-back {
+      backface-visibility: hidden;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .match-card-back {
+      transform: rotateY(180deg);
+    }
+    
+    .drag-item {
+      cursor: grab;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+    .drag-item:active {
+      cursor: grabbing;
+    }
+    .drag-item.dragging {
+      opacity: 0.5;
+      transform: scale(1.1);
+    }
+    
+    .drop-zone {
+      border: 3px dashed #ccc;
+      transition: all 0.3s ease;
+    }
+    .drop-zone.drag-over {
+      border-color: #4ade80;
+      background: rgba(74, 222, 128, 0.1);
+      transform: scale(1.02);
+    }
+    
+    .character {
+      transition: all 0.3s ease;
+    }
+    .character.jump {
+      animation: jump 0.5s ease;
+    }
+    @keyframes jump {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-30px); }
+    }
+    
+    .obstacle {
+      animation: moveLeft 2s linear;
+    }
+    @keyframes moveLeft {
+      from { transform: translateX(100%); }
+      to { transform: translateX(-100%); }
+    }
+
+    .cloud {
+      position: absolute;
+      opacity: 0.8;
+    }
+    
+    .tooltip {
+      position: relative;
+    }
+    .tooltip::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .tooltip:hover::after {
+      opacity: 1;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full overflow-auto">
+  <div id="app" class="min-h-full w-full bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400"><!-- PANTALLA DE INICIO -->
+   <div id="home-screen" class="min-h-full w-full flex flex-col items-center justify-center p-4 relative overflow-hidden"><!-- Nubes decorativas -->
+    <div class="cloud" style="top: 10%; left: 5%;">
+     <svg width="120" height="60" viewbox="0 0 120 60" fill="white"><ellipse cx="30" cy="40" rx="25" ry="18" /> <ellipse cx="60" cy="35" rx="30" ry="22" /> <ellipse cx="90" cy="40" rx="25" ry="18" /> <ellipse cx="45" cy="25" rx="20" ry="15" /> <ellipse cx="75" cy="25" rx="20" ry="15" />
+     </svg>
+    </div>
+    <div class="cloud" style="top: 15%; right: 10%;">
+     <svg width="100" height="50" viewbox="0 0 100 50" fill="white"><ellipse cx="25" cy="33" rx="20" ry="15" /> <ellipse cx="50" cy="30" rx="25" ry="18" /> <ellipse cx="75" cy="33" rx="20" ry="15" /> <ellipse cx="50" cy="18" rx="18" ry="12" />
+     </svg>
+    </div><!-- Estrellas decorativas -->
+    <div class="absolute top-20 left-10 text-yellow-300 text-4xl star-spin">
+     ⭐
+    </div>
+    <div class="absolute top-32 right-16 text-yellow-300 text-3xl star-spin" style="animation-delay: 0.5s;">
+     ⭐
+    </div>
+    <div class="absolute bottom-40 left-20 text-yellow-300 text-2xl star-spin" style="animation-delay: 1s;">
+     ⭐
+    </div><!-- Logo y título principal -->
+    <div class="text-center bounce-in">
+     <div class="mb-6 float">
+      <div class="w-32 h-32 mx-auto bg-white rounded-full shadow-2xl flex items-center justify-center"><span class="text-6xl">📚</span>
+      </div>
+     </div>
+     <h1 class="title-font text-4xl md:text-6xl text-white drop-shadow-lg mb-2" id="main-title">¡Enciclopedia Interactiva!</h1>
+     <div class="bg-white/90 backdrop-blur rounded-2xl px-6 py-4 shadow-xl mb-6 max-w-lg mx-auto">
+      <p class="text-lg md:text-xl font-bold text-purple-700" id="school-display">Primaria</p>
+      <p class="text-sm text-purple-500" id="school-code">26DPR1320W</p>
+     </div>
+     <div class="flex justify-center gap-2 mb-8"><span class="text-3xl float" style="animation-delay: 0.1s;">🎨</span> <span class="text-3xl float" style="animation-delay: 0.2s;">🔢</span> <span class="text-3xl float" style="animation-delay: 0.3s;">🌍</span> <span class="text-3xl float" style="animation-delay: 0.4s;">📖</span> <span class="text-3xl float" style="animation-delay: 0.5s;">🧪</span>
+     </div><!-- Botón de inicio --> <button onclick="showScreen('menu')" class="btn-game rainbow-bg text-white text-2xl font-bold px-12 py-4 rounded-full shadow-2xl hover:shadow-3xl"> 🚀 ¡COMENZAR AVENTURA! 🚀 </button>
+     <div class="mt-8 bg-white/80 backdrop-blur rounded-xl px-4 py-3 max-w-md mx-auto">
+      <p class="text-sm text-purple-600 font-semibold">💜 Creado con amor por</p>
+      <p class="text-purple-800 font-bold" id="teacher-display">Maestra María Fernanda Flores Valenzuela</p>
+     </div>
+    </div>
+   </div><!-- MENÚ PRINCIPAL -->
+   <div id="menu-screen" class="min-h-full w-full hidden p-4"><!-- Header con vidas y puntos -->
+    <div class="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-4 mb-6 sticky top-2 z-50">
+     <div class="flex flex-wrap items-center justify-between gap-4"><button onclick="showScreen('home')" class="btn-game bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full font-bold text-gray-700 flex items-center gap-2"> 🏠 Inicio </button>
+      <div class="flex items-center gap-6"><!-- Vidas -->
+       <div class="flex items-center gap-1"><span class="text-sm font-bold text-gray-600">Vidas:</span>
+        <div id="lives-display" class="flex gap-1"><span class="text-2xl pulse-heart">❤️</span> <span class="text-2xl pulse-heart" style="animation-delay: 0.2s;">❤️</span> <span class="text-2xl pulse-heart" style="animation-delay: 0.4s;">❤️</span>
+        </div>
+       </div><!-- Estrellas/Puntos -->
+       <div class="flex items-center gap-2 bg-yellow-100 px-4 py-2 rounded-full"><span class="text-2xl">⭐</span> <span id="stars-display" class="text-xl font-bold text-yellow-600">0</span>
+       </div><!-- Nivel -->
+       <div class="flex items-center gap-2 bg-purple-100 px-4 py-2 rounded-full"><span class="text-lg">🎯</span> <span class="text-sm font-bold text-purple-600">Nivel: </span> <select id="difficulty-select" onchange="changeDifficulty(this.value)" class="bg-transparent font-bold text-purple-700 outline-none cursor-pointer"> <option value="1">⭐ Fácil</option> <option value="2">⭐⭐ Medio</option> <option value="3">⭐⭐⭐ Difícil</option> </select>
+       </div>
+      </div>
+     </div>
+    </div><!-- Título del menú -->
+    <div class="text-center mb-8">
+     <h2 class="title-font text-3xl md:text-4xl text-white drop-shadow-lg mb-2">🎮 Elige tu Aventura 🎮</h2>
+     <p class="text-white/90 text-lg">¡Toca una materia para comenzar a jugar!</p>
+    </div><!-- Grid de materias -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"><!-- Cálculo Mental -->
+     <div onclick="showScreen('calculo')" class="game-card bg-gradient-to-br from-red-400 to-orange-500 rounded-3xl p-6 shadow-xl relative">
+      <div class="level-badge bg-white text-orange-500">
+       🧮
+      </div>
+      <div class="text-6xl mb-4 text-center">
+       🔢
+      </div>
+      <h3 class="title-font text-2xl text-white text-center mb-2">Cálculo Mental</h3>
+      <p class="text-white/90 text-center text-sm">¡Resuelve operaciones matemáticas a toda velocidad!</p>
+      <div class="mt-4 flex justify-center gap-1"><span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Sumas</span> <span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Restas</span> <span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">×</span>
+      </div>
+     </div><!-- Alfabetización -->
+     <div onclick="showScreen('alfabetizacion')" class="game-card bg-gradient-to-br from-blue-400 to-cyan-500 rounded-3xl p-6 shadow-xl relative">
+      <div class="level-badge bg-white text-blue-500">
+       📖
+      </div>
+      <div class="text-6xl mb-4 text-center">
+       📚
+      </div>
+      <h3 class="title-font text-2xl text-white text-center mb-2">Alfabetización</h3>
+      <p class="text-white/90 text-center text-sm">¡Aprende a leer y escribir jugando!</p>
+      <div class="mt-4 flex justify-center gap-1"><span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Lectura</span> <span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Palabras</span>
+      </div>
+     </div><!-- Ciencias -->
+     <div onclick="showScreen('ciencias')" class="game-card bg-gradient-to-br from-green-400 to-emerald-500 rounded-3xl p-6 shadow-xl relative">
+      <div class="level-badge bg-white text-green-500">
+       🔬
+      </div>
+      <div class="text-6xl mb-4 text-center">
+       🧪
+      </div>
+      <h3 class="title-font text-2xl text-white text-center mb-2">Ciencias</h3>
+      <p class="text-white/90 text-center text-sm">¡Descubre los secretos de la naturaleza!</p>
+      <div class="mt-4 flex justify-center gap-1"><span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Animales</span> <span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Plantas</span> <span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Cuerpo</span>
+      </div>
+     </div><!-- Geografía -->
+     <div onclick="showScreen('geografia')" class="game-card bg-gradient-to-br from-yellow-400 to-amber-500 rounded-3xl p-6 shadow-xl relative">
+      <div class="level-badge bg-white text-yellow-600">
+       🌍
+      </div>
+      <div class="text-6xl mb-4 text-center">
+       🗺️
+      </div>
+      <h3 class="title-font text-2xl text-white text-center mb-2">Geografía</h3>
+      <p class="text-white/90 text-center text-sm">¡Viaja por México y el mundo!</p>
+      <div class="mt-4 flex justify-center gap-1"><span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Estados</span> <span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Capitales</span>
+      </div>
+     </div><!-- Historia -->
+     <div onclick="showScreen('historia')" class="game-card bg-gradient-to-br from-purple-400 to-violet-500 rounded-3xl p-6 shadow-xl relative">
+      <div class="level-badge bg-white text-purple-500">
+       📜
+      </div>
+      <div class="text-6xl mb-4 text-center">
+       🏛️
+      </div>
+      <h3 class="title-font text-2xl text-white text-center mb-2">Historia</h3>
+      <p class="text-white/90 text-center text-sm">¡Conoce a los héroes de México!</p>
+      <div class="mt-4 flex justify-center gap-1"><span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Héroes</span> <span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Fechas</span>
+      </div>
+     </div><!-- Fracciones -->
+     <div onclick="showScreen('fracciones')" class="game-card bg-gradient-to-br from-pink-400 to-rose-500 rounded-3xl p-6 shadow-xl relative">
+      <div class="level-badge bg-white text-pink-500">
+       🍕
+      </div>
+      <div class="text-6xl mb-4 text-center">
+       🥧
+      </div>
+      <h3 class="title-font text-2xl text-white text-center mb-2">Fracciones</h3>
+      <p class="text-white/90 text-center text-sm">¡Aprende a partir en pedacitos!</p>
+      <div class="mt-4 flex justify-center gap-1"><span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">½</span> <span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">¼</span> <span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">⅓</span>
+      </div>
+     </div><!-- Multiplicaciones -->
+     <div onclick="showScreen('multiplicaciones')" class="game-card bg-gradient-to-br from-indigo-400 to-blue-600 rounded-3xl p-6 shadow-xl relative">
+      <div class="level-badge bg-white text-indigo-500">
+       ✖️
+      </div>
+      <div class="text-6xl mb-4 text-center">
+       🎯
+      </div>
+      <h3 class="title-font text-2xl text-white text-center mb-2">Multiplicaciones</h3>
+      <p class="text-white/90 text-center text-sm">¡Domina las tablas de multiplicar!</p>
+      <div class="mt-4 flex justify-center gap-1"><span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Tablas</span> <span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Memoria</span>
+      </div>
+     </div><!-- Juego de Unir -->
+     <div onclick="showScreen('unir')" class="game-card bg-gradient-to-br from-teal-400 to-cyan-600 rounded-3xl p-6 shadow-xl relative">
+      <div class="level-badge bg-white text-teal-500">
+       🔗
+      </div>
+      <div class="text-6xl mb-4 text-center">
+       🧩
+      </div>
+      <h3 class="title-font text-2xl text-white text-center mb-2">Juego de Unir</h3>
+      <p class="text-white/90 text-center text-sm">¡Conecta las parejas correctas!</p>
+      <div class="mt-4 flex justify-center gap-1"><span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Parejas</span> <span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Memoria</span>
+      </div>
+     </div><!-- Aventura de Lectura -->
+     <div onclick="showScreen('aventura')" class="game-card bg-gradient-to-br from-lime-400 to-green-600 rounded-3xl p-6 shadow-xl relative">
+      <div class="level-badge bg-white text-lime-600">
+       🎮
+      </div>
+      <div class="text-6xl mb-4 text-center">
+       🦸
+      </div>
+      <h3 class="title-font text-2xl text-white text-center mb-2">Aventura de Lectura</h3>
+      <p class="text-white/90 text-center text-sm">¡Lee y salta obstáculos!</p>
+      <div class="mt-4 flex justify-center gap-1"><span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Plataforma</span> <span class="bg-white/30 px-2 py-1 rounded-full text-xs text-white">Lectura</span>
+      </div>
+     </div>
+    </div><!-- Instrucciones -->
+    <div class="mt-8 bg-white/90 backdrop-blur rounded-2xl p-6 max-w-2xl mx-auto text-center">
+     <h3 class="title-font text-xl text-purple-700 mb-3">📋 ¿Cómo jugar?</h3>
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+      <div class="bg-purple-50 rounded-xl p-3"><span class="text-2xl">❤️</span>
+       <p class="font-bold text-purple-700">Vidas</p>
+       <p class="text-gray-600">Tienes 3 vidas. ¡No las pierdas!</p>
+      </div>
+      <div class="bg-yellow-50 rounded-xl p-3"><span class="text-2xl">⭐</span>
+       <p class="font-bold text-yellow-700">Estrellas</p>
+       <p class="text-gray-600">Gana estrellas con cada respuesta correcta</p>
+      </div>
+      <div class="bg-blue-50 rounded-xl p-3"><span class="text-2xl">⏱️</span>
+       <p class="font-bold text-blue-700">Tiempo</p>
+       <p class="text-gray-600">¡Responde rápido para más puntos!</p>
+      </div>
+     </div>
+    </div>
+   </div><!-- PANTALLA DE CÁLCULO MENTAL -->
+   <div id="calculo-screen" class="min-h-full w-full hidden p-4">
+    <div class="max-w-2xl mx-auto"><!-- Header del juego -->
+     <div class="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-4 mb-6">
+      <div class="flex items-center justify-between"><button onclick="showScreen('menu')" class="btn-game bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full font-bold text-gray-700"> ← Volver </button>
+       <div class="flex items-center gap-4">
+        <div id="calculo-lives" class="flex gap-1"><span class="text-xl">❤️</span> <span class="text-xl">❤️</span> <span class="text-xl">❤️</span>
+        </div>
+        <div class="bg-yellow-100 px-3 py-1 rounded-full flex items-center gap-1"><span>⭐</span> <span id="calculo-score" class="font-bold">0</span>
+        </div>
+        <div id="calculo-timer" class="bg-blue-100 px-3 py-1 rounded-full font-bold text-blue-700">
+         ⏱️ 30s
+        </div>
+       </div>
+      </div>
+     </div><!-- Área del juego -->
+     <div class="bg-white rounded-3xl shadow-2xl p-8 text-center">
+      <h2 class="title-font text-3xl text-orange-500 mb-6">🧮 Cálculo Mental</h2>
+      <div class="mb-6">
+       <div class="progress-bar w-full bg-gray-200">
+        <div id="calculo-progress" class="progress-fill bg-gradient-to-r from-orange-400 to-red-500" style="width: 0%"></div>
+       </div>
+       <p class="text-sm text-gray-500 mt-2">Pregunta <span id="calculo-current">1</span> de <span id="calculo-total">10</span></p>
+      </div>
+      <div id="calculo-question" class="text-5xl md:text-6xl font-bold text-gray-800 mb-8 bounce-in">
+       5 + 3 = ?
+      </div>
+      <div id="calculo-options" class="grid grid-cols-2 gap-4 max-w-sm mx-auto"><!-- Las opciones se generan dinámicamente -->
+      </div>
+      <div id="calculo-feedback" class="mt-6 text-2xl font-bold hidden"></div><button id="calculo-start" onclick="startCalculoGame()" class="btn-game mt-6 bg-gradient-to-r from-orange-400 to-red-500 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg"> 🎮 ¡Empezar! </button>
+     </div>
+    </div>
+   </div><!-- PANTALLA DE ALFABETIZACIÓN -->
+   <div id="alfabetizacion-screen" class="min-h-full w-full hidden p-4">
+    <div class="max-w-3xl mx-auto">
+     <div class="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-4 mb-6">
+      <div class="flex items-center justify-between"><button onclick="showScreen('menu')" class="btn-game bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full font-bold text-gray-700"> ← Volver </button>
+       <div class="flex items-center gap-4">
+        <div id="alfa-lives" class="flex gap-1"><span class="text-xl">❤️</span> <span class="text-xl">❤️</span> <span class="text-xl">❤️</span>
+        </div>
+        <div class="bg-yellow-100 px-3 py-1 rounded-full flex items-center gap-1"><span>⭐</span> <span id="alfa-score" class="font-bold">0</span>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="bg-white rounded-3xl shadow-2xl p-8">
+      <h2 class="title-font text-3xl text-blue-500 mb-6 text-center">📚 Alfabetización</h2><!-- Texto para leer -->
+      <div id="alfa-reading" class="bg-blue-50 rounded-2xl p-6 mb-6">
+       <h3 class="font-bold text-blue-700 mb-3 flex items-center gap-2"><span class="text-2xl">📖</span> Lee con atención:</h3>
+       <p id="alfa-text" class="text-lg text-gray-700 leading-relaxed">El perro de María se llama Toby. Toby es un perro muy juguetón y le gusta correr en el parque. Tiene el pelo de color café y ojos grandes y brillantes. Todos los días, María lo lleva a pasear después de la escuela.</p>
+      </div><!-- Pregunta -->
+      <div id="alfa-question-area" class="text-center">
+       <p class="text-xl font-bold text-gray-800 mb-6" id="alfa-question">¿Cómo se llama el perro de María?</p>
+       <div id="alfa-options" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg mx-auto"><!-- Opciones dinámicas -->
+       </div>
+      </div>
+      <div id="alfa-feedback" class="mt-6 text-center text-2xl font-bold hidden"></div><button id="alfa-start" onclick="startAlfaGame()" class="btn-game mt-6 bg-gradient-to-r from-blue-400 to-cyan-500 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg mx-auto block"> 📖 ¡Comenzar Lectura! </button>
+     </div>
+    </div>
+   </div><!-- PANTALLA DE CIENCIAS -->
+   <div id="ciencias-screen" class="min-h-full w-full hidden p-4">
+    <div class="max-w-3xl mx-auto">
+     <div class="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-4 mb-6">
+      <div class="flex items-center justify-between"><button onclick="showScreen('menu')" class="btn-game bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full font-bold text-gray-700"> ← Volver </button>
+       <div class="flex items-center gap-4">
+        <div id="ciencias-lives" class="flex gap-1"><span class="text-xl">❤️</span> <span class="text-xl">❤️</span> <span class="text-xl">❤️</span>
+        </div>
+        <div class="bg-yellow-100 px-3 py-1 rounded-full flex items-center gap-1"><span>⭐</span> <span id="ciencias-score" class="font-bold">0</span>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="bg-white rounded-3xl shadow-2xl p-8">
+      <h2 class="title-font text-3xl text-green-500 mb-6 text-center">🧪 Ciencias Naturales</h2>
+      <div id="ciencias-info" class="bg-green-50 rounded-2xl p-6 mb-6">
+       <h3 class="font-bold text-green-700 mb-3 flex items-center gap-2"><span class="text-2xl">🔬</span> ¿Sabías que...?</h3>
+       <p id="ciencias-fact" class="text-lg text-gray-700 leading-relaxed">Las plantas necesitan luz del sol, agua y aire para vivir. A este proceso se le llama fotosíntesis. Las hojas de las plantas son verdes porque tienen clorofila, que es la sustancia que les ayuda a hacer su comida.</p>
+      </div>
+      <div class="text-center">
+       <p class="text-xl font-bold text-gray-800 mb-6" id="ciencias-question">¿Qué necesitan las plantas para vivir?</p>
+       <div id="ciencias-options" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg mx-auto"><!-- Opciones dinámicas -->
+       </div>
+      </div>
+      <div id="ciencias-feedback" class="mt-6 text-center text-2xl font-bold hidden"></div><button id="ciencias-start" onclick="startCienciasGame()" class="btn-game mt-6 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg mx-auto block"> 🔬 ¡Explorar Ciencias! </button>
+     </div>
+    </div>
+   </div><!-- PANTALLA DE GEOGRAFÍA -->
+   <div id="geografia-screen" class="min-h-full w-full hidden p-4">
+    <div class="max-w-3xl mx-auto">
+     <div class="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-4 mb-6">
+      <div class="flex items-center justify-between"><button onclick="showScreen('menu')" class="btn-game bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full font-bold text-gray-700"> ← Volver </button>
+       <div class="flex items-center gap-4">
+        <div id="geo-lives" class="flex gap-1"><span class="text-xl">❤️</span> <span class="text-xl">❤️</span> <span class="text-xl">❤️</span>
+        </div>
+        <div class="bg-yellow-100 px-3 py-1 rounded-full flex items-center gap-1"><span>⭐</span> <span id="geo-score" class="font-bold">0</span>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="bg-white rounded-3xl shadow-2xl p-8">
+      <h2 class="title-font text-3xl text-yellow-500 mb-6 text-center">🗺️ Geografía de México</h2>
+      <div id="geo-info" class="bg-yellow-50 rounded-2xl p-6 mb-6">
+       <h3 class="font-bold text-yellow-700 mb-3 flex items-center gap-2"><span class="text-2xl">🌍</span> Dato Geográfico:</h3>
+       <p id="geo-fact" class="text-lg text-gray-700 leading-relaxed">México tiene 32 estados. La capital de nuestro país es la Ciudad de México, que también es la ciudad más grande. México está rodeado por el Océano Pacífico al oeste y el Golfo de México al este.</p>
+      </div>
+      <div class="text-center">
+       <p class="text-xl font-bold text-gray-800 mb-6" id="geo-question">¿Cuántos estados tiene México?</p>
+       <div id="geo-options" class="grid grid-cols-2 gap-4 max-w-lg mx-auto"><!-- Opciones dinámicas -->
+       </div>
+      </div>
+      <div id="geo-feedback" class="mt-6 text-center text-2xl font-bold hidden"></div><button id="geo-start" onclick="startGeoGame()" class="btn-game mt-6 bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg mx-auto block"> 🗺️ ¡Explorar México! </button>
+     </div>
+    </div>
+   </div><!-- PANTALLA DE HISTORIA -->
+   <div id="historia-screen" class="min-h-full w-full hidden p-4">
+    <div class="max-w-3xl mx-auto">
+     <div class="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-4 mb-6">
+      <div class="flex items-center justify-between"><button onclick="showScreen('menu')" class="btn-game bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full font-bold text-gray-700"> ← Volver </button>
+       <div class="flex items-center gap-4">
+        <div id="historia-lives" class="flex gap-1"><span class="text-xl">❤️</span> <span class="text-xl">❤️</span> <span class="text-xl">❤️</span>
+        </div>
+        <div class="bg-yellow-100 px-3 py-1 rounded-full flex items-center gap-1"><span>⭐</span> <span id="historia-score" class="font-bold">0</span>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="bg-white rounded-3xl shadow-2xl p-8">
+      <h2 class="title-font text-3xl text-purple-500 mb-6 text-center">🏛️ Historia de México</h2>
+      <div id="historia-info" class="bg-purple-50 rounded-2xl p-6 mb-6">
+       <h3 class="font-bold text-purple-700 mb-3 flex items-center gap-2"><span class="text-2xl">📜</span> Momento Histórico:</h3>
+       <p id="historia-fact" class="text-lg text-gray-700 leading-relaxed">El 16 de septiembre de 1810, el cura Miguel Hidalgo tocó las campanas de la iglesia de Dolores para llamar al pueblo. Ese día gritó "¡Viva México!" e inició la lucha por la independencia. Por eso celebramos el Día de la Independencia cada 16 de septiembre.</p>
+      </div>
+      <div class="text-center">
+       <p class="text-xl font-bold text-gray-800 mb-6" id="historia-question">¿Quién inició la lucha por la independencia de México?</p>
+       <div id="historia-options" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg mx-auto"><!-- Opciones dinámicas -->
+       </div>
+      </div>
+      <div id="historia-feedback" class="mt-6 text-center text-2xl font-bold hidden"></div><button id="historia-start" onclick="startHistoriaGame()" class="btn-game mt-6 bg-gradient-to-r from-purple-400 to-violet-500 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg mx-auto block"> 📜 ¡Descubrir Historia! </button>
+     </div>
+    </div>
+   </div><!-- PANTALLA DE FRACCIONES -->
+   <div id="fracciones-screen" class="min-h-full w-full hidden p-4">
+    <div class="max-w-3xl mx-auto">
+     <div class="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-4 mb-6">
+      <div class="flex items-center justify-between"><button onclick="showScreen('menu')" class="btn-game bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full font-bold text-gray-700"> ← Volver </button>
+       <div class="flex items-center gap-4">
+        <div id="frac-lives" class="flex gap-1"><span class="text-xl">❤️</span> <span class="text-xl">❤️</span> <span class="text-xl">❤️</span>
+        </div>
+        <div class="bg-yellow-100 px-3 py-1 rounded-full flex items-center gap-1"><span>⭐</span> <span id="frac-score" class="font-bold">0</span>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="bg-white rounded-3xl shadow-2xl p-8">
+      <h2 class="title-font text-3xl text-pink-500 mb-6 text-center">🍕 Fracciones</h2><!-- Visualización de fracción -->
+      <div class="flex justify-center mb-6">
+       <div id="frac-visual" class="grid grid-cols-4 gap-1 w-48 h-48"><!-- Se genera dinámicamente -->
+       </div>
+      </div>
+      <div class="text-center">
+       <p class="text-xl font-bold text-gray-800 mb-6" id="frac-question">¿Qué fracción está coloreada?</p>
+       <div id="frac-options" class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-lg mx-auto"><!-- Opciones dinámicas -->
+       </div>
+      </div>
+      <div id="frac-feedback" class="mt-6 text-center text-2xl font-bold hidden"></div><button id="frac-start" onclick="startFracGame()" class="btn-game mt-6 bg-gradient-to-r from-pink-400 to-rose-500 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg mx-auto block"> 🍕 ¡Aprender Fracciones! </button>
+     </div>
+    </div>
+   </div><!-- PANTALLA DE MULTIPLICACIONES -->
+   <div id="multiplicaciones-screen" class="min-h-full w-full hidden p-4">
+    <div class="max-w-2xl mx-auto">
+     <div class="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-4 mb-6">
+      <div class="flex items-center justify-between"><button onclick="showScreen('menu')" class="btn-game bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full font-bold text-gray-700"> ← Volver </button>
+       <div class="flex items-center gap-4">
+        <div id="mult-lives" class="flex gap-1"><span class="text-xl">❤️</span> <span class="text-xl">❤️</span> <span class="text-xl">❤️</span>
+        </div>
+        <div class="bg-yellow-100 px-3 py-1 rounded-full flex items-center gap-1"><span>⭐</span> <span id="mult-score" class="font-bold">0</span>
+        </div>
+        <div id="mult-timer" class="bg-blue-100 px-3 py-1 rounded-full font-bold text-blue-700">
+         ⏱️ 60s
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="bg-white rounded-3xl shadow-2xl p-8 text-center">
+      <h2 class="title-font text-3xl text-indigo-500 mb-6">✖️ Multiplicaciones</h2><!-- Selector de tabla -->
+      <div class="mb-6"><label class="text-gray-600 font-bold mb-2 block">Elige la tabla:</label>
+       <div class="flex flex-wrap justify-center gap-2"><button onclick="selectTable(2)" class="table-btn bg-indigo-100 hover:bg-indigo-200 px-4 py-2 rounded-full font-bold text-indigo-700" data-table="2">×2</button> <button onclick="selectTable(3)" class="table-btn bg-indigo-100 hover:bg-indigo-200 px-4 py-2 rounded-full font-bold text-indigo-700" data-table="3">×3</button> <button onclick="selectTable(4)" class="table-btn bg-indigo-100 hover:bg-indigo-200 px-4 py-2 rounded-full font-bold text-indigo-700" data-table="4">×4</button> <button onclick="selectTable(5)" class="table-btn bg-indigo-100 hover:bg-indigo-200 px-4 py-2 rounded-full font-bold text-indigo-700" data-table="5">×5</button> <button onclick="selectTable(6)" class="table-btn bg-indigo-100 hover:bg-indigo-200 px-4 py-2 rounded-full font-bold text-indigo-700" data-table="6">×6</button> <button onclick="selectTable(7)" class="table-btn bg-indigo-100 hover:bg-indigo-200 px-4 py-2 rounded-full font-bold text-indigo-700" data-table="7">×7</button> <button onclick="selectTable(8)" class="table-btn bg-indigo-100 hover:bg-indigo-200 px-4 py-2 rounded-full font-bold text-indigo-700" data-table="8">×8</button> <button onclick="selectTable(9)" class="table-btn bg-indigo-100 hover:bg-indigo-200 px-4 py-2 rounded-full font-bold text-indigo-700" data-table="9">×9</button> <button onclick="selectTable(0)" class="table-btn bg-gradient-to-r from-indigo-400 to-purple-500 text-white px-4 py-2 rounded-full font-bold" data-table="0">Todas</button>
+       </div>
+      </div>
+      <div id="mult-question" class="text-5xl md:text-6xl font-bold text-gray-800 mb-8 bounce-in">
+       7 × 8 = ?
+      </div>
+      <div id="mult-options" class="grid grid-cols-2 gap-4 max-w-sm mx-auto"><!-- Opciones dinámicas -->
+      </div>
+      <div id="mult-feedback" class="mt-6 text-2xl font-bold hidden"></div><button id="mult-start" onclick="startMultGame()" class="btn-game mt-6 bg-gradient-to-r from-indigo-400 to-blue-600 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg"> 🎯 ¡Practicar Tablas! </button>
+     </div>
+    </div>
+   </div><!-- PANTALLA DE JUEGO DE UNIR -->
+   <div id="unir-screen" class="min-h-full w-full hidden p-4">
+    <div class="max-w-4xl mx-auto">
+     <div class="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-4 mb-6">
+      <div class="flex items-center justify-between"><button onclick="showScreen('menu')" class="btn-game bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full font-bold text-gray-700"> ← Volver </button>
+       <div class="flex items-center gap-4">
+        <div id="unir-moves" class="bg-teal-100 px-3 py-1 rounded-full font-bold text-teal-700">
+         🔄 Movimientos: <span id="unir-moves-count">0</span>
+        </div>
+        <div class="bg-yellow-100 px-3 py-1 rounded-full flex items-center gap-1"><span>⭐</span> <span id="unir-score" class="font-bold">0</span>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="bg-white rounded-3xl shadow-2xl p-8">
+      <h2 class="title-font text-3xl text-teal-500 mb-6 text-center">🧩 Juego de Memoria</h2>
+      <p class="text-center text-gray-600 mb-6">¡Encuentra las parejas de palabras y números!</p>
+      <div id="unir-grid" class="grid grid-cols-4 gap-3 max-w-md mx-auto"><!-- Tarjetas dinámicas -->
+      </div>
+      <div id="unir-feedback" class="mt-6 text-center text-2xl font-bold hidden"></div><button id="unir-start" onclick="startUnirGame()" class="btn-game mt-6 bg-gradient-to-r from-teal-400 to-cyan-600 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg mx-auto block"> 🧩 ¡Jugar Memoria! </button>
+     </div>
+    </div>
+   </div><!-- PANTALLA DE AVENTURA DE LECTURA -->
+   <div id="aventura-screen" class="min-h-full w-full hidden p-4">
+    <div class="max-w-3xl mx-auto">
+     <div class="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-4 mb-6">
+      <div class="flex items-center justify-between"><button onclick="showScreen('menu')" class="btn-game bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full font-bold text-gray-700"> ← Volver </button>
+       <div class="flex items-center gap-4">
+        <div id="aventura-lives" class="flex gap-1"><span class="text-xl">❤️</span> <span class="text-xl">❤️</span> <span class="text-xl">❤️</span>
+        </div>
+        <div class="bg-yellow-100 px-3 py-1 rounded-full flex items-center gap-1"><span>⭐</span> <span id="aventura-score" class="font-bold">0</span>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="bg-white rounded-3xl shadow-2xl p-8">
+      <h2 class="title-font text-3xl text-lime-500 mb-6 text-center">🦸 Aventura de Lectura</h2><!-- Área del juego tipo plataforma -->
+      <div id="aventura-game" class="relative bg-gradient-to-b from-sky-300 to-sky-100 rounded-2xl h-48 mb-6 overflow-hidden"><!-- Suelo -->
+       <div class="absolute bottom-0 w-full h-8 bg-gradient-to-t from-green-600 to-green-500"></div><!-- Personaje -->
+       <div id="aventura-character" class="character absolute bottom-8 left-8 text-5xl transition-all duration-200">
+        🏃
+       </div><!-- Obstáculo/Pregunta -->
+       <div id="aventura-obstacle" class="absolute bottom-8 right-8 bg-red-500 text-white px-4 py-2 rounded-lg font-bold text-lg">
+        ❓
+       </div><!-- Instrucciones en el juego -->
+       <div class="absolute top-2 left-2 bg-white/80 rounded-lg px-3 py-1 text-sm">
+        ¡Lee y responde para avanzar! 🎮
+       </div>
+      </div><!-- Texto para leer -->
+      <div id="aventura-text-area" class="bg-lime-50 rounded-2xl p-6 mb-6">
+       <h3 class="font-bold text-lime-700 mb-3 flex items-center gap-2"><span class="text-2xl">📖</span> Lee esta historia:</h3>
+       <p id="aventura-text" class="text-lg text-gray-700 leading-relaxed">Había una vez un conejito llamado Saltarín que vivía en un bosque muy verde. Un día encontró una zanahoria mágica que brillaba con luz dorada. Cuando la comió, ¡pudo saltar más alto que los árboles!</p>
+      </div><!-- Pregunta -->
+      <div class="text-center">
+       <p class="text-xl font-bold text-gray-800 mb-6" id="aventura-question">¿Cómo se llamaba el conejito?</p>
+       <div id="aventura-options" class="grid grid-cols-2 gap-4 max-w-lg mx-auto"><!-- Opciones dinámicas -->
+       </div>
+      </div>
+      <div id="aventura-feedback" class="mt-6 text-center text-2xl font-bold hidden"></div><button id="aventura-start" onclick="startAventuraGame()" class="btn-game mt-6 bg-gradient-to-r from-lime-400 to-green-600 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg mx-auto block"> 🎮 ¡Comenzar Aventura! </button>
+     </div>
+    </div>
+   </div><!-- PANTALLA DE GAME OVER -->
+   <div id="gameover-screen" class="min-h-full w-full hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl p-8 text-center max-w-md">
+     <div class="text-6xl mb-4">
+      😢
+     </div>
+     <h2 class="title-font text-3xl text-red-500 mb-4">¡Oh no!</h2>
+     <p class="text-gray-600 mb-6">Se acabaron tus vidas, pero no te preocupes...</p>
+     <p class="text-2xl font-bold text-purple-600 mb-6">¡Puedes intentarlo de nuevo!</p>
+     <div class="flex flex-col gap-3"><button onclick="restartGame()" class="btn-game bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg"> 🔄 Intentar de Nuevo </button> <button onclick="showScreen('menu')" class="btn-game bg-gray-200 text-gray-700 font-bold px-6 py-3 rounded-full"> 🏠 Volver al Menú </button>
+     </div>
+    </div>
+   </div><!-- PANTALLA DE VICTORIA -->
+   <div id="victory-screen" class="min-h-full w-full hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl p-8 text-center max-w-md">
+     <div class="text-6xl mb-4 bounce-in">
+      🏆
+     </div>
+     <h2 class="title-font text-3xl text-yellow-500 mb-4">¡FELICIDADES!</h2>
+     <p class="text-gray-600 mb-4">¡Completaste el juego!</p>
+     <div class="bg-yellow-100 rounded-2xl p-4 mb-6">
+      <p class="text-4xl font-bold text-yellow-600">⭐ <span id="final-score">0</span></p>
+      <p class="text-gray-500">Estrellas ganadas</p>
+     </div>
+     <div class="flex flex-col gap-3"><button onclick="restartGame()" class="btn-game bg-gradient-to-r from-purple-400 to-pink-500 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg"> 🎮 Jugar Otra Vez </button> <button onclick="showScreen('menu')" class="btn-game bg-gray-200 text-gray-700 font-bold px-6 py-3 rounded-full"> 🏠 Volver al Menú </button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    // =====================
+    // CONFIGURACIÓN GLOBAL
+    // =====================
+    const defaultConfig = {
+      school_name: 'Primaria',
+      teacher_name: 'Maestra María Fernanda Flores Valenzuela'
+    };
+    
+    let gameState = {
+      lives: 3,
+      stars: 0,
+      difficulty: 1,
+      currentGame: null,
+      currentQuestion: 0,
+      totalQuestions: 10,
+      timer: null,
+      timeLeft: 30,
+      selectedTable: 0
+    };
+    
+    // =====================
+    // INICIALIZACIÓN SDK
+    // =====================
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => {
+          const schoolDisplay = document.getElementById('school-display');
+          const teacherDisplay = document.getElementById('teacher-display');
+          if (schoolDisplay) schoolDisplay.textContent = config.school_name || defaultConfig.school_name;
+          if (teacherDisplay) teacherDisplay.textContent = config.teacher_name || defaultConfig.teacher_name;
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['school_name', config.school_name || defaultConfig.school_name],
+          ['teacher_name', config.teacher_name || defaultConfig.teacher_name]
+        ])
+      });
+    }
+    
+    // =====================
+    // NAVEGACIÓN
+    // =====================
+    function showScreen(screenId) {
+      document.querySelectorAll('#app > div').forEach(div => div.classList.add('hidden'));
+      document.getElementById(screenId + '-screen').classList.remove('hidden');
+      
+      if (screenId === 'menu') {
+        updateGlobalDisplay();
+      }
+    }
+    
+    // =====================
+    // SISTEMA DE VIDAS Y PUNTOS
+    // =====================
+    function updateGlobalDisplay() {
+      const livesDisplay = document.getElementById('lives-display');
+      const starsDisplay = document.getElementById('stars-display');
+      
+      if (livesDisplay) {
+        livesDisplay.innerHTML = '';
+        for (let i = 0; i < 3; i++) {
+          const heart = document.createElement('span');
+          heart.className = i < gameState.lives ? 'text-2xl pulse-heart' : 'text-2xl opacity-30';
+          heart.style.animationDelay = (i * 0.2) + 's';
+          heart.textContent = '❤️';
+          livesDisplay.appendChild(heart);
+        }
+      }
+      
+      if (starsDisplay) starsDisplay.textContent = gameState.stars;
+    }
+    
+    function updateLocalLives(containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      
+      container.innerHTML = '';
+      for (let i = 0; i < 3; i++) {
+        const heart = document.createElement('span');
+        heart.className = i < gameState.lives ? 'text-xl' : 'text-xl opacity-30';
+        heart.textContent = '❤️';
+        container.appendChild(heart);
+      }
+    }
+    
+    function loseLife() {
+      gameState.lives--;
+      updateGlobalDisplay();
+      
+      if (gameState.lives <= 0) {
+        setTimeout(() => showScreen('gameover'), 1000);
+        return true;
+      }
+      return false;
+    }
+    
+    function addStars(amount) {
+      gameState.stars += amount;
+      updateGlobalDisplay();
+    }
+    
+    function changeDifficulty(level) {
+      gameState.difficulty = parseInt(level);
+    }
+    
+    function resetGameState() {
+      gameState.lives = 3;
+      gameState.currentQuestion = 0;
+      updateGlobalDisplay();
+    }
+    
+    // =====================
+    // DATOS DE JUEGOS
+    // =====================
+    const calculoData = {
+      1: () => { // Fácil: sumas y restas simples
+        const a = Math.floor(Math.random() * 10) + 1;
+        const b = Math.floor(Math.random() * 10) + 1;
+        const ops = ['+', '-'];
+        const op = ops[Math.floor(Math.random() * ops.length)];
+        const answer = op === '+' ? a + b : Math.max(a, b) - Math.min(a, b);
+        const question = op === '+' ? `${a} + ${b}` : `${Math.max(a, b)} - ${Math.min(a, b)}`;
+        return { question: question + ' = ?', answer, generateOptions: (ans) => shuffleArray([ans, ans + 1, ans - 1, ans + 2].filter(x => x >= 0)) };
+      },
+      2: () => { // Medio: operaciones más grandes
+        const a = Math.floor(Math.random() * 20) + 10;
+        const b = Math.floor(Math.random() * 10) + 1;
+        const ops = ['+', '-', '×'];
+        const op = ops[Math.floor(Math.random() * ops.length)];
+        let answer, question;
+        if (op === '×') {
+          const x = Math.floor(Math.random() * 5) + 2;
+          const y = Math.floor(Math.random() * 10) + 1;
+          answer = x * y;
+          question = `${x} × ${y}`;
+        } else {
+          answer = op === '+' ? a + b : a - b;
+          question = `${a} ${op} ${b}`;
+        }
+        return { question: question + ' = ?', answer, generateOptions: (ans) => shuffleArray([ans, ans + 2, ans - 2, ans + 5].filter(x => x >= 0)) };
+      },
+      3: () => { // Difícil: multiplicaciones y operaciones complejas
+        const a = Math.floor(Math.random() * 12) + 2;
+        const b = Math.floor(Math.random() * 12) + 2;
+        const answer = a * b;
+        return { question: `${a} × ${b} = ?`, answer, generateOptions: (ans) => shuffleArray([ans, ans + a, ans - b, ans + 10].filter(x => x >= 0)) };
+      }
+    };
+    
+    const alfaData = {
+      1: [
+        { text: 'El gato de Pedro se llama Michi. Michi es negro y le gusta dormir en el sofá. Todos los días, Pedro le da leche.', question: '¿Cómo se llama el gato?', answer: 'Michi', options: ['Michi', 'Pedro', 'Negro', 'Sofá'] },
+        { text: 'La casa de Ana tiene un jardín muy bonito. En el jardín hay flores rojas, amarillas y blancas. Ana riega las flores cada mañana.', question: '¿De qué colores son las flores?', answer: 'Rojas, amarillas y blancas', options: ['Rojas, amarillas y blancas', 'Solo rojas', 'Azules y verdes', 'Moradas'] }
+      ],
+      2: [
+        { text: 'En la escuela de Luis hay una biblioteca muy grande. Tiene muchos libros de cuentos, ciencia y aventuras. A Luis le gustan más los libros de aventuras porque puede imaginar que viaja a lugares lejanos.', question: '¿Qué tipo de libros le gustan más a Luis?', answer: 'De aventuras', options: ['De aventuras', 'De ciencia', 'De cuentos', 'De matemáticas'] },
+        { text: 'María fue al mercado con su mamá. Compraron manzanas, plátanos y naranjas. Las manzanas eran las más dulces. María comió una manzana de camino a casa.', question: '¿Qué fruta comió María?', answer: 'Una manzana', options: ['Una manzana', 'Un plátano', 'Una naranja', 'Una pera'] }
+      ],
+      3: [
+        { text: 'El científico descubrió que las abejas son muy importantes para las plantas. Cuando una abeja visita una flor, lleva polen a otras flores. Este proceso se llama polinización y ayuda a que nazcan nuevas plantas y frutos.', question: '¿Cómo se llama el proceso donde las abejas llevan polen?', answer: 'Polinización', options: ['Polinización', 'Fotosíntesis', 'Respiración', 'Germinación'] },
+        { text: 'México es un país con mucha historia. Los aztecas fundaron su ciudad Tenochtitlán donde vieron un águila devorando una serpiente sobre un nopal. Esta imagen aparece en nuestra bandera nacional.', question: '¿Qué vieron los aztecas que los hizo fundar su ciudad?', answer: 'Un águila devorando una serpiente', options: ['Un águila devorando una serpiente', 'Un volcán', 'Un río grande', 'Una montaña'] }
+      ]
+    };
+    
+    const cienciasData = {
+      1: [
+        { fact: 'Los animales se dividen en dos grupos: los que tienen huesos (vertebrados) como los perros, y los que no tienen huesos (invertebrados) como las mariposas.', question: '¿Cómo se llaman los animales que tienen huesos?', answer: 'Vertebrados', options: ['Vertebrados', 'Invertebrados', 'Mamíferos', 'Reptiles'] },
+        { fact: 'El agua puede estar en tres estados: líquido (como en un vaso), sólido (como el hielo) y gaseoso (como el vapor). Cuando calentamos agua, se convierte en vapor.', question: '¿En qué se convierte el agua cuando la calentamos mucho?', answer: 'Vapor', options: ['Vapor', 'Hielo', 'Lluvia', 'Nieve'] }
+      ],
+      2: [
+        { fact: 'El sistema solar tiene 8 planetas que giran alrededor del Sol. La Tierra es el tercer planeta y es el único donde sabemos que hay vida. Marte es el cuarto planeta y es de color rojo.', question: '¿Cuántos planetas tiene el sistema solar?', answer: '8 planetas', options: ['8 planetas', '9 planetas', '7 planetas', '10 planetas'] },
+        { fact: 'Los pulmones son los órganos que nos permiten respirar. Cuando respiramos, tomamos oxígeno del aire y sacamos dióxido de carbono. Un adulto respira aproximadamente 20 veces por minuto.', question: '¿Qué gas tomamos del aire cuando respiramos?', answer: 'Oxígeno', options: ['Oxígeno', 'Dióxido de carbono', 'Nitrógeno', 'Hidrógeno'] }
+      ],
+      3: [
+        { fact: 'La fotosíntesis es el proceso por el cual las plantas fabrican su alimento. Usan la luz del sol, el agua y el dióxido de carbono para producir glucosa (azúcar) y liberar oxígeno al aire.', question: '¿Qué liberan las plantas durante la fotosíntesis?', answer: 'Oxígeno', options: ['Oxígeno', 'Dióxido de carbono', 'Nitrógeno', 'Vapor de agua'] },
+        { fact: 'Los ecosistemas son comunidades de seres vivos que interactúan entre sí y con su ambiente. En un ecosistema de bosque, los árboles producen oxígeno, los herbívoros comen plantas y los carnívoros cazan a otros animales.', question: '¿Cómo se llama la comunidad de seres vivos que interactúan entre sí?', answer: 'Ecosistema', options: ['Ecosistema', 'Hábitat', 'Bioma', 'Población'] }
+      ]
+    };
+    
+    const geoData = {
+      1: [
+        { fact: 'México tiene 32 estados. Cada estado tiene su propia capital. Por ejemplo, la capital de Sonora es Hermosillo, y la capital de Jalisco es Guadalajara.', question: '¿Cuántos estados tiene México?', answer: '32 estados', options: ['32 estados', '30 estados', '28 estados', '35 estados'] },
+        { fact: 'El volcán más alto de México es el Pico de Orizaba, también conocido como Citlaltépetl. Mide 5,636 metros de altura y está entre los estados de Puebla y Veracruz.', question: '¿Cuál es el volcán más alto de México?', answer: 'Pico de Orizaba', options: ['Pico de Orizaba', 'Popocatépetl', 'Iztaccíhuatl', 'Nevado de Toluca'] }
+      ],
+      2: [
+        { fact: 'México tiene fronteras con tres países: Estados Unidos al norte, Guatemala al sureste, y Belice también al sureste. Además, tiene costas en el Océano Pacífico y el Golfo de México.', question: '¿Con cuántos países tiene frontera México?', answer: '3 países', options: ['3 países', '2 países', '4 países', '5 países'] },
+        { fact: 'El Río Bravo es el río más largo de México y forma parte de la frontera con Estados Unidos. También se le conoce como Río Grande en Estados Unidos.', question: '¿Cómo se llama el río más largo de México?', answer: 'Río Bravo', options: ['Río Bravo', 'Río Lerma', 'Río Balsas', 'Río Grijalva'] }
+      ],
+      3: [
+        { fact: 'México se divide en diferentes regiones naturales: selva tropical en el sureste (Chiapas, Tabasco), desierto en el norte (Sonora, Chihuahua), y bosques templados en el centro.', question: '¿En qué región de México hay selva tropical?', answer: 'Sureste', options: ['Sureste', 'Norte', 'Centro', 'Oeste'] },
+        { fact: 'La Península de Yucatán está formada por los estados de Yucatán, Quintana Roo y Campeche. Es famosa por sus playas, cenotes y ruinas mayas como Chichén Itzá.', question: '¿Cuántos estados forman la Península de Yucatán?', answer: '3 estados', options: ['3 estados', '2 estados', '4 estados', '5 estados'] }
+      ]
+    };
+    
+    const historiaData = {
+      1: [
+        { fact: 'El 16 de septiembre de 1810, el cura Miguel Hidalgo tocó las campanas de la iglesia de Dolores para llamar al pueblo e iniciar la lucha por la independencia. Por eso celebramos este día como el Día de la Independencia.', question: '¿Quién tocó las campanas para iniciar la independencia?', answer: 'Miguel Hidalgo', options: ['Miguel Hidalgo', 'José María Morelos', 'Benito Juárez', 'Emiliano Zapata'] },
+        { fact: 'La Bandera de México tiene tres colores: verde, blanco y rojo. En el centro está el escudo nacional con un águila devorando una serpiente sobre un nopal.', question: '¿Cuáles son los colores de la bandera de México?', answer: 'Verde, blanco y rojo', options: ['Verde, blanco y rojo', 'Azul, blanco y rojo', 'Verde, amarillo y rojo', 'Rojo, blanco y azul'] },
+        { fact: 'Cristóbal Colón llegó a América el 12 de octubre de 1492. Este viaje cambió la historia del mundo. Los españoles llegaron a las nuevas tierras en tres carabelas: la Pinta, la Niña y la Santa María.', question: '¿En qué año llegó Cristóbla Colón a América?', answer: '1492', options: ['1492', '1500', '1493', '1491'] },
+        { fact: 'El Códice Mendoza es un documento importante que contiene información sobre el imperio azteca. Fue creado para el rey de España y muestra cómo vivían los aztecas, qué comían y cómo gobernaban.', question: '¿Qué es el Códice Mendoza?', answer: 'Un documento sobre el imperio azteca', options: ['Un documento sobre el imperio azteca', 'Una pirámide', 'Un libro de magia', 'Un juego antiguo'] }
+      ],
+      2: [
+        { fact: 'Benito Juárez fue presidente de México y es conocido como el "Benemérito de las Américas". Nació en Oaxaca y su frase más famosa es: "Entre los individuos, como entre las naciones, el respeto al derecho ajeno es la paz."', question: '¿De qué estado era originario Benito Juárez?', answer: 'Oaxaca', options: ['Oaxaca', 'Veracruz', 'Puebla', 'Guerrero'] },
+        { fact: 'Los Niños Héroes fueron seis jóvenes cadetes que defendieron el Castillo de Chapultepec el 13 de septiembre de 1847 durante la invasión estadounidense. Juan Escutia se envolvió en la bandera para que no cayera en manos del enemigo.', question: '¿Qué defendieron los Niños Héroes?', answer: 'El Castillo de Chapultepec', options: ['El Castillo de Chapultepec', 'El Palacio Nacional', 'La Catedral', 'El Zócalo'] },
+        { fact: 'La Batalla de Puebla fue el 5 de mayo de 1862. El general Ignacio Zaragoza derrotó al ejército francés. Por eso celebramos el Cinco de Mayo como un día importante en la historia de México.', question: '¿Quién fue el general que ganó la Batalla de Puebla?', answer: 'Ignacio Zaragoza', options: ['Ignacio Zaragoza', 'Benito Juárez', 'Miguel Hidalgo', 'Santa Anna'] },
+        { fact: 'Moctezuma II fue el último emperador azteca. Gobernó desde 1502 hasta 1520. Durante su reinado, Hernán Cortés llegó a México y conquistó el imperio azteca.', question: '¿Cuál fue el último emperador azteca?', answer: 'Moctezuma II', options: ['Moctezuma II', 'Ahuízotl', 'Ahilote', 'Axayácatl'] }
+      ],
+      3: [
+        { fact: 'La Revolución Mexicana comenzó el 20 de noviembre de 1910. Francisco I. Madero luchó contra la dictadura de Porfirio Díaz. Otros líderes importantes fueron Emiliano Zapata (que luchó por los campesinos) y Pancho Villa.', question: '¿Contra quién luchó Francisco I. Madero?', answer: 'Porfirio Díaz', options: ['Porfirio Díaz', 'Maximiliano', 'Santa Anna', 'Iturbide'] },
+        { fact: 'Los aztecas fundaron Tenochtitlán en 1325 en un islote del lago de Texcoco. La ciudad tenía calzadas, chinampas (jardines flotantes) y grandes templos. Sobre sus ruinas se construyó la actual Ciudad de México.', question: '¿En qué año fundaron los aztecas Tenochtitlán?', answer: '1325', options: ['1325', '1425', '1521', '1200'] },
+        { fact: 'La Independencia de México se consumó el 27 de septiembre de 1821 cuando el Ejército Trigarante entró a la Ciudad de México. Agustín de Iturbide fue quien proclamó la independencia de México.', question: '¿Quién proclamó la independencia de México en 1821?', answer: 'Agustín de Iturbide', options: ['Agustín de Iturbide', 'Miguel Hidalgo', 'Benito Juárez', 'Antonio López de Santa Anna'] },
+        { fact: 'Emiliano Zapata fue un líder revolucionario que luchó principalmente por los derechos de los campesinos. Su lema era "Tierra y Libertad". Murió el 10 de abril de 1919 en Morelos.', question: '¿Cuál era el lema de Emiliano Zapata?', answer: 'Tierra y Libertad', options: ['Tierra y Libertad', 'Libertad o Muerte', 'Por la Patria', 'Reforma, Libertad y Justicia'] },
+        { fact: 'Pancho Villa fue un general revolucionario que luchó en la Revolución Mexicana. Fue jefe de la División del Norte y es considerado un héroe popular en México. Se enfrentó a numerosos enemigos pero también ayudó al pueblo.', question: '¿Qué fue Pancho Villa?', answer: 'Un general revolucionario', options: ['Un general revolucionario', 'Un presidente', 'Un poeta', 'Un científico'] }
+      ]
+    };
+    
+    const aventuraData = {
+      1: [
+        { text: 'Había una vez un conejito llamado Saltarín que vivía en un bosque muy verde. Un día encontró una zanahoria mágica que brillaba con luz dorada.', question: '¿Cómo se llamaba el conejito?', answer: 'Saltarín', options: ['Saltarín', 'Peludo', 'Orejón', 'Blanco'] },
+        { text: 'La princesa Luna tenía un caballo blanco muy rápido. Juntos viajaban por todo el reino ayudando a las personas.', question: '¿De qué color era el caballo de la princesa?', answer: 'Blanco', options: ['Blanco', 'Negro', 'Café', 'Gris'] }
+      ],
+      2: [
+        { text: 'En el fondo del océano vivía un pez llamado Brillante. Tenía escamas de todos los colores que resplandecían cuando nadaba. Un día, una pequeña estrella de mar le pidió ayuda para encontrar su hogar.', question: '¿Qué animal le pidió ayuda al pez?', answer: 'Una estrella de mar', options: ['Una estrella de mar', 'Un cangrejo', 'Una tortuga', 'Un delfín'] },
+        { text: 'El robot MAX-3000 fue creado para ayudar en la escuela. Podía resolver problemas de matemáticas, contar historias y hasta cantar canciones. Los niños lo querían mucho.', question: '¿Para qué fue creado el robot MAX-3000?', answer: 'Para ayudar en la escuela', options: ['Para ayudar en la escuela', 'Para cocinar', 'Para limpiar', 'Para jugar fútbol'] }
+      ],
+      3: [
+        { text: 'La exploradora Maya descubrió una cueva secreta en la montaña. Dentro encontró pinturas antiguas de animales que ya no existen. Los científicos dijeron que las pinturas tenían más de mil años.', question: '¿Qué encontró Maya dentro de la cueva?', answer: 'Pinturas antiguas', options: ['Pinturas antiguas', 'Tesoros de oro', 'Animales vivos', 'Un río subterráneo'] },
+        { text: 'El inventor Torres creó una máquina que podía traducir el lenguaje de los animales. Gracias a su invento, descubrió que los perros hablan sobre comida, juegos y cuánto quieren a sus dueños.', question: '¿Qué podía hacer la máquina del inventor Torres?', answer: 'Traducir el lenguaje de los animales', options: ['Traducir el lenguaje de los animales', 'Volar', 'Hacer invisible a las personas', 'Viajar en el tiempo'] }
+      ]
+    };
+    
+    // =====================
+    // FUNCIONES AUXILIARES
+    // =====================
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+    
+    function showFeedback(containerId, isCorrect, callback) {
+      const feedback = document.getElementById(containerId);
+      feedback.classList.remove('hidden');
+      feedback.className = `mt-6 text-center text-2xl font-bold bounce-in ${isCorrect ? 'text-green-500' : 'text-red-500'}`;
+      feedback.textContent = isCorrect ? '✅ ¡Correcto! +10 ⭐' : '❌ ¡Incorrecto!';
+      
+      setTimeout(() => {
+        feedback.classList.add('hidden');
+        if (callback) callback();
+      }, 1500);
+    }
+    
+    // =====================
+    // JUEGO DE CÁLCULO MENTAL
+    // =====================
+    let calculoTimer;
+    let calculoQuestions = [];
+    
+    function startCalculoGame() {
+      resetGameState();
+      gameState.currentGame = 'calculo';
+      gameState.currentQuestion = 0;
+      gameState.timeLeft = 30;
+      calculoQuestions = [];
+      
+      document.getElementById('calculo-start').classList.add('hidden');
+      document.getElementById('calculo-score').textContent = '0';
+      updateLocalLives('calculo-lives');
+      
+      for (let i = 0; i < 10; i++) {
+        calculoQuestions.push(calculoData[gameState.difficulty]());
+      }
+      
+      showCalculoQuestion();
+      startCalculoTimer();
+    }
+    
+    function startCalculoTimer() {
+      clearInterval(calculoTimer);
+      gameState.timeLeft = 30;
+      updateCalculoTimer();
+      
+      calculoTimer = setInterval(() => {
+        gameState.timeLeft--;
+        updateCalculoTimer();
+        
+        if (gameState.timeLeft <= 0) {
+          clearInterval(calculoTimer);
+          handleCalculoAnswer(null);
+        }
+      }, 1000);
+    }
+    
+    function updateCalculoTimer() {
+      const timerEl = document.getElementById('calculo-timer');
+      timerEl.textContent = `⏱️ ${gameState.timeLeft}s`;
+      timerEl.className = gameState.timeLeft <= 10 ? 'bg-red-100 px-3 py-1 rounded-full font-bold text-red-700 shake' : 'bg-blue-100 px-3 py-1 rounded-full font-bold text-blue-700';
+    }
+    
+    function showCalculoQuestion() {
+      if (gameState.currentQuestion >= calculoQuestions.length) {
+        clearInterval(calculoTimer);
+        document.getElementById('final-score').textContent = gameState.stars;
+        showScreen('victory');
+        return;
+      }
+      
+      const q = calculoQuestions[gameState.currentQuestion];
+      document.getElementById('calculo-question').textContent = q.question;
+      document.getElementById('calculo-question').className = 'text-5xl md:text-6xl font-bold text-gray-800 mb-8 bounce-in';
+      document.getElementById('calculo-current').textContent = gameState.currentQuestion + 1;
+      document.getElementById('calculo-progress').style.width = ((gameState.currentQuestion / 10) * 100) + '%';
+      
+      const options = q.generateOptions(q.answer);
+      const optionsContainer = document.getElementById('calculo-options');
+      optionsContainer.innerHTML = '';
+      
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-game bg-gradient-to-r from-orange-100 to-red-100 hover:from-orange-200 hover:to-red-200 text-2xl font-bold py-4 rounded-2xl shadow-lg';
+        btn.textContent = opt;
+        btn.onclick = () => handleCalculoAnswer(opt);
+        optionsContainer.appendChild(btn);
+      });
+      
+      startCalculoTimer();
+    }
+    
+    function handleCalculoAnswer(answer) {
+      clearInterval(calculoTimer);
+      const q = calculoQuestions[gameState.currentQuestion];
+      const isCorrect = answer === q.answer;
+      
+      if (isCorrect) {
+        addStars(10);
+        document.getElementById('calculo-score').textContent = gameState.stars;
+      } else {
+        if (loseLife()) return;
+        updateLocalLives('calculo-lives');
+      }
+      
+      showFeedback('calculo-feedback', isCorrect, () => {
+        gameState.currentQuestion++;
+        showCalculoQuestion();
+      });
+    }
+    
+    // =====================
+    // JUEGO DE ALFABETIZACIÓN
+    // =====================
+    let alfaQuestions = [];
+    
+    function startAlfaGame() {
+      resetGameState();
+      gameState.currentGame = 'alfa';
+      gameState.currentQuestion = 0;
+      
+      document.getElementById('alfa-start').classList.add('hidden');
+      document.getElementById('alfa-score').textContent = '0';
+      updateLocalLives('alfa-lives');
+      
+      alfaQuestions = shuffleArray([...alfaData[gameState.difficulty]]);
+      showAlfaQuestion();
+    }
+    
+    function showAlfaQuestion() {
+      if (gameState.currentQuestion >= alfaQuestions.length) {
+        document.getElementById('final-score').textContent = gameState.stars;
+        showScreen('victory');
+        return;
+      }
+      
+      const q = alfaQuestions[gameState.currentQuestion];
+      document.getElementById('alfa-text').textContent = q.text;
+      document.getElementById('alfa-question').textContent = q.question;
+      
+      const options = shuffleArray([...q.options]);
+      const optionsContainer = document.getElementById('alfa-options');
+      optionsContainer.innerHTML = '';
+      
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-game bg-gradient-to-r from-blue-100 to-cyan-100 hover:from-blue-200 hover:to-cyan-200 text-lg font-bold py-4 px-6 rounded-2xl shadow-lg text-left';
+        btn.textContent = opt;
+        btn.onclick = () => handleAlfaAnswer(opt);
+        optionsContainer.appendChild(btn);
+      });
+    }
+    
+    function handleAlfaAnswer(answer) {
+      const q = alfaQuestions[gameState.currentQuestion];
+      const isCorrect = answer === q.answer;
+      
+      if (isCorrect) {
+        addStars(15);
+        document.getElementById('alfa-score').textContent = gameState.stars;
+      } else {
+        if (loseLife()) return;
+        updateLocalLives('alfa-lives');
+      }
+      
+      showFeedback('alfa-feedback', isCorrect, () => {
+        gameState.currentQuestion++;
+        showAlfaQuestion();
+      });
+    }
+    
+    // =====================
+    // JUEGO DE CIENCIAS
+    // =====================
+    let cienciasQuestions = [];
+    
+    function startCienciasGame() {
+      resetGameState();
+      gameState.currentGame = 'ciencias';
+      gameState.currentQuestion = 0;
+      
+      document.getElementById('ciencias-start').classList.add('hidden');
+      document.getElementById('ciencias-score').textContent = '0';
+      updateLocalLives('ciencias-lives');
+      
+      cienciasQuestions = shuffleArray([...cienciasData[gameState.difficulty]]);
+      showCienciasQuestion();
+    }
+    
+    function showCienciasQuestion() {
+      if (gameState.currentQuestion >= cienciasQuestions.length) {
+        document.getElementById('final-score').textContent = gameState.stars;
+        showScreen('victory');
+        return;
+      }
+      
+      const q = cienciasQuestions[gameState.currentQuestion];
+      document.getElementById('ciencias-fact').textContent = q.fact;
+      document.getElementById('ciencias-question').textContent = q.question;
+      
+      const options = shuffleArray([...q.options]);
+      const optionsContainer = document.getElementById('ciencias-options');
+      optionsContainer.innerHTML = '';
+      
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-game bg-gradient-to-r from-green-100 to-emerald-100 hover:from-green-200 hover:to-emerald-200 text-lg font-bold py-4 px-6 rounded-2xl shadow-lg';
+        btn.textContent = opt;
+        btn.onclick = () => handleCienciasAnswer(opt);
+        optionsContainer.appendChild(btn);
+      });
+    }
+    
+    function handleCienciasAnswer(answer) {
+      const q = cienciasQuestions[gameState.currentQuestion];
+      const isCorrect = answer === q.answer;
+      
+      if (isCorrect) {
+        addStars(15);
+        document.getElementById('ciencias-score').textContent = gameState.stars;
+      } else {
+        if (loseLife()) return;
+        updateLocalLives('ciencias-lives');
+      }
+      
+      showFeedback('ciencias-feedback', isCorrect, () => {
+        gameState.currentQuestion++;
+        showCienciasQuestion();
+      });
+    }
+    
+    // =====================
+    // JUEGO DE GEOGRAFÍA
+    // =====================
+    let geoQuestions = [];
+    
+    function startGeoGame() {
+      resetGameState();
+      gameState.currentGame = 'geo';
+      gameState.currentQuestion = 0;
+      
+      document.getElementById('geo-start').classList.add('hidden');
+      document.getElementById('geo-score').textContent = '0';
+      updateLocalLives('geo-lives');
+      
+      geoQuestions = shuffleArray([...geoData[gameState.difficulty]]);
+      showGeoQuestion();
+    }
+    
+    function showGeoQuestion() {
+      if (gameState.currentQuestion >= geoQuestions.length) {
+        document.getElementById('final-score').textContent = gameState.stars;
+        showScreen('victory');
+        return;
+      }
+      
+      const q = geoQuestions[gameState.currentQuestion];
+      document.getElementById('geo-fact').textContent = q.fact;
+      document.getElementById('geo-question').textContent = q.question;
+      
+      const options = shuffleArray([...q.options]);
+      const optionsContainer = document.getElementById('geo-options');
+      optionsContainer.innerHTML = '';
+      
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-game bg-gradient-to-r from-yellow-100 to-amber-100 hover:from-yellow-200 hover:to-amber-200 text-lg font-bold py-4 px-6 rounded-2xl shadow-lg';
+        btn.textContent = opt;
+        btn.onclick = () => handleGeoAnswer(opt);
+        optionsContainer.appendChild(btn);
+      });
+    }
+    
+    function handleGeoAnswer(answer) {
+      const q = geoQuestions[gameState.currentQuestion];
+      const isCorrect = answer === q.answer;
+      
+      if (isCorrect) {
+        addStars(15);
+        document.getElementById('geo-score').textContent = gameState.stars;
+      } else {
+        if (loseLife()) return;
+        updateLocalLives('geo-lives');
+      }
+      
+      showFeedback('geo-feedback', isCorrect, () => {
+        gameState.currentQuestion++;
+        showGeoQuestion();
+      });
+    }
+    
+    // =====================
+    // JUEGO DE HISTORIA
+    // =====================
+    let historiaQuestions = [];
+    
+    function startHistoriaGame() {
+      resetGameState();
+      gameState.currentGame = 'historia';
+      gameState.currentQuestion = 0;
+      
+      document.getElementById('historia-start').classList.add('hidden');
+      document.getElementById('historia-score').textContent = '0';
+      updateLocalLives('historia-lives');
+      
+      historiaQuestions = shuffleArray([...historiaData[gameState.difficulty]]);
+      showHistoriaQuestion();
+    }
+    
+    function showHistoriaQuestion() {
+      if (gameState.currentQuestion >= historiaQuestions.length) {
+        document.getElementById('final-score').textContent = gameState.stars;
+        showScreen('victory');
+        return;
+      }
+      
+      const q = historiaQuestions[gameState.currentQuestion];
+      document.getElementById('historia-fact').textContent = q.fact;
+      document.getElementById('historia-question').textContent = q.question;
+      
+      const options = shuffleArray([...q.options]);
+      const optionsContainer = document.getElementById('historia-options');
+      optionsContainer.innerHTML = '';
+      
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-game bg-gradient-to-r from-purple-100 to-violet-100 hover:from-purple-200 hover:to-violet-200 text-lg font-bold py-4 px-6 rounded-2xl shadow-lg';
+        btn.textContent = opt;
+        btn.onclick = () => handleHistoriaAnswer(opt);
+        optionsContainer.appendChild(btn);
+      });
+    }
+    
+    function handleHistoriaAnswer(answer) {
+      const q = historiaQuestions[gameState.currentQuestion];
+      const isCorrect = answer === q.answer;
+      
+      if (isCorrect) {
+        addStars(15);
+        document.getElementById('historia-score').textContent = gameState.stars;
+      } else {
+        if (loseLife()) return;
+        updateLocalLives('historia-lives');
+      }
+      
+      showFeedback('historia-feedback', isCorrect, () => {
+        gameState.currentQuestion++;
+        showHistoriaQuestion();
+      });
+    }
+    
+    // =====================
+    // JUEGO DE FRACCIONES
+    // =====================
+    const fractionData = {
+      1: [
+        { numerator: 1, denominator: 2, display: '½' },
+        { numerator: 1, denominator: 4, display: '¼' },
+        { numerator: 2, denominator: 4, display: '2/4' },
+        { numerator: 3, denominator: 4, display: '¾' }
+      ],
+      2: [
+        { numerator: 1, denominator: 3, display: '⅓' },
+        { numerator: 2, denominator: 3, display: '⅔' },
+        { numerator: 1, denominator: 6, display: '1/6' },
+        { numerator: 3, denominator: 6, display: '3/6' }
+      ],
+      3: [
+        { numerator: 1, denominator: 8, display: '⅛' },
+        { numerator: 3, denominator: 8, display: '⅜' },
+        { numerator: 5, denominator: 8, display: '⅝' },
+        { numerator: 7, denominator: 8, display: '⅞' }
+      ]
+    };
+    
+    let currentFraction = null;
+    
+    function startFracGame() {
+      resetGameState();
+      gameState.currentGame = 'frac';
+      gameState.currentQuestion = 0;
+      
+      document.getElementById('frac-start').classList.add('hidden');
+      document.getElementById('frac-score').textContent = '0';
+      updateLocalLives('frac-lives');
+      
+      showFracQuestion();
+    }
+    
+    function showFracQuestion() {
+      if (gameState.currentQuestion >= 8) {
+        document.getElementById('final-score').textContent = gameState.stars;
+        showScreen('victory');
+        return;
+      }
+      
+      const fractions = fractionData[gameState.difficulty];
+      currentFraction = fractions[Math.floor(Math.random() * fractions.length)];
+      
+      // Crear visualización
+      const visual = document.getElementById('frac-visual');
+      visual.innerHTML = '';
+      visual.className = `grid gap-1 w-48 h-48`;
+      
+      const totalParts = currentFraction.denominator;
+      const coloredParts = currentFraction.numerator;
+      
+      // Ajustar grid según denominador
+      if (totalParts === 2) visual.classList.add('grid-cols-2');
+      else if (totalParts === 3) visual.classList.add('grid-cols-3');
+      else if (totalParts === 4) visual.classList.add('grid-cols-2');
+      else if (totalParts === 6) visual.classList.add('grid-cols-3');
+      else visual.classList.add('grid-cols-4');
+      
+      for (let i = 0; i < totalParts; i++) {
+        const part = document.createElement('div');
+        part.className = `rounded-lg ${i < coloredParts ? 'bg-pink-500' : 'bg-gray-200'} transition-all duration-300`;
+        visual.appendChild(part);
+      }
+      
+      // Crear opciones
+      const allOptions = fractions.map(f => f.display);
+      const options = shuffleArray(allOptions).slice(0, 4);
+      if (!options.includes(currentFraction.display)) {
+        options[0] = currentFraction.display;
+      }
+      
+      const optionsContainer = document.getElementById('frac-options');
+      optionsContainer.innerHTML = '';
+      
+      shuffleArray(options).forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-game bg-gradient-to-r from-pink-100 to-rose-100 hover:from-pink-200 hover:to-rose-200 text-2xl font-bold py-4 rounded-2xl shadow-lg';
+        btn.textContent = opt;
+        btn.onclick = () => handleFracAnswer(opt);
+        optionsContainer.appendChild(btn);
+      });
+    }
+    
+    function handleFracAnswer(answer) {
+      const isCorrect = answer === currentFraction.display;
+      
+      if (isCorrect) {
+        addStars(15);
+        document.getElementById('frac-score').textContent = gameState.stars;
+      } else {
+        if (loseLife()) return;
+        updateLocalLives('frac-lives');
+      }
+      
+      showFeedback('frac-feedback', isCorrect, () => {
+        gameState.currentQuestion++;
+        showFracQuestion();
+      });
+    }
+    
+    // =====================
+    // JUEGO DE MULTIPLICACIONES
+    // =====================
+    let multTimer;
+    
+    function selectTable(table) {
+      gameState.selectedTable = table;
+      document.querySelectorAll('.table-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-500', 'text-white');
+        btn.classList.add('bg-indigo-100', 'text-indigo-700');
+      });
+      const selectedBtn = document.querySelector(`.table-btn[data-table="${table}"]`);
+      if (selectedBtn) {
+        selectedBtn.classList.remove('bg-indigo-100', 'text-indigo-700');
+        selectedBtn.classList.add('bg-indigo-500', 'text-white');
+      }
+    }
+    
+    function startMultGame() {
+      resetGameState();
+      gameState.currentGame = 'mult';
+      gameState.currentQuestion = 0;
+      gameState.timeLeft = 60;
+      
+      document.getElementById('mult-start').classList.add('hidden');
+      document.getElementById('mult-score').textContent = '0';
+      updateLocalLives('mult-lives');
+      
+      startMultTimer();
+      showMultQuestion();
+    }
+    
+    function startMultTimer() {
+      clearInterval(multTimer);
+      gameState.timeLeft = 60;
+      updateMultTimer();
+      
+      multTimer = setInterval(() => {
+        gameState.timeLeft--;
+        updateMultTimer();
+        
+        if (gameState.timeLeft <= 0) {
+          clearInterval(multTimer);
+          document.getElementById('final-score').textContent = gameState.stars;
+          showScreen('victory');
+        }
+      }, 1000);
+    }
+    
+    function updateMultTimer() {
+      const timerEl = document.getElementById('mult-timer');
+      timerEl.textContent = `⏱️ ${gameState.timeLeft}s`;
+      timerEl.className = gameState.timeLeft <= 10 ? 'bg-red-100 px-3 py-1 rounded-full font-bold text-red-700 shake' : 'bg-blue-100 px-3 py-1 rounded-full font-bold text-blue-700';
+    }
+    
+    function showMultQuestion() {
+      let a, b;
+      if (gameState.selectedTable === 0) {
+        a = Math.floor(Math.random() * 8) + 2;
+        b = Math.floor(Math.random() * 10) + 1;
+      } else {
+        a = gameState.selectedTable;
+        b = Math.floor(Math.random() * 10) + 1;
+      }
+      
+      const answer = a * b;
+      
+      document.getElementById('mult-question').textContent = `${a} × ${b} = ?`;
+      document.getElementById('mult-question').className = 'text-5xl md:text-6xl font-bold text-gray-800 mb-8 bounce-in';
+      
+      const options = shuffleArray([answer, answer + a, answer - b > 0 ? answer - b : answer + 1, answer + b]);
+      const optionsContainer = document.getElementById('mult-options');
+      optionsContainer.innerHTML = '';
+      
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-game bg-gradient-to-r from-indigo-100 to-blue-100 hover:from-indigo-200 hover:to-blue-200 text-2xl font-bold py-4 rounded-2xl shadow-lg';
+        btn.textContent = opt;
+        btn.onclick = () => handleMultAnswer(opt, answer);
+        optionsContainer.appendChild(btn);
+      });
+    }
+    
+    function handleMultAnswer(answer, correct) {
+      const isCorrect = answer === correct;
+      
+      if (isCorrect) {
+        addStars(10);
+        document.getElementById('mult-score').textContent = gameState.stars;
+      } else {
+        if (loseLife()) {
+          clearInterval(multTimer);
+          return;
+        }
+        updateLocalLives('mult-lives');
+      }
+      
+      showFeedback('mult-feedback', isCorrect, () => {
+        gameState.currentQuestion++;
+        showMultQuestion();
+      });
+    }
+    
+    // =====================
+    // JUEGO DE MEMORIA (UNIR)
+    // =====================
+    const memoryPairs = {
+      1: [
+        { a: '2+2', b: '4' },
+        { a: '3+1', b: '4' },
+        { a: '5-3', b: '2' },
+        { a: '1+1', b: '2' }
+      ],
+      2: [
+        { a: 'México', b: '🇲🇽' },
+        { a: 'Sol', b: '☀️' },
+        { a: 'Luna', b: '🌙' },
+        { a: 'Estrella', b: '⭐' }
+      ],
+      3: [
+        { a: '3×3', b: '9' },
+        { a: '4×2', b: '8' },
+        { a: '5×2', b: '10' },
+        { a: '6×1', b: '6' }
+      ]
+    };
+    
+    let memoryCards = [];
+    let flippedCards = [];
+    let matchedPairs = 0;
+    let moves = 0;
+    
+    function startUnirGame() {
+      gameState.currentGame = 'unir';
+      moves = 0;
+      matchedPairs = 0;
+      flippedCards = [];
+      
+      document.getElementById('unir-start').classList.add('hidden');
+      document.getElementById('unir-moves-count').textContent = '0';
+      document.getElementById('unir-score').textContent = '0';
+      
+      const pairs = memoryPairs[gameState.difficulty];
+      memoryCards = [];
+      
+      pairs.forEach((pair, index) => {
+        memoryCards.push({ id: index * 2, content: pair.a, pairId: index, matched: false });
+        memoryCards.push({ id: index * 2 + 1, content: pair.b, pairId: index, matched: false });
+      });
+      
+      memoryCards = shuffleArray(memoryCards);
+      renderMemoryGrid();
+    }
+    
+    function renderMemoryGrid() {
+      const grid = document.getElementById('unir-grid');
+      grid.innerHTML = '';
+      
+      memoryCards.forEach(card => {
+        const cardEl = document.createElement('div');
+        cardEl.className = `match-card w-full aspect-square ${card.matched ? 'opacity-50' : ''}`;
+        cardEl.dataset.id = card.id;
+        cardEl.innerHTML = `
+          <div class="match-card-inner relative w-full h-full">
+            <div class="match-card-front bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center shadow-lg">
+              <span class="text-3xl text-white">❓</span>
+            </div>
+            <div class="match-card-back bg-white flex items-center justify-center shadow-lg border-4 border-teal-400">
+              <span class="text-xl font-bold text-gray-800">${card.content}</span>
+            </div>
+          </div>
+        `;
+        
+        if (!card.matched) {
+          cardEl.onclick = () => flipCard(card.id);
+        }
+        
+        grid.appendChild(cardEl);
+      });
+    }
+    
+    function flipCard(id) {
+      if (flippedCards.length >= 2) return;
+      
+      const card = memoryCards.find(c => c.id === id);
+      if (!card || card.matched || flippedCards.includes(id)) return;
+      
+      flippedCards.push(id);
+      const cardEl = document.querySelector(`.match-card[data-id="${id}"]`);
+      cardEl.classList.add('flipped');
+      
+      if (flippedCards.length === 2) {
+        moves++;
+        document.getElementById('unir-moves-count').textContent = moves;
+        
+        const [id1, id2] = flippedCards;
+        const card1 = memoryCards.find(c => c.id === id1);
+        const card2 = memoryCards.find(c => c.id === id2);
+        
+        if (card1.pairId === card2.pairId) {
+          card1.matched = true;
+          card2.matched = true;
+          matchedPairs++;
+          addStars(20);
+          document.getElementById('unir-score').textContent = gameState.stars;
+          flippedCards = [];
+          
+          if (matchedPairs === memoryCards.length / 2) {
+            setTimeout(() => {
+              document.getElementById('final-score').textContent = gameState.stars;
+              showScreen('victory');
+            }, 1000);
+          }
+        } else {
+          setTimeout(() => {
+            document.querySelectorAll('.match-card.flipped').forEach(el => {
+              const cardId = parseInt(el.dataset.id);
+              const c = memoryCards.find(mc => mc.id === cardId);
+              if (!c.matched) el.classList.remove('flipped');
+            });
+            flippedCards = [];
+          }, 1000);
+        }
+      }
+    }
+    
+    // =====================
+    // JUEGO AVENTURA DE LECTURA
+    // =====================
+    let aventuraQuestions = [];
+    
+    function startAventuraGame() {
+      resetGameState();
+      gameState.currentGame = 'aventura';
+      gameState.currentQuestion = 0;
+      
+      document.getElementById('aventura-start').classList.add('hidden');
+      document.getElementById('aventura-score').textContent = '0';
+      updateLocalLives('aventura-lives');
+      
+      aventuraQuestions = shuffleArray([...aventuraData[gameState.difficulty]]);
+      showAventuraQuestion();
+    }
+    
+    function showAventuraQuestion() {
+      if (gameState.currentQuestion >= aventuraQuestions.length) {
+        document.getElementById('final-score').textContent = gameState.stars;
+        showScreen('victory');
+        return;
+      }
+      
+      const q = aventuraQuestions[gameState.currentQuestion];
+      document.getElementById('aventura-text').textContent = q.text;
+      document.getElementById('aventura-question').textContent = q.question;
+      
+      // Resetear personaje
+      const character = document.getElementById('aventura-character');
+      character.textContent = '🏃';
+      character.style.left = '32px';
+      
+      const options = shuffleArray([...q.options]);
+      const optionsContainer = document.getElementById('aventura-options');
+      optionsContainer.innerHTML = '';
+      
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-game bg-gradient-to-r from-lime-100 to-green-100 hover:from-lime-200 hover:to-green-200 text-lg font-bold py-4 px-6 rounded-2xl shadow-lg';
+        btn.textContent = opt;
+        btn.onclick = () => handleAventuraAnswer(opt);
+        optionsContainer.appendChild(btn);
+      });
+    }
+    
+    function handleAventuraAnswer(answer) {
+      const q = aventuraQuestions[gameState.currentQuestion];
+      const isCorrect = answer === q.answer;
+      const character = document.getElementById('aventura-character');
+      
+      if (isCorrect) {
+        // Animación de salto y avance
+        character.classList.add('jump');
+        character.textContent = '🎉';
+        setTimeout(() => {
+          character.style.left = '200px';
+        }, 250);
+        
+        addStars(20);
+        document.getElementById('aventura-score').textContent = gameState.stars;
+      } else {
+        character.textContent = '😵';
+        if (loseLife()) return;
+        updateLocalLives('aventura-lives');
+      }
+      
+      showFeedback('aventura-feedback', isCorrect, () => {
+        character.classList.remove('jump');
+        gameState.currentQuestion++;
+        showAventuraQuestion();
+      });
+    }
+    
+    // =====================
+    // REINICIAR Y NAVEGACIÓN
+    // =====================
+    function restartGame() {
+      resetGameState();
+      gameState.stars = 0;
+      updateGlobalDisplay();
+      
+      // Mostrar botones de inicio
+      ['calculo', 'alfa', 'ciencias', 'geo', 'historia', 'frac', 'mult', 'unir', 'aventura'].forEach(game => {
+        const startBtn = document.getElementById(`${game}-start`);
+        if (startBtn) startBtn.classList.remove('hidden');
+      });
+      
+      if (gameState.currentGame) {
+        showScreen(gameState.currentGame);
+      } else {
+        showScreen('menu');
+      }
+    }
+    
+    // Inicializar
+    updateGlobalDisplay();
+    selectTable(0);
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0f3f8cc3052f11',t:'MTc3MTYwMzU1NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
