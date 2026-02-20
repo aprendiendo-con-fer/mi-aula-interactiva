@@ -5,630 +5,1061 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mi Aula Interactiva</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&amp;family=Comic+Neue:wght@400;700&amp;display=swap" rel="stylesheet">
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
   <style>
-    * {
-      font-family: 'Fredoka', 'Comic Neue', cursive;
-    }
+    * { font-family: 'Nunito', sans-serif; }
+    .title-font { font-family: 'Fredoka One', cursive; }
     
-    .gradient-bg {
-      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ee9ca7 100%);
-    }
-    
-    .header-gradient {
-      background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    .card-fase3 {
-      background: linear-gradient(145deg, #84fab0 0%, #8fd3f4 100%);
-    }
-    
-    .card-fase4 {
-      background: linear-gradient(145deg, #a8edea 0%, #fed6e3 100%);
-    }
-    
-    .card-fase5 {
-      background: linear-gradient(145deg, #ffecd2 0%, #fcb69f 100%);
-    }
-    
-    .card-ingles {
-      background: linear-gradient(145deg, #d299c2 0%, #fef9d7 100%);
-    }
-    
-    .btn-card {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    
-    .btn-card:hover {
-      transform: translateY(-8px) scale(1.05);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-    }
-    
-    .floating {
-      animation: floating 3s ease-in-out infinite;
-    }
-    
-    .floating-delay {
-      animation: floating 3s ease-in-out infinite;
-      animation-delay: 1.5s;
-    }
-    
-    @keyframes floating {
+    @keyframes float {
       0%, 100% { transform: translateY(0px); }
       50% { transform: translateY(-10px); }
     }
-    
-    .sparkle {
-      animation: sparkle 2s ease-in-out infinite;
+    @keyframes bounce-slow {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
-    
     @keyframes sparkle {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(1.2); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    @keyframes celebrate {
+      0% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.1) rotate(-5deg); }
+      50% { transform: scale(1.2) rotate(5deg); }
+      75% { transform: scale(1.1) rotate(-5deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+    .float { animation: float 3s ease-in-out infinite; }
+    .bounce-slow { animation: bounce-slow 2s ease-in-out infinite; }
+    .sparkle { animation: sparkle 1.5s ease-in-out infinite; }
+    .shake { animation: shake 0.5s ease-in-out; }
+    .celebrate { animation: celebrate 0.6s ease-in-out; }
+    
+    .btn-phase {
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.2), 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .btn-phase:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 9px 0 rgba(0,0,0,0.2), 0 12px 25px rgba(0,0,0,0.2);
+    }
+    .btn-phase:active {
+      transform: translateY(2px);
+      box-shadow: 0 3px 0 rgba(0,0,0,0.2), 0 4px 10px rgba(0,0,0,0.1);
     }
     
-    .bounce-subtle {
-      animation: bounce-subtle 2s ease-in-out infinite;
+    .category-btn {
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .category-btn:hover {
+      transform: scale(1.08) rotate(-2deg);
     }
     
-    @keyframes bounce-subtle {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
+    .life-heart {
+      transition: all 0.3s ease;
+    }
+    .life-heart.lost {
+      filter: grayscale(100%);
+      opacity: 0.3;
+    }
+    
+    .progress-bar {
+      transition: width 0.1s linear;
+    }
+    
+    .option-btn {
+      transition: all 0.2s ease;
+    }
+    .option-btn:hover:not(:disabled) {
+      transform: scale(1.03);
+    }
+    .option-btn.correct {
+      background: linear-gradient(135deg, #10b981, #059669) !important;
+      color: white !important;
+    }
+    .option-btn.incorrect {
+      background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+      color: white !important;
+    }
+    
+    .decorative-element {
+      position: absolute;
+      pointer-events: none;
+      user-select: none;
     }
   </style>
   <style>body { box-sizing: border-box; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
-  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
  </head>
- <body class="h-full">
-  <div id="home-screen" class="min-h-full w-full gradient-bg overflow-auto relative">
-   <!-- Decorative Elements -->
-   <div class="absolute top-4 left-4 text-4xl floating opacity-80">
+ <body class="h-full overflow-auto bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400">
+  <div id="app" class="min-h-full w-full relative"><!-- Elementos decorativos flotantes -->
+   <div class="decorative-element text-4xl top-[5%] left-[5%] float" style="animation-delay: 0s;">
     📚
    </div>
-   <div class="absolute top-8 right-8 text-3xl floating-delay opacity-80">
+   <div class="decorative-element text-3xl top-[10%] right-[8%] float" style="animation-delay: 0.5s;">
     ✏️
    </div>
-   <div class="absolute top-20 left-20 text-2xl sparkle opacity-70">
-    ⭐
-   </div>
-   <div class="absolute top-16 right-24 text-2xl sparkle opacity-70" style="animation-delay: 0.5s;">
-    ✨
-   </div>
-   <div class="absolute bottom-20 left-12 text-3xl floating opacity-80">
+   <div class="decorative-element text-4xl top-[20%] left-[3%] float" style="animation-delay: 1s;">
     🎨
    </div>
-   <div class="absolute bottom-16 right-16 text-4xl floating-delay opacity-80">
-    🎒
-   </div>
-   <div class="absolute top-32 left-1/4 text-xl sparkle opacity-60">
+   <div class="decorative-element text-3xl bottom-[15%] right-[5%] float" style="animation-delay: 1.5s;">
     🌟
    </div>
-   <div class="absolute bottom-32 right-1/4 text-xl sparkle opacity-60" style="animation-delay: 1s;">
-    💫
-   </div><!-- Main Content -->
-   <div class="relative z-10 px-4 py-8 md:py-12">
-    <!-- Header Section -->
-    <header class="text-center mb-8 md:mb-12">
-     <div class="inline-block bg-white/80 backdrop-blur-sm rounded-3xl px-6 py-4 md:px-10 md:py-6 shadow-xl border-4 border-purple-200">
-      <!-- School Icon -->
-      <div class="text-5xl md:text-6xl mb-3 bounce-subtle">
-       🏫
-      </div><!-- Main Title -->
-      <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold header-gradient mb-3 leading-tight">Mi Aula Interactiva</h1><!-- School Name -->
-      <h2 class="text-lg md:text-xl lg:text-2xl font-semibold text-purple-700 mb-2">Escuela Primaria Venustiano Carranza 26DPR1320W</h2><!-- Zone -->
-      <p class="text-base md:text-lg text-purple-600 font-medium mb-3">📍 Zona Escolar 105</p><!-- Divider with hearts -->
-      <div class="flex items-center justify-center gap-2 mb-3">
-       <span class="text-pink-400">💜</span>
-       <div class="h-0.5 w-16 bg-gradient-to-r from-pink-300 to-purple-300 rounded-full"></div><span class="text-pink-400">💜</span>
-       <div class="h-0.5 w-16 bg-gradient-to-r from-purple-300 to-pink-300 rounded-full"></div><span class="text-pink-400">💜</span>
-      </div><!-- Creator Credit -->
-      <p class="text-sm md:text-base text-pink-600 font-medium flex items-center justify-center gap-2"><span>💕</span> Creado con amor por la Mtra. María Fernanda Flores Valenzuela <span>💕</span></p>
-     </div>
-    </header><!-- Buttons Section -->
-    <main class="max-w-5xl mx-auto">
-     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 px-4">
-      <!-- FASE 3 - Primero y Segundo --> <button class="btn-card card-fase3 rounded-3xl p-6 md:p-8 text-center cursor-pointer border-4 border-white/50 group">
-       <div class="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
-        🌱
-       </div><h3 class="text-xl md:text-2xl font-bold text-teal-800 mb-2">FASE 3</h3><p class="text-base md:text-lg font-semibold text-teal-700 mb-3">Primero y Segundo Grado</p>
-       <div class="flex justify-center gap-2 text-2xl">
-        <span>1️⃣</span> <span>2️⃣</span>
-       </div>
-       <div class="mt-3 text-sm text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        ¡Haz clic para entrar! 🚀
-       </div></button> <!-- FASE 4 - Tercero y Cuarto --> <button class="btn-card card-fase4 rounded-3xl p-6 md:p-8 text-center cursor-pointer border-4 border-white/50 group">
-       <div class="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
-        🌻
-       </div><h3 class="text-xl md:text-2xl font-bold text-pink-800 mb-2">FASE 4</h3><p class="text-base md:text-lg font-semibold text-pink-700 mb-3">Tercero y Cuarto Grado</p>
-       <div class="flex justify-center gap-2 text-2xl">
-        <span>3️⃣</span> <span>4️⃣</span>
-       </div>
-       <div class="mt-3 text-sm text-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        ¡Haz clic para entrar! 🚀
-       </div></button> <!-- FASE 5 - Quinto y Sexto --> <button class="btn-card card-fase5 rounded-3xl p-6 md:p-8 text-center cursor-pointer border-4 border-white/50 group">
-       <div class="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
-        🌳
-       </div><h3 class="text-xl md:text-2xl font-bold text-orange-800 mb-2">FASE 5</h3><p class="text-base md:text-lg font-semibold text-orange-700 mb-3">Quinto y Sexto Grado</p>
-       <div class="flex justify-center gap-2 text-2xl">
-        <span>5️⃣</span> <span>6️⃣</span>
-       </div>
-       <div class="mt-3 text-sm text-orange-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        ¡Haz clic para entrar! 🚀
-       </div></button> <!-- INGLÉS --> <button class="btn-card card-ingles rounded-3xl p-6 md:p-8 text-center cursor-pointer border-4 border-white/50 group">
-       <div class="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
-        🌎
-       </div><h3 class="text-xl md:text-2xl font-bold text-purple-800 mb-2">INGLÉS</h3><p class="text-base md:text-lg font-semibold text-purple-700 mb-3">English Class</p>
-       <div class="flex justify-center gap-2 text-2xl">
-        <span>🇺🇸</span> <span>🇬🇧</span>
-       </div>
-       <div class="mt-3 text-sm text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        Click to enter! 🚀
-       </div></button>
-     </div>
-    </main><!-- Footer Decorative -->
-    <footer class="text-center mt-10 md:mt-12">
-     <div class="flex items-center justify-center gap-3 text-2xl md:text-3xl">
-      <span class="floating">📖</span> <span class="floating-delay">🖍️</span> <span class="floating">📐</span> <span class="floating-delay">🔬</span> <span class="floating">🎵</span>
-     </div>
-     <p class="text-purple-600 text-sm mt-4 font-medium">¡Aprender es divertido! 🌈</p>
-    </footer>
+   <div class="decorative-element text-4xl bottom-[10%] left-[8%] float" style="animation-delay: 2s;">
+    🎓
    </div>
-  </div><!-- FASE 3 SCREEN -->
-  <div id="fase3-screen" class="hidden min-h-full w-full gradient-bg overflow-auto relative">
-   <!-- Decorative Elements -->
-   <div class="absolute top-4 left-4 text-4xl floating opacity-80">
-    🌱
+   <div class="decorative-element text-3xl top-[40%] right-[3%] float" style="animation-delay: 0.3s;">
+    📐
    </div>
-   <div class="absolute top-8 right-8 text-3xl floating-delay opacity-80">
-    📚
+   <div class="decorative-element text-4xl bottom-[30%] left-[2%] float" style="animation-delay: 0.8s;">
+    🔬
    </div>
-   <div class="absolute bottom-20 left-12 text-3xl floating opacity-80">
-    ✏️
-   </div>
-   <div class="absolute bottom-16 right-16 text-4xl floating-delay opacity-80">
-    🎨
-   </div>
-   <div class="relative z-10 px-4 py-8 md:py-12">
-    <!-- Header Section -->
-    <header class="text-center mb-8 md:mb-12">
-     <div class="inline-block bg-white/80 backdrop-blur-sm rounded-3xl px-6 py-4 md:px-10 md:py-6 shadow-xl border-4 border-teal-200">
-      <div class="text-5xl md:text-6xl mb-3 bounce-subtle">
-       🌱
-      </div>
-      <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold text-teal-700 mb-3 leading-tight">FASE 3</h1>
-      <p class="text-base md:text-lg text-teal-600 font-medium">Primero y Segundo Grado</p><button onclick="goHome()" class="mt-4 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-6 rounded-full transition-all duration-300 text-sm"> ← Volver al Inicio </button>
+   <div class="decorative-element text-3xl top-[60%] right-[6%] float" style="animation-delay: 1.3s;">
+    🌍
+   </div><!-- PANTALLA PRINCIPAL -->
+   <div id="main-screen" class="min-h-full flex flex-col items-center justify-center p-4 relative z-10"><!-- Encabezado -->
+    <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-8 mb-8 max-w-4xl w-full text-center border-4 border-yellow-400">
+     <div class="flex justify-center mb-4"><span class="text-5xl md:text-6xl sparkle">🏫</span>
      </div>
-    </header><!-- Subjects Grid -->
-    <main class="max-w-5xl mx-auto">
-     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 px-4">
-      <!-- CÁLCULO MENTAL -->
-      <div class="btn-card bg-gradient-to-br from-blue-300 to-blue-500 rounded-3xl p-6 md:p-8 text-center cursor-pointer border-4 border-white/50 group hover:shadow-2xl transition-all duration-300">
-       <div class="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
-        🧮
-       </div>
-       <h3 class="text-xl md:text-2xl font-bold text-blue-900 mb-2">Cálculo Mental</h3>
-       <p class="text-base md:text-lg font-semibold text-blue-800 mb-3">Matemáticas rápidas</p>
-       <div class="mt-3 text-sm text-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        ¡Entrena tu mente! 🚀
-       </div>
-      </div><!-- ALFABETIZACIÓN -->
-      <div class="btn-card bg-gradient-to-br from-pink-300 to-pink-500 rounded-3xl p-6 md:p-8 text-center cursor-pointer border-4 border-white/50 group hover:shadow-2xl transition-all duration-300">
-       <div class="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
-        📖
-       </div>
-       <h3 class="text-xl md:text-2xl font-bold text-pink-900 mb-2">Alfabetización</h3>
-       <p class="text-base md:text-lg font-semibold text-pink-800 mb-3">Lectura y escritura</p>
-       <div class="mt-3 text-sm text-pink-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        ¡Aprende a leer! 🚀
-       </div>
-      </div><!-- CIENCIAS -->
-      <div class="btn-card bg-gradient-to-br from-green-300 to-green-500 rounded-3xl p-6 md:p-8 text-center cursor-pointer border-4 border-white/50 group hover:shadow-2xl transition-all duration-300">
-       <div class="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
-        🔬
-       </div>
-       <h3 class="text-xl md:text-2xl font-bold text-green-900 mb-2">Ciencias</h3>
-       <p class="text-base md:text-lg font-semibold text-green-800 mb-3">Explora la naturaleza</p>
-       <div class="mt-3 text-sm text-green-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        ¡Descubre! 🚀
-       </div>
-      </div><!-- CONOCIENDO EL MUNDO -->
-      <div class="btn-card bg-gradient-to-br from-orange-300 to-orange-500 rounded-3xl p-6 md:p-8 text-center cursor-pointer border-4 border-white/50 group hover:shadow-2xl transition-all duration-300">
-       <div class="text-4xl md:text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
-        🌍
-       </div>
-       <h3 class="text-xl md:text-2xl font-bold text-orange-900 mb-2">Conociendo el Mundo</h3>
-       <p class="text-base md:text-lg font-semibold text-orange-800 mb-3">Geografía y cultura</p>
-       <div class="mt-3 text-sm text-orange-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        ¡Viaja! 🚀
-       </div>
-      </div>
+     <h1 id="main-title" class="title-font text-3xl md:text-5xl bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 bg-clip-text text-transparent mb-3">MI AULA INTERACTIVA</h1>
+     <h2 id="school-title" class="text-lg md:text-2xl font-bold text-blue-700 mb-2">ESC. PRIMARIA VENUSTIANO CARRANZA</h2>
+     <p class="text-sm md:text-base text-gray-600 font-semibold">26DPR1320W • ZONA ESCOLAR 105</p>
+     <div class="mt-4 pt-4 border-t-2 border-dashed border-pink-300">
+      <p class="text-sm md:text-base text-pink-600 font-bold flex items-center justify-center gap-2"><span>💖</span> <span id="teacher-title">ELABORADO CON AMOR POR LA MTRA. MARIA FERNANDA FLORES VALENZUELA</span> <span>💖</span></p>
      </div>
-    </main><!-- Footer -->
-    <footer class="text-center mt-10 md:mt-12">
-     <div class="flex items-center justify-center gap-3 text-2xl md:text-3xl">
-      <span class="floating">🎓</span> <span class="floating-delay">✨</span> <span class="floating">💡</span>
+    </div><!-- Botones de fase -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-4xl w-full px-4"><!-- Fase 3 --> <button onclick="selectPhase(3)" class="btn-phase bg-gradient-to-br from-green-400 to-green-600 text-white rounded-2xl p-5 md:p-6 flex flex-col items-center gap-2"> <span class="text-4xl md:text-5xl">🌱</span> <span class="title-font text-xl md:text-2xl">FASE 3</span> <span class="text-xs md:text-sm opacity-90">1° y 2° Grado</span> <span class="text-2xl mt-1">👶</span> </button> <!-- Fase 4 --> <button onclick="selectPhase(4)" class="btn-phase bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-2xl p-5 md:p-6 flex flex-col items-center gap-2"> <span class="text-4xl md:text-5xl">🌿</span> <span class="title-font text-xl md:text-2xl">FASE 4</span> <span class="text-xs md:text-sm opacity-90">3° y 4° Grado</span> <span class="text-2xl mt-1">🧒</span> </button> <!-- Fase 5 --> <button onclick="selectPhase(5)" class="btn-phase bg-gradient-to-br from-purple-400 to-purple-600 text-white rounded-2xl p-5 md:p-6 flex flex-col items-center gap-2"> <span class="text-4xl md:text-5xl">🌳</span> <span class="title-font text-xl md:text-2xl">FASE 5</span> <span class="text-xs md:text-sm opacity-90">5° y 6° Grado</span> <span class="text-2xl mt-1">👦</span> </button> <!-- Inglés --> <button onclick="selectPhase('english')" class="btn-phase bg-gradient-to-br from-red-400 to-orange-500 text-white rounded-2xl p-5 md:p-6 flex flex-col items-center gap-2"> <span class="text-4xl md:text-5xl">🇺🇸</span> <span class="title-font text-xl md:text-2xl">INGLÉS</span> <span class="text-xs md:text-sm opacity-90">Vocabulario</span> <span class="text-2xl mt-1">🗣️</span> </button>
+    </div><!-- Instrucciones -->
+    <div class="mt-8 bg-white/90 backdrop-blur-sm rounded-2xl p-4 md:p-6 max-w-2xl w-full mx-4 shadow-lg border-2 border-blue-300">
+     <h3 class="title-font text-lg md:text-xl text-center text-blue-600 mb-3 flex items-center justify-center gap-2"><span>📋</span> INSTRUCCIONES <span>📋</span></h3>
+     <ul class="text-sm md:text-base text-gray-700 space-y-2">
+      <li class="flex items-start gap-2"><span>🎯</span> Selecciona tu nivel de aprendizaje</li>
+      <li class="flex items-start gap-2"><span>❤️</span> Tienes 3 vidas para responder</li>
+      <li class="flex items-start gap-2"><span>⏱️</span> Responde antes de que se acabe el tiempo</li>
+      <li class="flex items-start gap-2"><span>🏆</span> ¡Acumula puntos y diviértete aprendiendo!</li>
+     </ul>
+    </div>
+   </div><!-- PANTALLA DE CATEGORÍAS -->
+   <div id="category-screen" class="hidden min-h-full flex flex-col items-center justify-center p-4 relative z-10">
+    <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-8 max-w-4xl w-full">
+     <div class="flex items-center justify-between mb-6"><button onclick="goToMain()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-full p-3 transition-all"> <span class="text-xl">⬅️</span> </button>
+      <h2 id="phase-title" class="title-font text-2xl md:text-3xl text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">FASE 3 - Elige una categoría</h2>
+      <div class="w-12"></div>
      </div>
-     <p class="text-teal-600 text-sm mt-4 font-medium">¡Sigue aprendiendo! 🌈</p>
-    </footer>
-   </div>
-  </div><!-- CÁLCULO MENTAL GAME SCREEN -->
-  <div id="calculo-screen" class="hidden min-h-full w-full overflow-auto relative" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);">
-   <div class="relative z-10 px-4 py-8 md:py-12"><!-- Header with Lives and Timer -->
-    <header class="flex justify-between items-center mb-6 px-4"><button onclick="goFase3()" class="bg-white/80 hover:bg-white text-purple-700 font-bold py-2 px-4 rounded-full transition-all text-sm"> ← Atrás </button>
-     <div class="flex items-center gap-3"><span id="lives" class="text-3xl">❤️❤️❤️</span>
+     <div id="category-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4"><!-- Las categorías se generan dinámicamente -->
      </div>
-     <div id="timer" class="bg-white/80 rounded-full px-4 py-2 font-bold text-lg text-purple-700">
-      ⏱️ 00:00
+    </div>
+   </div><!-- PANTALLA DE JUEGO -->
+   <div id="game-screen" class="hidden min-h-full flex flex-col items-center p-4 relative z-10">
+    <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-4 md:p-6 max-w-3xl w-full"><!-- Header del juego -->
+     <div class="flex items-center justify-between mb-4 flex-wrap gap-2"><button onclick="goToCategories()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-full p-2 transition-all"> <span class="text-lg">⬅️</span> </button>
+      <div id="lives-container" class="flex gap-1"><span class="life-heart text-2xl">❤️</span> <span class="life-heart text-2xl">❤️</span> <span class="life-heart text-2xl">❤️</span>
+      </div>
+      <div class="bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-4 py-2 rounded-full font-bold flex items-center gap-2"><span>⭐</span> <span id="score-display">0</span>
+      </div>
+     </div><!-- Barra de tiempo -->
+     <div class="bg-gray-200 rounded-full h-4 mb-4 overflow-hidden">
+      <div id="timer-bar" class="progress-bar bg-gradient-to-r from-green-400 to-green-600 h-full rounded-full" style="width: 100%;"></div>
+     </div><!-- Contador de pregunta -->
+     <div class="text-center mb-4"><span id="question-counter" class="bg-purple-100 text-purple-700 px-4 py-1 rounded-full text-sm font-bold"> Pregunta 1 de 10 </span>
+     </div><!-- Contenedor de pregunta -->
+     <div id="question-container" class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-5 md:p-6 mb-4 border-2 border-blue-200">
+      <div id="category-badge" class="inline-block bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-bold mb-3">
+       📐 Matemáticas
+      </div>
+      <p id="question-text" class="text-lg md:text-xl font-bold text-gray-800 leading-relaxed">¿Cuánto es 2 + 2?</p>
+     </div><!-- Opciones -->
+     <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-3"><!-- Las opciones se generan dinámicamente -->
+     </div><!-- Feedback -->
+     <div id="feedback-container" class="hidden mt-4 p-4 rounded-2xl text-center">
+      <p id="feedback-text" class="text-lg font-bold"></p>
+      <p id="feedback-explanation" class="text-sm mt-2 opacity-80"></p>
+     </div><!-- Botón siguiente --> <button id="next-btn" onclick="nextQuestion()" class="hidden w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-xl font-bold text-lg hover:from-blue-600 hover:to-purple-600 transition-all"> Siguiente ➡️ </button>
+    </div>
+   </div><!-- PANTALLA DE RESULTADOS -->
+   <div id="results-screen" class="hidden min-h-full flex flex-col items-center justify-center p-4 relative z-10">
+    <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-8 max-w-lg w-full text-center">
+     <div id="result-emoji" class="text-7xl md:text-8xl mb-4 celebrate">
+      🏆
      </div>
-    </header><!-- Main Game Container -->
-    <main class="max-w-2xl mx-auto"><!-- Progress Bar with Steps -->
-     <div class="mb-8 bg-white/20 backdrop-blur-sm rounded-3xl p-6">
-      <div class="flex justify-between items-center mb-4">
-       <h2 class="text-white font-bold text-lg">Progreso</h2><span id="progress-text" class="text-white font-bold text-2xl">1/30</span>
+     <h2 id="result-title" class="title-font text-2xl md:text-3xl text-gray-800 mb-2">¡Excelente trabajo!</h2>
+     <p id="result-message" class="text-gray-600 mb-6">Has completado el desafío</p>
+     <div class="bg-gradient-to-br from-yellow-100 to-orange-100 rounded-2xl p-6 mb-6">
+      <p class="text-sm text-gray-500 mb-1">Tu puntuación</p>
+      <p id="final-score" class="title-font text-5xl text-orange-500">0</p>
+      <p class="text-sm text-gray-500 mt-1">puntos</p>
+     </div>
+     <div class="grid grid-cols-2 gap-4 mb-6">
+      <div class="bg-green-100 rounded-xl p-3">
+       <p id="correct-count" class="title-font text-2xl text-green-600">0</p>
+       <p class="text-xs text-gray-500">Correctas</p>
       </div>
-      <div id="progress-steps" class="flex justify-between gap-2 mb-4"><!-- Steps will be generated by JavaScript -->
-      </div>
-      <div class="w-full bg-white/30 rounded-full h-3 overflow-hidden">
-       <div id="progress-bar" class="bg-gradient-to-r from-yellow-300 to-pink-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
-      </div>
-     </div><!-- Question Card -->
-     <div id="question-card" class="bg-white/90 backdrop-blur-sm rounded-3xl p-8 mb-6 shadow-2xl">
-      <div class="text-center mb-6">
-       <p class="text-purple-600 text-sm font-semibold mb-2">Pregunta <span id="question-num">1</span> de 30</p>
-       <div id="question-text" class="text-4xl md:text-5xl font-bold text-purple-800 mb-4">
-        5 + 3 = ?
-       </div>
-       <div id="question-type" class="text-sm text-purple-500 font-medium">
-        Suma sencilla
-       </div>
-      </div><!-- Answer Options -->
-      <div id="answer-options" class="grid grid-cols-2 gap-4 mb-6"><!-- Options will be generated by JavaScript -->
-      </div><!-- Time for this question -->
-      <div class="text-center">
-       <p class="text-sm text-gray-500">Tiempo por pregunta: <span id="question-timer">30</span>s</p>
-       <div class="w-full bg-gray-300 rounded-full h-2 mt-2 overflow-hidden">
-        <div id="question-progress" class="bg-gradient-to-r from-blue-400 to-blue-600 h-full transition-all duration-1000"></div>
-       </div>
-      </div>
-     </div><!-- Feedback Message -->
-     <div id="feedback" class="hidden text-center text-white text-2xl font-bold mb-6 animate-bounce"><!-- Will show success or error -->
-     </div><!-- Game Over Modal -->
-     <div id="game-over-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div class="bg-white rounded-3xl p-8 max-w-md mx-auto text-center">
-       <div id="end-message" class="text-5xl mb-4">
-        🎉
-       </div>
-       <h2 id="end-title" class="text-3xl font-bold text-purple-700 mb-2">¡Lo Hiciste!</h2>
-       <p id="end-text" class="text-gray-600 mb-2">Preguntas acertadas: <span id="correct-count">0</span>/30</p>
-       <p id="end-time" class="text-gray-600 mb-6">Tiempo total: <span id="total-time">00:00</span></p>
-       <div class="flex gap-4"><button onclick="restartGame()" class="flex-1 bg-gradient-to-br from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-2xl transition-all"> 🔄 Reintentar </button> <button onclick="goFase3()" class="flex-1 bg-gradient-to-br from-pink-400 to-pink-600 hover:from-pink-500 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-2xl transition-all"> 🏠 Atrás </button>
-       </div>
+      <div class="bg-red-100 rounded-xl p-3">
+       <p id="incorrect-count" class="title-font text-2xl text-red-500">0</p>
+       <p class="text-xs text-gray-500">Incorrectas</p>
       </div>
      </div>
-    </main>
+     <div class="flex flex-col gap-3"><button onclick="playAgain()" class="bg-gradient-to-r from-green-400 to-green-600 text-white py-3 px-6 rounded-xl font-bold hover:from-green-500 hover:to-green-700 transition-all flex items-center justify-center gap-2"> <span>🔄</span> Jugar de nuevo </button> <button onclick="goToMain()" class="bg-gradient-to-r from-blue-400 to-blue-600 text-white py-3 px-6 rounded-xl font-bold hover:from-blue-500 hover:to-blue-700 transition-all flex items-center justify-center gap-2"> <span>🏠</span> Menú principal </button>
+     </div>
+    </div>
+   </div><!-- PANTALLA DE GAME OVER -->
+   <div id="gameover-screen" class="hidden min-h-full flex flex-col items-center justify-center p-4 relative z-10">
+    <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-8 max-w-lg w-full text-center">
+     <div class="text-7xl md:text-8xl mb-4">
+      💔
+     </div>
+     <h2 class="title-font text-2xl md:text-3xl text-gray-800 mb-2">¡Se acabaron las vidas!</h2>
+     <p class="text-gray-600 mb-6">No te preocupes, ¡puedes intentarlo de nuevo!</p>
+     <div class="bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl p-6 mb-6">
+      <p class="text-sm text-gray-500 mb-1">Puntuación alcanzada</p>
+      <p id="gameover-score" class="title-font text-4xl text-purple-500">0</p>
+     </div>
+     <div class="flex flex-col gap-3"><button onclick="playAgain()" class="bg-gradient-to-r from-green-400 to-green-600 text-white py-3 px-6 rounded-xl font-bold hover:from-green-500 hover:to-green-700 transition-all flex items-center justify-center gap-2"> <span>🔄</span> Intentar de nuevo </button> <button onclick="goToMain()" class="bg-gradient-to-r from-blue-400 to-blue-600 text-white py-3 px-6 rounded-xl font-bold hover:from-blue-500 hover:to-blue-700 transition-all flex items-center justify-center gap-2"> <span>🏠</span> Menú principal </button>
+     </div>
+    </div>
    </div>
   </div>
   <script>
-    // Game State
+    // ============= CONFIGURACIÓN Y ESTADO DEL JUEGO =============
+    const defaultConfig = {
+      school_name: "ESC. PRIMARIA VENUSTIANO CARRANZA",
+      teacher_name: "ELABORADO CON AMOR POR LA MTRA. MARIA FERNANDA FLORES VALENZUELA"
+    };
+    
     let gameState = {
-      currentQuestion: 0,
+      currentPhase: null,
+      currentCategory: null,
       lives: 3,
-      correct: 0,
+      score: 0,
+      questionIndex: 0,
       questions: [],
-      startTime: 0,
-      totalTime: 0,
-      gameActive: true,
-      questionStartTime: 0
+      correctAnswers: 0,
+      incorrectAnswers: 0,
+      timerInterval: null,
+      timeLeft: 100
+    };
+    
+    // ============= CATEGORÍAS =============
+    const categories = {
+      spanish: [
+        { icon: "📚", name: "Español", color: "from-pink-400 to-pink-600" }
+      ],
+      math: [
+        { icon: "🔢", name: "Matemáticas", color: "from-blue-400 to-blue-600" }
+      ],
+      science: [
+        { icon: "🔬", name: "Ciencias", color: "from-green-400 to-green-600" }
+      ],
+      geography: [
+        { icon: "🌍", name: "Geografía", color: "from-teal-400 to-teal-600" }
+      ],
+      history: [
+        { icon: "📜", name: "Historia", color: "from-amber-400 to-amber-600" }
+      ],
+      culture: [
+        { icon: "🎭", name: "Cultura", color: "from-purple-400 to-purple-600" }
+      ],
+      english: [
+        { icon: "🇺🇸", name: "English", color: "from-red-400 to-red-600" }
+      ]
     };
 
-    // Generate diverse questions for 1st and 2nd grade
-    function generateQuestions() {
-      const questions = [];
-      const types = ['suma', 'resta', 'complemento', 'secuencia', 'sumaMenor', 'restaMenor'];
+    // ============= BASE DE DATOS DE PREGUNTAS =============
+    
+    // FASE 3 - 1° y 2° Grado (Fácil)
+    const phase3Questions = {
+      math: [
+        { q: "¿Cuánto es 2 + 3?", options: ["4", "5", "6", "7"], correct: 1, explanation: "2 + 3 = 5" },
+        { q: "¿Cuánto es 5 - 2?", options: ["2", "3", "4", "1"], correct: 1, explanation: "5 - 2 = 3" },
+        { q: "¿Cuánto es 1 + 1?", options: ["1", "2", "3", "0"], correct: 1, explanation: "1 + 1 = 2" },
+        { q: "¿Cuánto es 4 + 4?", options: ["6", "7", "8", "9"], correct: 2, explanation: "4 + 4 = 8" },
+        { q: "¿Cuánto es 6 - 3?", options: ["2", "3", "4", "5"], correct: 1, explanation: "6 - 3 = 3" },
+        { q: "¿Cuánto es 3 + 5?", options: ["7", "8", "9", "6"], correct: 1, explanation: "3 + 5 = 8" },
+        { q: "¿Qué número sigue: 1, 2, 3, __?", options: ["5", "4", "6", "3"], correct: 1, explanation: "La secuencia aumenta de 1 en 1" },
+        { q: "¿Cuánto es 10 - 5?", options: ["4", "5", "6", "3"], correct: 1, explanation: "10 - 5 = 5" },
+        { q: "¿Cuántas patas tiene un perro?", options: ["2", "3", "4", "6"], correct: 2, explanation: "Los perros tienen 4 patas" },
+        { q: "¿Cuánto es 7 + 2?", options: ["8", "9", "10", "7"], correct: 1, explanation: "7 + 2 = 9" },
+        { q: "¿Qué número es mayor: 5 o 3?", options: ["3", "5", "Son iguales", "No sé"], correct: 1, explanation: "5 es mayor que 3" },
+        { q: "¿Cuánto es 2 + 2 + 2?", options: ["4", "5", "6", "7"], correct: 2, explanation: "2 + 2 + 2 = 6" }
+      ],
+      spanish: [
+        { q: "¿Cuántas sílabas tiene 'CASA'?", options: ["1", "2", "3", "4"], correct: 1, explanation: "CA-SA = 2 sílabas" },
+        { q: "¿Con qué letra empieza 'MAMÁ'?", options: ["P", "M", "A", "S"], correct: 1, explanation: "MAMÁ empieza con M" },
+        { q: "Completa: El ___ ladra.", options: ["gato", "perro", "pájaro", "pez"], correct: 1, explanation: "El perro ladra" },
+        { q: "¿Qué vocal falta? M_SA", options: ["A", "E", "I", "O"], correct: 1, explanation: "MESA lleva E" },
+        { q: "¿Cuántas sílabas tiene 'SOL'?", options: ["1", "2", "3", "4"], correct: 0, explanation: "SOL = 1 sílaba" },
+        { q: "¿Con qué letra empieza 'ÁRBOL'?", options: ["A", "R", "B", "O"], correct: 0, explanation: "ÁRBOL empieza con A" },
+        { q: "Completa: La ___ maúlla.", options: ["vaca", "gata", "gallina", "oveja"], correct: 1, explanation: "La gata maúlla" },
+        { q: "¿Cuántas vocales tiene 'AMOR'?", options: ["1", "2", "3", "4"], correct: 1, explanation: "AMOR tiene A y O = 2 vocales" },
+        { q: "¿Qué palabra rima con 'PATO'?", options: ["Mesa", "Gato", "Árbol", "Libro"], correct: 1, explanation: "PATO rima con GATO" },
+        { q: "Completa: El sol sale por la ___.", options: ["noche", "tarde", "mañana", "luna"], correct: 2, explanation: "El sol sale por la mañana" },
+        { q: "¿Cuál es una vocal?", options: ["B", "C", "E", "D"], correct: 2, explanation: "E es una vocal (A, E, I, O, U)" },
+        { q: "¿Con qué termina 'ESTRELLA'?", options: ["A", "E", "L", "R"], correct: 0, explanation: "ESTRELLA termina en A" }
+      ],
+      science: [
+        { q: "¿Qué animal tiene plumas?", options: ["Perro", "Pájaro", "Pez", "Gato"], correct: 1, explanation: "Los pájaros tienen plumas" },
+        { q: "¿De qué color es el sol?", options: ["Azul", "Verde", "Amarillo", "Rojo"], correct: 2, explanation: "El sol se ve amarillo" },
+        { q: "¿Qué necesitan las plantas para vivir?", options: ["Piedras", "Agua", "Arena", "Plástico"], correct: 1, explanation: "Las plantas necesitan agua" },
+        { q: "¿Dónde viven los peces?", options: ["En tierra", "En el aire", "En el agua", "En el fuego"], correct: 2, explanation: "Los peces viven en el agua" },
+        { q: "¿Cuántas patas tiene una araña?", options: ["4", "6", "8", "10"], correct: 2, explanation: "Las arañas tienen 8 patas" },
+        { q: "¿Qué animal da leche?", options: ["Gallina", "Vaca", "Pez", "Serpiente"], correct: 1, explanation: "La vaca da leche" },
+        { q: "¿De dónde viene la lluvia?", options: ["Del sol", "De las nubes", "Del mar", "Del suelo"], correct: 1, explanation: "La lluvia cae de las nubes" },
+        { q: "¿Qué animal pone huevos?", options: ["Perro", "Gato", "Gallina", "Vaca"], correct: 2, explanation: "La gallina pone huevos" },
+        { q: "¿Qué parte del cuerpo usamos para ver?", options: ["Orejas", "Nariz", "Ojos", "Boca"], correct: 2, explanation: "Vemos con los ojos" },
+        { q: "¿Cuántos sentidos tenemos?", options: ["3", "4", "5", "6"], correct: 2, explanation: "Tenemos 5 sentidos" },
+        { q: "¿Qué animal tiene rayas y vive en África?", options: ["León", "Cebra", "Elefante", "Jirafa"], correct: 1, explanation: "La cebra tiene rayas" },
+        { q: "¿De qué color son las hojas de los árboles?", options: ["Rojas", "Azules", "Verdes", "Moradas"], correct: 2, explanation: "Las hojas son verdes" }
+      ],
+      geography: [
+        { q: "¿En qué país vivimos?", options: ["España", "México", "Argentina", "Chile"], correct: 1, explanation: "Vivimos en México" },
+        { q: "¿De qué color es el mar?", options: ["Rojo", "Verde", "Azul", "Amarillo"], correct: 2, explanation: "El mar se ve azul" },
+        { q: "¿Qué hay mucho en el desierto?", options: ["Agua", "Arena", "Nieve", "Árboles"], correct: 1, explanation: "En el desierto hay mucha arena" },
+        { q: "¿Dónde hace mucho frío?", options: ["Desierto", "Playa", "Polo Norte", "Selva"], correct: 2, explanation: "En el Polo Norte hace mucho frío" },
+        { q: "¿Qué astro nos da luz de día?", options: ["Luna", "Estrellas", "Sol", "Planetas"], correct: 2, explanation: "El Sol nos da luz de día" },
+        { q: "¿Qué hay en las montañas altas?", options: ["Playa", "Nieve", "Desierto", "Mar"], correct: 1, explanation: "En las montañas altas hay nieve" },
+        { q: "¿Cómo se llama nuestro planeta?", options: ["Marte", "Venus", "Tierra", "Júpiter"], correct: 2, explanation: "Nuestro planeta es la Tierra" },
+        { q: "¿Qué tiene mucha agua?", options: ["Desierto", "Océano", "Montaña", "Cueva"], correct: 1, explanation: "El océano tiene mucha agua" },
+        { q: "¿Dónde hay muchos árboles juntos?", options: ["Desierto", "Bosque", "Playa", "Ciudad"], correct: 1, explanation: "En el bosque hay muchos árboles" },
+        { q: "¿Qué vemos de noche en el cielo?", options: ["Sol", "Nubes blancas", "Estrellas", "Arcoíris"], correct: 2, explanation: "De noche vemos estrellas" }
+      ],
+      history: [
+        { q: "¿Qué celebramos el 16 de septiembre?", options: ["Navidad", "Independencia", "Año nuevo", "Pascua"], correct: 1, explanation: "El 16 de septiembre es la Independencia de México" },
+        { q: "¿Quién gritó '¡Viva México!'?", options: ["Juárez", "Hidalgo", "Morelos", "Zapata"], correct: 1, explanation: "Miguel Hidalgo dio el Grito de Independencia" },
+        { q: "¿Qué usaban los dinosaurios?", options: ["Ropa", "Nada", "Zapatos", "Sombreros"], correct: 1, explanation: "Los dinosaurios no usaban nada" },
+        { q: "¿Hace cuánto vivieron los dinosaurios?", options: ["Ayer", "Hace 100 años", "Hace millones de años", "Nunca existieron"], correct: 2, explanation: "Los dinosaurios vivieron hace millones de años" },
+        { q: "¿Qué construyeron los mayas?", options: ["Castillos", "Pirámides", "Rascacielos", "Iglesias"], correct: 1, explanation: "Los mayas construyeron pirámides" },
+        { q: "¿De qué color es la bandera de México (en medio)?", options: ["Rojo", "Verde", "Blanco", "Azul"], correct: 2, explanation: "En medio la bandera es blanca con el escudo" },
+        { q: "¿Cuántos colores tiene la bandera mexicana?", options: ["2", "3", "4", "5"], correct: 1, explanation: "La bandera tiene verde, blanco y rojo = 3 colores" },
+        { q: "¿Qué animal está en nuestra bandera?", options: ["León", "Águila", "Serpiente", "Jaguar"], correct: 1, explanation: "En la bandera hay un águila comiendo una serpiente" },
+        { q: "¿Qué celebramos el 12 de diciembre?", options: ["Navidad", "Día de Muertos", "Virgen de Guadalupe", "Independencia"], correct: 2, explanation: "El 12 de diciembre es el día de la Virgen de Guadalupe" },
+        { q: "¿Cuándo es el Día de Muertos?", options: ["31 de octubre", "1 y 2 de noviembre", "25 de diciembre", "14 de febrero"], correct: 1, explanation: "El Día de Muertos es el 1 y 2 de noviembre" }
+      ],
+      culture: [
+        { q: "¿Qué comemos el Día de Muertos?", options: ["Pastel", "Pan de muerto", "Pizza", "Hamburguesa"], correct: 1, explanation: "Comemos pan de muerto" },
+        { q: "¿De qué color son las flores de cempasúchil?", options: ["Rojas", "Azules", "Naranjas", "Moradas"], correct: 2, explanation: "El cempasúchil es naranja" },
+        { q: "¿Qué rompemos en las posadas?", options: ["Piñata", "Globos", "Platos", "Vasos"], correct: 0, explanation: "Rompemos piñatas en las posadas" },
+        { q: "¿Qué comida típica mexicana es redonda?", options: ["Sopa", "Tortilla", "Pan", "Arroz"], correct: 1, explanation: "La tortilla es redonda" },
+        { q: "¿Qué sombrero es típico de México?", options: ["Gorra", "Boina", "Sombrero de charro", "Casco"], correct: 2, explanation: "El sombrero de charro es típico de México" },
+        { q: "¿Con qué hacemos tamales?", options: ["Trigo", "Arroz", "Maíz", "Papa"], correct: 2, explanation: "Los tamales se hacen de maíz" },
+        { q: "¿Qué bebida mexicana es de chocolate?", options: ["Café", "Atole de chocolate", "Jugo", "Refresco"], correct: 1, explanation: "El atole de chocolate es tradicional" },
+        { q: "¿Qué instrumento se toca en un mariachi?", options: ["Batería", "Piano", "Trompeta", "Flauta"], correct: 2, explanation: "La trompeta es parte del mariachi" },
+        { q: "¿De qué están hechas las calaveritas dulces?", options: ["Chocolate", "Azúcar", "Chicle", "Miel"], correct: 1, explanation: "Las calaveritas son de azúcar" },
+        { q: "¿Qué ponemos en la ofrenda del Día de Muertos?", options: ["Regalos", "Flores y comida", "Juguetes", "Ropa"], correct: 1, explanation: "Ponemos flores, comida y fotos en la ofrenda" }
+      ]
+    };
+
+    // FASE 4 - 3° y 4° Grado (Medio)
+    const phase4Questions = {
+      math: [
+        { q: "¿Cuánto es 15 + 27?", options: ["32", "42", "52", "62"], correct: 1, explanation: "15 + 27 = 42" },
+        { q: "¿Cuánto es 8 × 7?", options: ["54", "56", "58", "60"], correct: 1, explanation: "8 × 7 = 56" },
+        { q: "¿Cuánto es 100 - 45?", options: ["45", "55", "65", "75"], correct: 1, explanation: "100 - 45 = 55" },
+        { q: "¿Cuánto es 36 ÷ 6?", options: ["4", "5", "6", "7"], correct: 2, explanation: "36 ÷ 6 = 6" },
+        { q: "¿Cuánto es 9 × 9?", options: ["72", "81", "90", "99"], correct: 1, explanation: "9 × 9 = 81" },
+        { q: "¿Cuánto es 250 + 175?", options: ["325", "375", "425", "475"], correct: 2, explanation: "250 + 175 = 425" },
+        { q: "¿Qué número es 1/2 de 100?", options: ["25", "50", "75", "100"], correct: 1, explanation: "La mitad de 100 es 50" },
+        { q: "¿Cuánto es 7 × 8?", options: ["54", "56", "58", "64"], correct: 1, explanation: "7 × 8 = 56" },
+        { q: "¿Cuántos minutos hay en 1 hora?", options: ["30", "45", "60", "90"], correct: 2, explanation: "1 hora = 60 minutos" },
+        { q: "¿Cuánto es 144 ÷ 12?", options: ["10", "11", "12", "13"], correct: 2, explanation: "144 ÷ 12 = 12" },
+        { q: "¿Cuál es el doble de 35?", options: ["60", "65", "70", "75"], correct: 2, explanation: "35 × 2 = 70" },
+        { q: "¿Cuánto es 6 × 6 + 4?", options: ["36", "38", "40", "42"], correct: 2, explanation: "6 × 6 = 36, + 4 = 40" }
+      ],
+      spanish: [
+        { q: "¿Cuál es el sinónimo de 'feliz'?", options: ["Triste", "Contento", "Enojado", "Cansado"], correct: 1, explanation: "Feliz y contento significan lo mismo" },
+        { q: "¿Qué es un sustantivo?", options: ["Acción", "Cualidad", "Nombre de algo", "Unión"], correct: 2, explanation: "El sustantivo nombra personas, animales o cosas" },
+        { q: "¿Cuál es el antónimo de 'grande'?", options: ["Enorme", "Pequeño", "Alto", "Gordo"], correct: 1, explanation: "El antónimo de grande es pequeño" },
+        { q: "¿Cuántas sílabas tiene 'mariposa'?", options: ["2", "3", "4", "5"], correct: 2, explanation: "Ma-ri-po-sa = 4 sílabas" },
+        { q: "¿Qué signo va al final de una pregunta?", options: [".", ",", "?", "!"], correct: 2, explanation: "Las preguntas terminan con ¿?" },
+        { q: "En 'El niño corre', ¿cuál es el verbo?", options: ["El", "niño", "corre", "Ninguno"], correct: 2, explanation: "Corre es el verbo (acción)" },
+        { q: "¿Qué palabra está bien escrita?", options: ["Aver", "Haver", "Aber", "Haber"], correct: 3, explanation: "Se escribe 'haber' con h y b" },
+        { q: "¿Cuál es el plural de 'lápiz'?", options: ["Lápizes", "Lápices", "Lápiz", "Lapices"], correct: 1, explanation: "El plural de lápiz es lápices" },
+        { q: "Completa: 'María ____ a la escuela'", options: ["van", "vamos", "va", "voy"], correct: 2, explanation: "María va (tercera persona singular)" },
+        { q: "¿Qué tipo de palabra es 'rápidamente'?", options: ["Sustantivo", "Verbo", "Adjetivo", "Adverbio"], correct: 3, explanation: "Rápidamente es un adverbio" },
+        { q: "¿Cuál palabra tiene diptongo?", options: ["Marea", "Cielo", "Poema", "Caos"], correct: 1, explanation: "Cielo tiene diptongo (ie)" },
+        { q: "¿Qué palabra es aguda?", options: ["Árbol", "Mesa", "Canción", "Brújula"], correct: 2, explanation: "Canción es aguda (acento en última sílaba)" }
+      ],
+      science: [
+        { q: "¿Cuál es el planeta más grande del Sistema Solar?", options: ["Marte", "Saturno", "Júpiter", "Neptuno"], correct: 2, explanation: "Júpiter es el planeta más grande" },
+        { q: "¿Qué órgano bombea la sangre?", options: ["Pulmones", "Estómago", "Corazón", "Cerebro"], correct: 2, explanation: "El corazón bombea la sangre" },
+        { q: "¿Cuántos huesos tiene un adulto aproximadamente?", options: ["106", "156", "206", "306"], correct: 2, explanation: "Un adulto tiene aproximadamente 206 huesos" },
+        { q: "¿Qué gas necesitamos para respirar?", options: ["Nitrógeno", "Oxígeno", "Dióxido de carbono", "Hidrógeno"], correct: 1, explanation: "Necesitamos oxígeno para respirar" },
+        { q: "¿Qué producen las plantas durante la fotosíntesis?", options: ["Agua", "Oxígeno", "Dióxido de carbono", "Nitrógeno"], correct: 1, explanation: "Las plantas producen oxígeno" },
+        { q: "¿Cuántos planetas hay en el Sistema Solar?", options: ["7", "8", "9", "10"], correct: 1, explanation: "Hay 8 planetas en el Sistema Solar" },
+        { q: "¿Qué tipo de animal es la ballena?", options: ["Pez", "Anfibio", "Mamífero", "Reptil"], correct: 2, explanation: "La ballena es un mamífero marino" },
+        { q: "¿Cuál es el órgano más grande del cuerpo?", options: ["Hígado", "Cerebro", "Piel", "Intestino"], correct: 2, explanation: "La piel es el órgano más grande" },
+        { q: "¿Qué parte de la planta absorbe el agua?", options: ["Hojas", "Tallo", "Raíz", "Flores"], correct: 2, explanation: "La raíz absorbe el agua" },
+        { q: "¿Qué animal es un anfibio?", options: ["Serpiente", "Rana", "Tortuga", "Lagartija"], correct: 1, explanation: "La rana es un anfibio" },
+        { q: "¿Cuál es el satélite natural de la Tierra?", options: ["El Sol", "Marte", "La Luna", "Venus"], correct: 2, explanation: "La Luna es nuestro satélite natural" },
+        { q: "¿Qué sistema controla el cuerpo?", options: ["Digestivo", "Nervioso", "Circulatorio", "Respiratorio"], correct: 1, explanation: "El sistema nervioso controla el cuerpo" }
+      ],
+      geography: [
+        { q: "¿Cuál es la capital de México?", options: ["Guadalajara", "Monterrey", "Ciudad de México", "Cancún"], correct: 2, explanation: "La capital de México es la Ciudad de México" },
+        { q: "¿Cuántos estados tiene México?", options: ["30", "31", "32", "33"], correct: 2, explanation: "México tiene 32 estados (incluyendo CDMX)" },
+        { q: "¿Qué océano está al oeste de México?", options: ["Atlántico", "Índico", "Pacífico", "Ártico"], correct: 2, explanation: "El Océano Pacífico está al oeste" },
+        { q: "¿Cuál es el río más largo de México?", options: ["Río Lerma", "Río Bravo", "Río Balsas", "Río Grijalva"], correct: 1, explanation: "El Río Bravo es el más largo" },
+        { q: "¿Con qué país limita México al norte?", options: ["Guatemala", "Estados Unidos", "Belice", "Cuba"], correct: 1, explanation: "México limita con Estados Unidos al norte" },
+        { q: "¿Cuál es el volcán más alto de México?", options: ["Popocatépetl", "Iztaccíhuatl", "Pico de Orizaba", "Nevado de Toluca"], correct: 2, explanation: "El Pico de Orizaba es el más alto" },
+        { q: "¿En qué continente está México?", options: ["Europa", "Asia", "América", "África"], correct: 2, explanation: "México está en América del Norte" },
+        { q: "¿Qué península está en el sureste de México?", options: ["Baja California", "De Yucatán", "Ibérica", "Florida"], correct: 1, explanation: "La Península de Yucatán está en el sureste" },
+        { q: "¿Cuál es el golfo que baña el este de México?", options: ["Golfo Pérsico", "Golfo de California", "Golfo de México", "Golfo de Bengala"], correct: 2, explanation: "El Golfo de México está al este" },
+        { q: "¿Qué estado es famoso por sus playas en el Caribe?", options: ["Sonora", "Chihuahua", "Quintana Roo", "Jalisco"], correct: 2, explanation: "Quintana Roo tiene playas en el Caribe" },
+        { q: "¿Cuál es el desierto más grande de México?", options: ["Sonorense", "De Chihuahua", "De Vizcaíno", "Altar"], correct: 1, explanation: "El Desierto de Chihuahua es el más grande" },
+        { q: "¿Qué sierra atraviesa el oeste de México?", options: ["Sierra Madre Oriental", "Sierra Madre Occidental", "Sierra Negra", "Sierra de Juárez"], correct: 1, explanation: "La Sierra Madre Occidental está al oeste" }
+      ],
+      history: [
+        { q: "¿En qué año comenzó la Independencia de México?", options: ["1810", "1821", "1910", "1521"], correct: 0, explanation: "La Independencia comenzó en 1810" },
+        { q: "¿Quién fue el último emperador azteca?", options: ["Moctezuma", "Cuauhtémoc", "Cuitláhuac", "Axayácatl"], correct: 1, explanation: "Cuauhtémoc fue el último emperador azteca" },
+        { q: "¿Qué civilización construyó Chichén Itzá?", options: ["Azteca", "Olmeca", "Maya", "Zapoteca"], correct: 2, explanation: "Los mayas construyeron Chichén Itzá" },
+        { q: "¿Quién fue Benito Juárez?", options: ["Rey", "Conquistador", "Presidente", "Virrey"], correct: 2, explanation: "Benito Juárez fue presidente de México" },
+        { q: "¿En qué año llegaron los españoles a México?", options: ["1419", "1492", "1519", "1619"], correct: 2, explanation: "Hernán Cortés llegó en 1519" },
+        { q: "¿Qué celebramos el 5 de mayo?", options: ["Independencia", "Batalla de Puebla", "Revolución", "Constitución"], correct: 1, explanation: "El 5 de mayo celebramos la Batalla de Puebla" },
+        { q: "¿Quién fue Miguel Hidalgo?", options: ["Rey", "Sacerdote", "Conquistador", "Científico"], correct: 1, explanation: "Miguel Hidalgo fue un sacerdote que inició la Independencia" },
+        { q: "¿Qué evento comenzó en 1910?", options: ["Independencia", "Conquista", "Revolución Mexicana", "Reforma"], correct: 2, explanation: "La Revolución Mexicana comenzó en 1910" },
+        { q: "¿Qué cultura creó cabezas colosales de piedra?", options: ["Maya", "Azteca", "Olmeca", "Tolteca"], correct: 2, explanation: "Los olmecas crearon las cabezas colosales" },
+        { q: "¿Cuál era el nombre azteca de la Ciudad de México?", options: ["Teotihuacán", "Tenochtitlan", "Tlatelolco", "Texcoco"], correct: 1, explanation: "Se llamaba Tenochtitlan" },
+        { q: "¿Quién fue Emiliano Zapata?", options: ["Presidente", "Revolucionario", "Conquistador", "Virrey"], correct: 1, explanation: "Zapata fue un líder revolucionario" },
+        { q: "¿Qué símbolo aparece en la bandera según la leyenda azteca?", options: ["León", "Águila y serpiente", "Jaguar", "Quetzal"], correct: 1, explanation: "El águila devorando una serpiente" }
+      ],
+      culture: [
+        { q: "¿Qué baile típico es de Jalisco?", options: ["Danzón", "Jarabe tapatío", "Cumbia", "Salsa"], correct: 1, explanation: "El jarabe tapatío es de Jalisco" },
+        { q: "¿Qué ingrediente es base de la cocina mexicana?", options: ["Arroz", "Trigo", "Maíz", "Papa"], correct: 2, explanation: "El maíz es base de la cocina mexicana" },
+        { q: "¿Qué artista mexicana pintó autorretratos?", options: ["Diego Rivera", "Frida Kahlo", "Rufino Tamayo", "José Clemente Orozco"], correct: 1, explanation: "Frida Kahlo es famosa por sus autorretratos" },
+        { q: "¿Qué es el mole?", options: ["Bebida", "Salsa", "Pan", "Postre"], correct: 1, explanation: "El mole es una salsa tradicional mexicana" },
+        { q: "¿De dónde es originario el tequila?", options: ["Oaxaca", "Jalisco", "Michoacán", "Puebla"], correct: 1, explanation: "El tequila es originario de Jalisco" },
+        { q: "¿Qué es un alebrije?", options: ["Comida", "Artesanía fantástica", "Baile", "Instrumento"], correct: 1, explanation: "Los alebrijes son artesanías de criaturas fantásticas" },
+        { q: "¿Qué premio Nobel ganó Octavio Paz?", options: ["Física", "Paz", "Literatura", "Química"], correct: 2, explanation: "Octavio Paz ganó el Nobel de Literatura" },
+        { q: "¿Qué es la Guelaguetza?", options: ["Comida", "Baile", "Fiesta tradicional", "Artesanía"], correct: 2, explanation: "La Guelaguetza es una fiesta de Oaxaca" },
+        { q: "¿Qué instrumento es típico del mariachi?", options: ["Acordeón", "Violín", "Tambor", "Flauta"], correct: 1, explanation: "El violín es típico del mariachi" },
+        { q: "¿De qué estado es el pozole?", options: ["Yucatán", "Guerrero", "Sonora", "Tabasco"], correct: 1, explanation: "El pozole es tradicional de Guerrero" },
+        { q: "¿Qué es un sarape?", options: ["Sombrero", "Manta colorida", "Zapato", "Comida"], correct: 1, explanation: "El sarape es una manta colorida típica" },
+        { q: "¿Quién escribió 'Pedro Páramo'?", options: ["Carlos Fuentes", "Juan Rulfo", "Elena Poniatowska", "Laura Esquivel"], correct: 1, explanation: "Juan Rulfo escribió Pedro Páramo" }
+      ]
+    };
+
+    // FASE 5 - 5° y 6° Grado (Difícil)
+    const phase5Questions = {
+      math: [
+        { q: "¿Cuánto es 15% de 200?", options: ["20", "25", "30", "35"], correct: 2, explanation: "15% de 200 = 200 × 0.15 = 30" },
+        { q: "¿Cuál es el MCD de 24 y 36?", options: ["6", "8", "12", "18"], correct: 2, explanation: "MCD(24, 36) = 12" },
+        { q: "¿Cuánto es 3² + 4²?", options: ["12", "25", "49", "7"], correct: 1, explanation: "9 + 16 = 25" },
+        { q: "Si x + 5 = 12, ¿cuánto vale x?", options: ["5", "6", "7", "8"], correct: 2, explanation: "x = 12 - 5 = 7" },
+        { q: "¿Cuánto es 2/3 + 1/6?", options: ["3/6", "4/6", "5/6", "6/6"], correct: 2, explanation: "4/6 + 1/6 = 5/6" },
+        { q: "¿Cuál es el área de un cuadrado de lado 8 cm?", options: ["32 cm²", "64 cm²", "16 cm²", "48 cm²"], correct: 1, explanation: "Área = 8² = 64 cm²" },
+        { q: "¿Cuánto es √144?", options: ["11", "12", "13", "14"], correct: 1, explanation: "√144 = 12" },
+        { q: "¿Cuántos grados tiene un triángulo?", options: ["90°", "180°", "270°", "360°"], correct: 1, explanation: "Los ángulos de un triángulo suman 180°" },
+        { q: "¿Cuánto es 0.25 × 40?", options: ["8", "10", "12", "15"], correct: 1, explanation: "0.25 × 40 = 10" },
+        { q: "¿Cuál es el mcm de 4 y 6?", options: ["8", "10", "12", "24"], correct: 2, explanation: "mcm(4, 6) = 12" },
+        { q: "Si 3x = 27, ¿cuánto vale x?", options: ["6", "7", "8", "9"], correct: 3, explanation: "x = 27 ÷ 3 = 9" },
+        { q: "¿Cuánto es 5³?", options: ["15", "25", "125", "625"], correct: 2, explanation: "5³ = 5 × 5 × 5 = 125" }
+      ],
+      spanish: [
+        { q: "¿Qué figura retórica es 'sus ojos eran dos luceros'?", options: ["Símil", "Metáfora", "Hipérbole", "Personificación"], correct: 1, explanation: "Es metáfora porque dice que son luceros, no que parecen" },
+        { q: "¿Qué tipo de texto narra hechos reales?", options: ["Cuento", "Fábula", "Crónica", "Leyenda"], correct: 2, explanation: "La crónica narra hechos reales" },
+        { q: "¿Cuál es el sujeto en 'Los pájaros cantan al amanecer'?", options: ["Cantan", "Al amanecer", "Los pájaros", "Amanecer"], correct: 2, explanation: "El sujeto es 'Los pájaros'" },
+        { q: "¿Qué es una palabra esdrújula?", options: ["Acento en última sílaba", "Acento en penúltima", "Acento en antepenúltima", "Sin acento"], correct: 2, explanation: "Las esdrújulas llevan acento en la antepenúltima sílaba" },
+        { q: "¿Qué tipo de narrador conoce todo?", options: ["Protagonista", "Testigo", "Omnisciente", "En segunda persona"], correct: 2, explanation: "El narrador omnisciente lo sabe todo" },
+        { q: "¿Cuál palabra es un verbo en infinitivo?", options: ["Corriendo", "Corrí", "Correr", "Corro"], correct: 2, explanation: "Correr es infinitivo (terminación -ar, -er, -ir)" },
+        { q: "¿Qué es una oración compuesta?", options: ["Con un verbo", "Con dos o más verbos", "Sin verbo", "Solo sustantivos"], correct: 1, explanation: "Tiene dos o más verbos conjugados" },
+        { q: "¿Cuál es el complemento directo en 'Juan come manzanas'?", options: ["Juan", "Come", "Manzanas", "No tiene"], correct: 2, explanation: "Manzanas es el complemento directo" },
+        { q: "¿Qué es un palíndromo?", options: ["Palabra con acento", "Se lee igual al revés", "Rima consonante", "Palabra compuesta"], correct: 1, explanation: "Un palíndromo se lee igual al revés (ej: 'oso')" },
+        { q: "¿Qué función tiene el adjetivo?", options: ["Nombrar", "Calificar al sustantivo", "Indicar acción", "Unir palabras"], correct: 1, explanation: "El adjetivo califica o describe al sustantivo" },
+        { q: "¿Qué es un hiato?", options: ["Dos vocales juntas separadas", "Dos consonantes", "Acento prosódico", "Rima asonante"], correct: 0, explanation: "El hiato separa dos vocales en sílabas distintas" },
+        { q: "¿Cuál oración está en voz pasiva?", options: ["Juan escribió el libro", "El libro fue escrito por Juan", "Escribió el libro", "Juan escribe"], correct: 1, explanation: "En voz pasiva el sujeto recibe la acción" }
+      ],
+      science: [
+        { q: "¿Qué es la fotosíntesis?", options: ["Respiración celular", "Proceso para hacer alimento con luz", "División celular", "Reproducción"], correct: 1, explanation: "La fotosíntesis convierte luz solar en alimento" },
+        { q: "¿Cuál es la unidad básica de los seres vivos?", options: ["Átomo", "Molécula", "Célula", "Tejido"], correct: 2, explanation: "La célula es la unidad básica de la vida" },
+        { q: "¿Qué tipo de energía tiene un objeto en movimiento?", options: ["Potencial", "Cinética", "Térmica", "Química"], correct: 1, explanation: "La energía cinética es energía de movimiento" },
+        { q: "¿Cuál es el gas más abundante en la atmósfera?", options: ["Oxígeno", "Dióxido de carbono", "Nitrógeno", "Argón"], correct: 2, explanation: "El nitrógeno compone el 78% de la atmósfera" },
+        { q: "¿Qué es el ADN?", options: ["Proteína", "Material genético", "Carbohidrato", "Lípido"], correct: 1, explanation: "El ADN contiene la información genética" },
+        { q: "¿Cuántos cromosomas tiene el ser humano?", options: ["23", "46", "48", "92"], correct: 1, explanation: "Los humanos tenemos 46 cromosomas (23 pares)" },
+        { q: "¿Qué capa de la Tierra está fundida?", options: ["Corteza", "Manto", "Núcleo externo", "Núcleo interno"], correct: 2, explanation: "El núcleo externo está en estado líquido" },
+        { q: "¿Qué causa las estaciones del año?", options: ["Distancia al Sol", "Inclinación de la Tierra", "La Luna", "Las nubes"], correct: 1, explanation: "La inclinación del eje terrestre causa las estaciones" },
+        { q: "¿Qué sistema elimina desechos del cuerpo?", options: ["Digestivo", "Circulatorio", "Excretor", "Nervioso"], correct: 2, explanation: "El sistema excretor elimina desechos" },
+        { q: "¿Qué es un ecosistema?", options: ["Un animal", "Comunidad de seres vivos y su ambiente", "Solo plantas", "El clima"], correct: 1, explanation: "Es la comunidad de seres vivos y su entorno físico" },
+        { q: "¿Cuál es la velocidad de la luz aproximadamente?", options: ["300 km/s", "3,000 km/s", "300,000 km/s", "3,000,000 km/s"], correct: 2, explanation: "La luz viaja a ~300,000 km/s" },
+        { q: "¿Qué es la cadena alimenticia?", options: ["Tipo de planta", "Flujo de energía entre organismos", "Un animal", "Tipo de célula"], correct: 1, explanation: "Es el flujo de energía de un organismo a otro" }
+      ],
+      geography: [
+        { q: "¿Cuáles son las coordenadas geográficas?", options: ["Norte y Sur", "Latitud y Longitud", "Este y Oeste", "Arriba y Abajo"], correct: 1, explanation: "Latitud y longitud ubican puntos en la Tierra" },
+        { q: "¿Qué es el meridiano de Greenwich?", options: ["Paralelo 0°", "Meridiano 0°", "Trópico de Cáncer", "Ecuador"], correct: 1, explanation: "El meridiano de Greenwich es la longitud 0°" },
+        { q: "¿Cuál es el continente más grande?", options: ["África", "América", "Asia", "Europa"], correct: 2, explanation: "Asia es el continente más grande" },
+        { q: "¿Qué es una meseta?", options: ["Llanura elevada", "Montaña", "Valle", "Depresión"], correct: 0, explanation: "Una meseta es una llanura elevada" },
+        { q: "¿Cuántos océanos hay?", options: ["3", "4", "5", "6"], correct: 2, explanation: "Hay 5 océanos: Pacífico, Atlántico, Índico, Ártico y Antártico" },
+        { q: "¿Qué es el PIB?", options: ["Producto de exportación", "Producto Interno Bruto", "Precio del dólar", "Población total"], correct: 1, explanation: "PIB = Producto Interno Bruto (valor de bienes y servicios)" },
+        { q: "¿Cuál es la línea que divide la Tierra en hemisferios Norte y Sur?", options: ["Meridiano", "Ecuador", "Trópico", "Polo"], correct: 1, explanation: "El Ecuador divide la Tierra en Norte y Sur" },
+        { q: "¿Qué tipo de clima tiene la selva?", options: ["Desértico", "Templado", "Tropical", "Polar"], correct: 2, explanation: "Las selvas tienen clima tropical, cálido y húmedo" },
+        { q: "¿Cuál es el país más poblado del mundo?", options: ["Estados Unidos", "India", "China", "Indonesia"], correct: 2, explanation: "China es el país más poblado (aunque India está muy cerca)" },
+        { q: "¿Qué es un delta?", options: ["Montaña", "Depósito de sedimentos en desembocadura", "Lago", "Isla"], correct: 1, explanation: "Un delta se forma donde un río desemboca" },
+        { q: "¿Cuál es el río más largo del mundo?", options: ["Amazonas", "Nilo", "Yangtsé", "Misisipi"], correct: 1, explanation: "El río Nilo es considerado el más largo (~6,650 km)" },
+        { q: "¿Qué son las placas tectónicas?", options: ["Tipos de rocas", "Fragmentos de la corteza terrestre", "Capas del manto", "Montañas submarinas"], correct: 1, explanation: "Son fragmentos de la corteza que se mueven" }
+      ],
+      history: [
+        { q: "¿Qué tratado puso fin a la Guerra de Reforma?", options: ["De Guadalupe", "McLane-Ocampo", "Tratados de Teoloyucan", "Plan de Ayutla"], correct: 2, explanation: "Los Tratados de Teoloyucan terminaron con la intervención" },
+        { q: "¿Quién fue Porfirio Díaz?", options: ["Revolucionario", "Dictador de 30 años", "Emperador", "Rey"], correct: 1, explanation: "Porfirio Díaz gobernó México por más de 30 años" },
+        { q: "¿Qué estableció la Constitución de 1917?", options: ["Monarquía", "Derechos sociales", "Porfiriato", "Virreinato"], correct: 1, explanation: "Estableció derechos laborales, agrarios y educativos" },
+        { q: "¿Qué fue el Plan de Ayala?", options: ["Plan de gobierno", "Reforma agraria de Zapata", "Tratado de paz", "Constitución"], correct: 1, explanation: "El Plan de Ayala exigía tierras para campesinos" },
+        { q: "¿Quién fue Lázaro Cárdenas?", options: ["Conquistador", "Presidente que expropió petróleo", "Virrey", "Revolucionario"], correct: 1, explanation: "Cárdenas expropió el petróleo en 1938" },
+        { q: "¿Qué civilización inventó el cero?", options: ["Azteca", "Maya", "Olmeca", "Tolteca"], correct: 1, explanation: "Los mayas inventaron el concepto del cero" },
+        { q: "¿Qué fue la Guerra Cristera?", options: ["Guerra de Independencia", "Conflicto religioso", "Revolución", "Conquista"], correct: 1, explanation: "Fue un conflicto entre el gobierno y católicos (1926-1929)" },
+        { q: "¿Cuánto duró el Virreinato de Nueva España?", options: ["100 años", "200 años", "300 años", "400 años"], correct: 2, explanation: "Duró aproximadamente 300 años (1521-1821)" },
+        { q: "¿Qué es el Tratado de Libre Comercio?", options: ["Acuerdo militar", "Acuerdo comercial", "Tratado de paz", "Constitución"], correct: 1, explanation: "El TLCAN es un acuerdo comercial con EE.UU. y Canadá" },
+        { q: "¿Quién fue José María Morelos?", options: ["Conquistador", "Sacerdote insurgente", "Virrey", "Emperador"], correct: 1, explanation: "Morelos fue líder de la Independencia" },
+        { q: "¿Qué evento ocurrió en Tlatelolco en 1968?", options: ["Terremoto", "Matanza de estudiantes", "Olimpiadas", "Revolución"], correct: 1, explanation: "Hubo una matanza de estudiantes el 2 de octubre de 1968" },
+        { q: "¿Qué es el Porfiriato?", options: ["Una guerra", "Período de gobierno de Díaz", "Un tratado", "Una constitución"], correct: 1, explanation: "Es el período en que Porfirio Díaz gobernó (1876-1911)" }
+      ],
+      culture: [
+        { q: "¿Qué es el muralismo mexicano?", options: ["Tipo de música", "Movimiento artístico de pintura mural", "Baile típico", "Literatura"], correct: 1, explanation: "Movimiento de grandes murales con temas sociales" },
+        { q: "¿Quién pintó 'El hombre en el cruce de caminos'?", options: ["Frida Kahlo", "Diego Rivera", "David Alfaro Siqueiros", "Rufino Tamayo"], correct: 1, explanation: "Diego Rivera pintó este famoso mural" },
+        { q: "¿De dónde es originario el son jarocho?", options: ["Jalisco", "Veracruz", "Oaxaca", "Michoacán"], correct: 1, explanation: "El son jarocho es de Veracruz" },
+        { q: "¿Qué escritor mexicano ganó el Premio Cervantes?", options: ["Juan Rulfo", "Carlos Fuentes", "Elena Poniatowska", "Todos"], correct: 3, explanation: "Los tres han ganado el Premio Cervantes" },
+        { q: "¿Qué es el Día de los Reyes Magos?", options: ["25 de diciembre", "6 de enero", "1 de noviembre", "16 de septiembre"], correct: 1, explanation: "El 6 de enero se celebra a los Reyes Magos" },
+        { q: "¿Qué es la charrería?", options: ["Comida", "Deporte nacional ecuestre", "Baile", "Artesanía"], correct: 1, explanation: "La charrería es el deporte nacional de México" },
+        { q: "¿Quién compuso 'Cielito Lindo'?", options: ["José Alfredo Jiménez", "Quirino Mendoza", "Agustín Lara", "Juan Gabriel"], correct: 1, explanation: "Quirino Mendoza compuso Cielito Lindo" },
+        { q: "¿De qué material están hechas las artesanías de Olinala?", options: ["Barro", "Madera laqueada", "Plata", "Vidrio"], correct: 1, explanation: "Las artesanías de Olinala son de madera laqueada" },
+        { q: "¿Qué es la Noche de Rábanos?", options: ["Festival de comida", "Concurso de figuras de rábano", "Baile típico", "Fiesta religiosa"], correct: 1, explanation: "Es un festival en Oaxaca con figuras de rábano" },
+        { q: "¿Quién es considerado el 'Príncipe de la Canción'?", options: ["Juan Gabriel", "José José", "Luis Miguel", "Vicente Fernández"], correct: 1, explanation: "José José es el 'Príncipe de la Canción'" },
+        { q: "¿Qué instrumento es el 'guitarrón'?", options: ["Guitarra pequeña", "Bajo del mariachi", "Tipo de violín", "Instrumento de viento"], correct: 1, explanation: "El guitarrón es el bajo del mariachi" },
+        { q: "¿Qué es el Zócalo de la Ciudad de México?", options: ["Mercado", "Plaza principal", "Museo", "Catedral"], correct: 1, explanation: "El Zócalo es la plaza principal de la CDMX" }
+      ]
+    };
+
+    // INGLÉS - Vocabulario (100+ palabras)
+    const englishQuestions = [
+      // Animales (15)
+      { q: "¿Cómo se dice 'perro' en inglés?", options: ["Cat", "Dog", "Bird", "Fish"], correct: 1, explanation: "Dog = Perro" },
+      { q: "¿Cómo se dice 'gato' en inglés?", options: ["Dog", "Mouse", "Cat", "Rabbit"], correct: 2, explanation: "Cat = Gato" },
+      { q: "¿Qué significa 'Bird'?", options: ["Pez", "Pájaro", "Oso", "León"], correct: 1, explanation: "Bird = Pájaro" },
+      { q: "¿Cómo se dice 'pez' en inglés?", options: ["Fish", "Bird", "Bug", "Cow"], correct: 0, explanation: "Fish = Pez" },
+      { q: "¿Qué significa 'Elephant'?", options: ["Tigre", "Jirafa", "Elefante", "León"], correct: 2, explanation: "Elephant = Elefante" },
+      { q: "¿Cómo se dice 'mariposa' en inglés?", options: ["Bee", "Butterfly", "Spider", "Ant"], correct: 1, explanation: "Butterfly = Mariposa" },
+      { q: "¿Qué significa 'Horse'?", options: ["Vaca", "Cerdo", "Caballo", "Oveja"], correct: 2, explanation: "Horse = Caballo" },
+      { q: "¿Cómo se dice 'león' en inglés?", options: ["Tiger", "Bear", "Lion", "Wolf"], correct: 2, explanation: "Lion = León" },
+      { q: "¿Qué significa 'Rabbit'?", options: ["Ratón", "Conejo", "Ardilla", "Hamster"], correct: 1, explanation: "Rabbit = Conejo" },
+      { q: "¿Cómo se dice 'tortuga' en inglés?", options: ["Turtle", "Snake", "Frog", "Lizard"], correct: 0, explanation: "Turtle = Tortuga" },
+      { q: "¿Qué significa 'Monkey'?", options: ["Gorila", "Mono", "Chimpancé", "Orangután"], correct: 1, explanation: "Monkey = Mono" },
+      { q: "¿Cómo se dice 'rana' en inglés?", options: ["Toad", "Frog", "Newt", "Salamander"], correct: 1, explanation: "Frog = Rana" },
+      { q: "¿Qué significa 'Shark'?", options: ["Ballena", "Delfín", "Tiburón", "Pulpo"], correct: 2, explanation: "Shark = Tiburón" },
+      { q: "¿Cómo se dice 'oso' en inglés?", options: ["Wolf", "Fox", "Bear", "Deer"], correct: 2, explanation: "Bear = Oso" },
+      { q: "¿Qué significa 'Duck'?", options: ["Pollo", "Pato", "Ganso", "Pavo"], correct: 1, explanation: "Duck = Pato" },
       
-      for (let i = 0; i < 30; i++) {
-        const type = types[i % types.length];
-        let question = {};
-
-        switch(type) {
-          case 'suma':
-            const a1 = Math.floor(Math.random() * 8) + 1;
-            const b1 = Math.floor(Math.random() * 8) + 1;
-            question = {
-              text: `${a1} + ${b1} = ?`,
-              answer: a1 + b1,
-              type: 'Suma sencilla',
-              options: generateOptions(a1 + b1, 'number')
-            };
-            break;
-
-          case 'resta':
-            const a2 = Math.floor(Math.random() * 15) + 5;
-            const b2 = Math.floor(Math.random() * a2);
-            question = {
-              text: `${a2} - ${b2} = ?`,
-              answer: a2 - b2,
-              type: 'Resta sencilla',
-              options: generateOptions(a2 - b2, 'number')
-            };
-            break;
-
-          case 'complemento':
-            const start = Math.floor(Math.random() * 8) + 2;
-            const end = Math.floor(Math.random() * 10) + start;
-            question = {
-              text: `¿Cuánto le falta a ${start} para llegar a ${end}?`,
-              answer: end - start,
-              type: 'Completar a un número',
-              options: generateOptions(end - start, 'number')
-            };
-            break;
-
-          case 'secuencia':
-            const seq = Math.floor(Math.random() * 6) + 1;
-            const seqStart = Math.floor(Math.random() * 5);
-            question = {
-              text: `Secuencia: ${seqStart}, ${seqStart + seq}, ${seqStart + seq * 2}, ?`,
-              answer: seqStart + seq * 3,
-              type: 'Patrón de secuencia',
-              options: generateOptions(seqStart + seq * 3, 'number')
-            };
-            break;
-
-          case 'sumaMenor':
-            const m1 = Math.floor(Math.random() * 6) + 1;
-            const m2 = Math.floor(Math.random() * 6) + 1;
-            question = {
-              text: `${m1} + ${m2} = ?`,
-              answer: m1 + m2,
-              type: 'Suma muy sencilla',
-              options: generateOptions(m1 + m2, 'number')
-            };
-            break;
-
-          case 'restaMenor':
-            const r1 = Math.floor(Math.random() * 10) + 2;
-            const r2 = Math.floor(Math.random() * r1);
-            question = {
-              text: `${r1} - ${r2} = ?`,
-              answer: r1 - r2,
-              type: 'Resta muy sencilla',
-              options: generateOptions(r1 - r2, 'number')
-            };
-            break;
-        }
-
-        questions.push(question);
-      }
-
-      return questions;
-    }
-
-    function generateOptions(correct, type) {
-      const options = [correct];
+      // Colores (10)
+      { q: "¿Cómo se dice 'rojo' en inglés?", options: ["Blue", "Green", "Red", "Yellow"], correct: 2, explanation: "Red = Rojo" },
+      { q: "¿Qué significa 'Blue'?", options: ["Verde", "Azul", "Morado", "Rosa"], correct: 1, explanation: "Blue = Azul" },
+      { q: "¿Cómo se dice 'amarillo' en inglés?", options: ["Orange", "Yellow", "Gold", "Brown"], correct: 1, explanation: "Yellow = Amarillo" },
+      { q: "¿Qué significa 'Green'?", options: ["Verde", "Gris", "Negro", "Blanco"], correct: 0, explanation: "Green = Verde" },
+      { q: "¿Cómo se dice 'negro' en inglés?", options: ["White", "Gray", "Black", "Brown"], correct: 2, explanation: "Black = Negro" },
+      { q: "¿Qué significa 'White'?", options: ["Negro", "Gris", "Blanco", "Crema"], correct: 2, explanation: "White = Blanco" },
+      { q: "¿Cómo se dice 'naranja' en inglés?", options: ["Purple", "Orange", "Pink", "Brown"], correct: 1, explanation: "Orange = Naranja" },
+      { q: "¿Qué significa 'Purple'?", options: ["Rosa", "Morado", "Azul", "Rojo"], correct: 1, explanation: "Purple = Morado" },
+      { q: "¿Cómo se dice 'rosa' en inglés?", options: ["Pink", "Red", "Peach", "Coral"], correct: 0, explanation: "Pink = Rosa" },
+      { q: "¿Qué significa 'Gray'?", options: ["Gris", "Plateado", "Negro", "Blanco"], correct: 0, explanation: "Gray = Gris" },
       
-      while (options.length < 4) {
-        let option;
-        if (type === 'number') {
-          option = correct + (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 3) + 1);
-        }
-        
-        if (option > 0 && !options.includes(option)) {
-          options.push(option);
-        }
-      }
+      // Números (10)
+      { q: "¿Cómo se dice 'uno' en inglés?", options: ["Two", "One", "Three", "Zero"], correct: 1, explanation: "One = Uno" },
+      { q: "¿Qué número es 'Five'?", options: ["4", "5", "6", "7"], correct: 1, explanation: "Five = Cinco (5)" },
+      { q: "¿Cómo se dice 'diez' en inglés?", options: ["Eleven", "Nine", "Ten", "Twelve"], correct: 2, explanation: "Ten = Diez" },
+      { q: "¿Qué número es 'Twenty'?", options: ["12", "15", "20", "25"], correct: 2, explanation: "Twenty = Veinte (20)" },
+      { q: "¿Cómo se dice 'cien' en inglés?", options: ["Hundred", "Thousand", "Million", "Dozen"], correct: 0, explanation: "Hundred = Cien (100)" },
+      { q: "¿Qué número es 'Fifteen'?", options: ["14", "15", "16", "50"], correct: 1, explanation: "Fifteen = Quince (15)" },
+      { q: "¿Cómo se dice 'siete' en inglés?", options: ["Six", "Seven", "Eight", "Nine"], correct: 1, explanation: "Seven = Siete" },
+      { q: "¿Qué número es 'Thirty'?", options: ["13", "30", "33", "3"], correct: 1, explanation: "Thirty = Treinta (30)" },
+      { q: "¿Cómo se dice 'doce' en inglés?", options: ["Eleven", "Twelve", "Twenty", "Ten"], correct: 1, explanation: "Twelve = Doce" },
+      { q: "¿Qué número es 'Forty'?", options: ["14", "4", "40", "44"], correct: 2, explanation: "Forty = Cuarenta (40)" },
+      
+      // Familia (10)
+      { q: "¿Cómo se dice 'mamá' en inglés?", options: ["Father", "Mother", "Sister", "Brother"], correct: 1, explanation: "Mother = Mamá" },
+      { q: "¿Qué significa 'Father'?", options: ["Mamá", "Papá", "Hermano", "Abuelo"], correct: 1, explanation: "Father = Papá" },
+      { q: "¿Cómo se dice 'hermano' en inglés?", options: ["Sister", "Brother", "Uncle", "Cousin"], correct: 1, explanation: "Brother = Hermano" },
+      { q: "¿Qué significa 'Sister'?", options: ["Prima", "Tía", "Hermana", "Sobrina"], correct: 2, explanation: "Sister = Hermana" },
+      { q: "¿Cómo se dice 'abuelo' en inglés?", options: ["Grandmother", "Grandfather", "Uncle", "Father"], correct: 1, explanation: "Grandfather = Abuelo" },
+      { q: "¿Qué significa 'Grandmother'?", options: ["Abuela", "Tía", "Mamá", "Prima"], correct: 0, explanation: "Grandmother = Abuela" },
+      { q: "¿Cómo se dice 'tío' en inglés?", options: ["Aunt", "Uncle", "Cousin", "Nephew"], correct: 1, explanation: "Uncle = Tío" },
+      { q: "¿Qué significa 'Aunt'?", options: ["Tía", "Prima", "Sobrina", "Nuera"], correct: 0, explanation: "Aunt = Tía" },
+      { q: "¿Cómo se dice 'primo' en inglés?", options: ["Brother", "Nephew", "Cousin", "Uncle"], correct: 2, explanation: "Cousin = Primo/Prima" },
+      { q: "¿Qué significa 'Son'?", options: ["Sol", "Hijo", "Sobrino", "Nieto"], correct: 1, explanation: "Son = Hijo" },
+      
+      // Comida (15)
+      { q: "¿Cómo se dice 'manzana' en inglés?", options: ["Orange", "Banana", "Apple", "Grape"], correct: 2, explanation: "Apple = Manzana" },
+      { q: "¿Qué significa 'Bread'?", options: ["Arroz", "Pan", "Pasta", "Cereal"], correct: 1, explanation: "Bread = Pan" },
+      { q: "¿Cómo se dice 'leche' en inglés?", options: ["Water", "Juice", "Milk", "Soda"], correct: 2, explanation: "Milk = Leche" },
+      { q: "¿Qué significa 'Egg'?", options: ["Pollo", "Huevo", "Pato", "Pavo"], correct: 1, explanation: "Egg = Huevo" },
+      { q: "¿Cómo se dice 'agua' en inglés?", options: ["Water", "Wine", "Soda", "Tea"], correct: 0, explanation: "Water = Agua" },
+      { q: "¿Qué significa 'Rice'?", options: ["Pan", "Pasta", "Arroz", "Trigo"], correct: 2, explanation: "Rice = Arroz" },
+      { q: "¿Cómo se dice 'pollo' en inglés?", options: ["Beef", "Pork", "Chicken", "Fish"], correct: 2, explanation: "Chicken = Pollo" },
+      { q: "¿Qué significa 'Cheese'?", options: ["Crema", "Mantequilla", "Queso", "Yogurt"], correct: 2, explanation: "Cheese = Queso" },
+      { q: "¿Cómo se dice 'fresa' en inglés?", options: ["Strawberry", "Blueberry", "Raspberry", "Blackberry"], correct: 0, explanation: "Strawberry = Fresa" },
+      { q: "¿Qué significa 'Sugar'?", options: ["Sal", "Azúcar", "Pimienta", "Harina"], correct: 1, explanation: "Sugar = Azúcar" },
+      { q: "¿Cómo se dice 'carne' en inglés?", options: ["Fish", "Chicken", "Meat", "Pork"], correct: 2, explanation: "Meat = Carne" },
+      { q: "¿Qué significa 'Orange'?", options: ["Limón", "Naranja", "Toronja", "Mandarina"], correct: 1, explanation: "Orange = Naranja (fruta y color)" },
+      { q: "¿Cómo se dice 'verduras' en inglés?", options: ["Fruits", "Vegetables", "Meats", "Grains"], correct: 1, explanation: "Vegetables = Verduras" },
+      { q: "¿Qué significa 'Ice cream'?", options: ["Crema", "Helado", "Hielo", "Pastel"], correct: 1, explanation: "Ice cream = Helado" },
+      { q: "¿Cómo se dice 'jugo' en inglés?", options: ["Water", "Milk", "Juice", "Soda"], correct: 2, explanation: "Juice = Jugo" },
+      
+      // Partes del cuerpo (10)
+      { q: "¿Cómo se dice 'cabeza' en inglés?", options: ["Hand", "Head", "Heart", "Hair"], correct: 1, explanation: "Head = Cabeza" },
+      { q: "¿Qué significa 'Hand'?", options: ["Brazo", "Pierna", "Mano", "Pie"], correct: 2, explanation: "Hand = Mano" },
+      { q: "¿Cómo se dice 'ojos' en inglés?", options: ["Ears", "Eyes", "Nose", "Mouth"], correct: 1, explanation: "Eyes = Ojos" },
+      { q: "¿Qué significa 'Mouth'?", options: ["Nariz", "Oreja", "Boca", "Barbilla"], correct: 2, explanation: "Mouth = Boca" },
+      { q: "¿Cómo se dice 'nariz' en inglés?", options: ["Nose", "Neck", "Knee", "Nail"], correct: 0, explanation: "Nose = Nariz" },
+      { q: "¿Qué significa 'Leg'?", options: ["Brazo", "Pierna", "Mano", "Pie"], correct: 1, explanation: "Leg = Pierna" },
+      { q: "¿Cómo se dice 'pie' en inglés?", options: ["Hand", "Foot", "Finger", "Toe"], correct: 1, explanation: "Foot = Pie" },
+      { q: "¿Qué significa 'Arm'?", options: ["Brazo", "Pierna", "Hombro", "Codo"], correct: 0, explanation: "Arm = Brazo" },
+      { q: "¿Cómo se dice 'dedo' en inglés?", options: ["Hand", "Arm", "Finger", "Wrist"], correct: 2, explanation: "Finger = Dedo" },
+      { q: "¿Qué significa 'Ear'?", options: ["Ojo", "Oreja", "Nariz", "Boca"], correct: 1, explanation: "Ear = Oreja" },
+      
+      // Días y tiempo (10)
+      { q: "¿Cómo se dice 'lunes' en inglés?", options: ["Tuesday", "Monday", "Wednesday", "Sunday"], correct: 1, explanation: "Monday = Lunes" },
+      { q: "¿Qué día es 'Friday'?", options: ["Jueves", "Viernes", "Sábado", "Domingo"], correct: 1, explanation: "Friday = Viernes" },
+      { q: "¿Cómo se dice 'domingo' en inglés?", options: ["Saturday", "Sunday", "Monday", "Friday"], correct: 1, explanation: "Sunday = Domingo" },
+      { q: "¿Qué significa 'Today'?", options: ["Ayer", "Mañana", "Hoy", "Siempre"], correct: 2, explanation: "Today = Hoy" },
+      { q: "¿Cómo se dice 'mañana' (día) en inglés?", options: ["Yesterday", "Today", "Tomorrow", "Morning"], correct: 2, explanation: "Tomorrow = Mañana (el día siguiente)" },
+      { q: "¿Qué significa 'Week'?", options: ["Día", "Mes", "Semana", "Año"], correct: 2, explanation: "Week = Semana" },
+      { q: "¿Cómo se dice 'mes' en inglés?", options: ["Day", "Week", "Month", "Year"], correct: 2, explanation: "Month = Mes" },
+      { q: "¿Qué significa 'Year'?", options: ["Mes", "Semana", "Día", "Año"], correct: 3, explanation: "Year = Año" },
+      { q: "¿Cómo se dice 'hora' en inglés?", options: ["Minute", "Second", "Hour", "Day"], correct: 2, explanation: "Hour = Hora" },
+      { q: "¿Qué significa 'Morning'?", options: ["Noche", "Tarde", "Mañana", "Mediodía"], correct: 2, explanation: "Morning = Mañana (período del día)" },
+      
+      // Objetos escolares (10)
+      { q: "¿Cómo se dice 'libro' en inglés?", options: ["Notebook", "Book", "Pencil", "Pen"], correct: 1, explanation: "Book = Libro" },
+      { q: "¿Qué significa 'Pencil'?", options: ["Pluma", "Lápiz", "Borrador", "Regla"], correct: 1, explanation: "Pencil = Lápiz" },
+      { q: "¿Cómo se dice 'cuaderno' en inglés?", options: ["Book", "Notebook", "Folder", "Binder"], correct: 1, explanation: "Notebook = Cuaderno" },
+      { q: "¿Qué significa 'Ruler'?", options: ["Borrador", "Compás", "Regla", "Tijeras"], correct: 2, explanation: "Ruler = Regla" },
+      { q: "¿Cómo se dice 'borrador' en inglés?", options: ["Pencil", "Pen", "Eraser", "Marker"], correct: 2, explanation: "Eraser = Borrador" },
+      { q: "¿Qué significa 'Desk'?", options: ["Silla", "Mesa", "Escritorio", "Pizarrón"], correct: 2, explanation: "Desk = Escritorio" },
+      { q: "¿Cómo se dice 'tijeras' en inglés?", options: ["Scissors", "Glue", "Tape", "Stapler"], correct: 0, explanation: "Scissors = Tijeras" },
+      { q: "¿Qué significa 'Backpack'?", options: ["Bolsa", "Mochila", "Estuche", "Lonchera"], correct: 1, explanation: "Backpack = Mochila" },
+      { q: "¿Cómo se dice 'pizarrón' en inglés?", options: ["Desk", "Chair", "Board", "Window"], correct: 2, explanation: "Board = Pizarrón" },
+      { q: "¿Qué significa 'Teacher'?", options: ["Estudiante", "Director", "Maestro", "Amigo"], correct: 2, explanation: "Teacher = Maestro/a" },
+      
+      // Lugares (10)
+      { q: "¿Cómo se dice 'escuela' en inglés?", options: ["Hospital", "School", "Church", "Store"], correct: 1, explanation: "School = Escuela" },
+      { q: "¿Qué significa 'House'?", options: ["Hospital", "Hotel", "Casa", "Edificio"], correct: 2, explanation: "House = Casa" },
+      { q: "¿Cómo se dice 'parque' en inglés?", options: ["Garden", "Park", "Forest", "Beach"], correct: 1, explanation: "Park = Parque" },
+      { q: "¿Qué significa 'Hospital'?", options: ["Hotel", "Hospital", "Oficina", "Tienda"], correct: 1, explanation: "Hospital = Hospital" },
+      { q: "¿Cómo se dice 'tienda' en inglés?", options: ["Store", "Bank", "Office", "Restaurant"], correct: 0, explanation: "Store = Tienda" },
+      { q: "¿Qué significa 'Beach'?", options: ["Montaña", "Río", "Playa", "Lago"], correct: 2, explanation: "Beach = Playa" },
+      { q: "¿Cómo se dice 'biblioteca' en inglés?", options: ["Bookstore", "Library", "Museum", "Gallery"], correct: 1, explanation: "Library = Biblioteca" },
+      { q: "¿Qué significa 'Airport'?", options: ["Estación", "Puerto", "Aeropuerto", "Terminal"], correct: 2, explanation: "Airport = Aeropuerto" },
+      { q: "¿Cómo se dice 'iglesia' en inglés?", options: ["Temple", "Church", "Mosque", "Chapel"], correct: 1, explanation: "Church = Iglesia" },
+      { q: "¿Qué significa 'Restaurant'?", options: ["Cafetería", "Restaurante", "Comedor", "Cocina"], correct: 1, explanation: "Restaurant = Restaurante" }
+    ];
 
-      return options.sort(() => Math.random() - 0.5);
+    // ============= FUNCIONES DE NAVEGACIÓN =============
+    
+    function showScreen(screenId) {
+      const screens = ['main-screen', 'category-screen', 'game-screen', 'results-screen', 'gameover-screen'];
+      screens.forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(screenId).classList.remove('hidden');
     }
-
-    function startGame() {
-      gameState.questions = generateQuestions();
-      gameState.startTime = Date.now();
-      gameState.currentQuestion = 0;
+    
+    function goToMain() {
+      stopTimer();
+      showScreen('main-screen');
+    }
+    
+    function goToCategories() {
+      stopTimer();
+      showScreen('category-screen');
+    }
+    
+    function selectPhase(phase) {
+      gameState.currentPhase = phase;
+      renderCategories(phase);
+      showScreen('category-screen');
+    }
+    
+    function renderCategories(phase) {
+      const grid = document.getElementById('category-grid');
+      grid.innerHTML = '';
+      
+      let phaseTitle = '';
+      let categoriesToShow = [];
+      
+      if (phase === 'english') {
+        phaseTitle = 'INGLÉS - Vocabulario Básico';
+        categoriesToShow = [
+          { key: 'english-animals', icon: '🐾', name: 'Animales', color: 'from-red-400 to-red-600' },
+          { key: 'english-colors', icon: '🎨', name: 'Colores', color: 'from-orange-400 to-orange-600' },
+          { key: 'english-numbers', icon: '🔢', name: 'Números', color: 'from-yellow-400 to-yellow-600' },
+          { key: 'english-family', icon: '👨‍👩‍👧‍👦', name: 'Familia', color: 'from-green-400 to-green-600' },
+          { key: 'english-food', icon: '🍎', name: 'Comida', color: 'from-teal-400 to-teal-600' },
+          { key: 'english-body', icon: '👋', name: 'Cuerpo', color: 'from-blue-400 to-blue-600' },
+          { key: 'english-time', icon: '📅', name: 'Días/Tiempo', color: 'from-indigo-400 to-indigo-600' },
+          { key: 'english-school', icon: '📚', name: 'Escuela', color: 'from-purple-400 to-purple-600' },
+          { key: 'english-places', icon: '🏠', name: 'Lugares', color: 'from-pink-400 to-pink-600' }
+        ];
+      } else {
+        phaseTitle = `FASE ${phase} - Elige una categoría`;
+        categoriesToShow = [
+          { key: 'math', icon: '🔢', name: 'Matemáticas', color: 'from-blue-400 to-blue-600' },
+          { key: 'spanish', icon: '📚', name: 'Español', color: 'from-pink-400 to-pink-600' },
+          { key: 'science', icon: '🔬', name: 'Ciencias', color: 'from-green-400 to-green-600' },
+          { key: 'geography', icon: '🌍', name: 'Geografía', color: 'from-teal-400 to-teal-600' },
+          { key: 'history', icon: '📜', name: 'Historia', color: 'from-amber-400 to-amber-600' },
+          { key: 'culture', icon: '🎭', name: 'Cultura', color: 'from-purple-400 to-purple-600' }
+        ];
+      }
+      
+      document.getElementById('phase-title').textContent = phaseTitle;
+      
+      categoriesToShow.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = `category-btn bg-gradient-to-br ${cat.color} text-white rounded-2xl p-5 flex flex-col items-center gap-2 shadow-lg`;
+        btn.innerHTML = `
+          <span class="text-4xl">${cat.icon}</span>
+          <span class="font-bold text-lg">${cat.name}</span>
+        `;
+        btn.onclick = () => startGame(cat.key);
+        grid.appendChild(btn);
+      });
+    }
+    
+    // ============= FUNCIONES DEL JUEGO =============
+    
+    function startGame(category) {
+      gameState.currentCategory = category;
       gameState.lives = 3;
-      gameState.correct = 0;
-      gameState.gameActive = true;
+      gameState.score = 0;
+      gameState.questionIndex = 0;
+      gameState.correctAnswers = 0;
+      gameState.incorrectAnswers = 0;
       
-      generateProgressSteps();
-      showQuestion();
-      startTimer();
-    }
-
-    function generateProgressSteps() {
-      const container = document.getElementById('progress-steps');
-      container.innerHTML = '';
+      // Obtener preguntas según fase y categoría
+      let questionBank = [];
       
-      for (let i = 0; i < 30; i++) {
-        const step = document.createElement('div');
-        step.className = `step-indicator w-2 h-8 rounded-full transition-all duration-300 ${i === 0 ? 'bg-yellow-300 scale-125' : 'bg-white/50'}`;
-        step.id = `step-${i}`;
-        container.appendChild(step);
+      // Manejar categorías de inglés
+      if (category.startsWith('english-')) {
+        const subcategory = category.replace('english-', '');
+        const englishCategories = {
+          'animals': englishQuestions.filter((_, i) => i < 15),
+          'colors': englishQuestions.filter((_, i) => i >= 15 && i < 25),
+          'numbers': englishQuestions.filter((_, i) => i >= 25 && i < 35),
+          'family': englishQuestions.filter((_, i) => i >= 35 && i < 45),
+          'food': englishQuestions.filter((_, i) => i >= 45 && i < 60),
+          'body': englishQuestions.filter((_, i) => i >= 60 && i < 70),
+          'time': englishQuestions.filter((_, i) => i >= 70 && i < 80),
+          'school': englishQuestions.filter((_, i) => i >= 80 && i < 90),
+          'places': englishQuestions.filter((_, i) => i >= 90 && i < 100)
+        };
+        questionBank = englishCategories[subcategory] || [];
+      } else if (gameState.currentPhase === 3) {
+        questionBank = phase3Questions[category] ? [...phase3Questions[category]] : [];
+      } else if (gameState.currentPhase === 4) {
+        questionBank = phase4Questions[category] ? [...phase4Questions[category]] : [];
+      } else if (gameState.currentPhase === 5) {
+        questionBank = phase5Questions[category] ? [...phase5Questions[category]] : [];
       }
+      
+      // Mezclar y seleccionar 10 preguntas
+      gameState.questions = shuffleArray(questionBank).slice(0, 10);
+      
+      updateLivesDisplay();
+      updateScoreDisplay();
+      showScreen('game-screen');
+      loadQuestion();
     }
-
-    function showQuestion() {
-      if (!gameState.gameActive) return;
-      
-      const q = gameState.questions[gameState.currentQuestion];
-      document.getElementById('question-num').textContent = gameState.currentQuestion + 1;
-      document.getElementById('question-text').textContent = q.text;
-      document.getElementById('question-type').textContent = q.type;
-      document.getElementById('progress-text').textContent = `${gameState.currentQuestion + 1}/30`;
-      
-      const percentage = (gameState.currentQuestion / 30) * 100;
-      document.getElementById('progress-bar').style.width = percentage + '%';
-
-      // Update progress steps
-      for (let i = 0; i < 30; i++) {
-        const step = document.getElementById(`step-${i}`);
-        if (i < gameState.currentQuestion) {
-          step.className = 'step-indicator w-2 h-8 rounded-full bg-green-400';
-        } else if (i === gameState.currentQuestion) {
-          step.className = 'step-indicator w-2 h-8 rounded-full bg-yellow-300 scale-125';
-        } else {
-          step.className = 'step-indicator w-2 h-8 rounded-full bg-white/50';
-        }
+    
+    function shuffleArray(array) {
+      const newArray = [...array];
+      for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
       }
-
-      // Generate answer buttons
-      const optionsContainer = document.getElementById('answer-options');
+      return newArray;
+    }
+    
+    function loadQuestion() {
+      stopTimer();
+      
+      const question = gameState.questions[gameState.questionIndex];
+      
+      // Actualizar contador
+      document.getElementById('question-counter').textContent = 
+        `Pregunta ${gameState.questionIndex + 1} de ${gameState.questions.length}`;
+      
+      // Actualizar badge de categoría
+      const categoryNames = {
+        math: '🔢 Matemáticas',
+        spanish: '📚 Español',
+        science: '🔬 Ciencias',
+        geography: '🌍 Geografía',
+        history: '📜 Historia',
+        culture: '🎭 Cultura',
+        'english-animals': '🐾 Animales',
+        'english-colors': '🎨 Colores',
+        'english-numbers': '🔢 Números',
+        'english-family': '👨‍👩‍👧‍👦 Familia',
+        'english-food': '🍎 Comida',
+        'english-body': '👋 Cuerpo',
+        'english-time': '📅 Días/Tiempo',
+        'english-school': '📚 Escuela',
+        'english-places': '🏠 Lugares'
+      };
+      document.getElementById('category-badge').textContent = categoryNames[gameState.currentCategory] || '📝 Pregunta';
+      
+      // Mostrar pregunta
+      document.getElementById('question-text').textContent = question.q;
+      
+      // Crear opciones
+      const optionsContainer = document.getElementById('options-container');
       optionsContainer.innerHTML = '';
       
-      q.options.forEach(option => {
+      const optionLabels = ['A', 'B', 'C', 'D'];
+      const optionColors = [
+        'from-red-400 to-red-500',
+        'from-blue-400 to-blue-500',
+        'from-green-400 to-green-500',
+        'from-yellow-400 to-yellow-500'
+      ];
+      
+      question.options.forEach((option, index) => {
         const btn = document.createElement('button');
-        btn.className = 'bg-gradient-to-br from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white font-bold text-2xl py-6 px-4 rounded-2xl transition-all transform hover:scale-105 active:scale-95';
-        btn.textContent = option;
-        btn.onclick = () => checkAnswer(option, q.answer);
+        btn.className = `option-btn bg-gradient-to-r ${optionColors[index]} text-white p-4 rounded-xl font-bold text-left flex items-center gap-3 shadow-md hover:shadow-lg`;
+        btn.innerHTML = `
+          <span class="bg-white/30 w-8 h-8 rounded-full flex items-center justify-center text-sm">${optionLabels[index]}</span>
+          <span class="flex-1">${option}</span>
+        `;
+        btn.onclick = () => checkAnswer(index);
         optionsContainer.appendChild(btn);
       });
-
-      // Reset question timer
-      startQuestionTimer();
-      updateLivesDisplay();
+      
+      // Ocultar feedback y botón siguiente
+      document.getElementById('feedback-container').classList.add('hidden');
+      document.getElementById('next-btn').classList.add('hidden');
+      
+      // Iniciar temporizador
+      startTimer();
     }
-
-    function checkAnswer(selected, correct) {
-      if (!gameState.gameActive) return;
+    
+    function checkAnswer(selectedIndex) {
+      stopTimer();
       
-      gameState.gameActive = false;
-      const feedback = document.getElementById('feedback');
+      const question = gameState.questions[gameState.questionIndex];
+      const isCorrect = selectedIndex === question.correct;
       
-      if (selected === correct) {
-        gameState.correct++;
-        feedback.textContent = '✅ ¡Correcto!';
-        feedback.classList.remove('hidden', 'text-red-400');
-        feedback.classList.add('text-green-400');
+      // Deshabilitar todas las opciones
+      const options = document.querySelectorAll('.option-btn');
+      options.forEach((btn, index) => {
+        btn.disabled = true;
+        btn.classList.remove('hover:shadow-lg');
+        
+        if (index === question.correct) {
+          btn.classList.add('correct');
+        } else if (index === selectedIndex && !isCorrect) {
+          btn.classList.add('incorrect');
+          btn.classList.add('shake');
+        }
+      });
+      
+      // Actualizar estado
+      if (isCorrect) {
+        gameState.score += 100;
+        gameState.correctAnswers++;
+        updateScoreDisplay();
+        showFeedback(true, question.explanation);
       } else {
         gameState.lives--;
-        feedback.textContent = '❌ ¡Incorrecto!';
-        feedback.classList.remove('hidden', 'text-green-400');
-        feedback.classList.add('text-red-400');
-      }
-
-      // Disable all buttons
-      document.querySelectorAll('#answer-options button').forEach(btn => {
-        btn.disabled = true;
-      });
-
-      setTimeout(() => {
+        gameState.incorrectAnswers++;
+        updateLivesDisplay();
+        showFeedback(false, question.explanation);
+        
         if (gameState.lives <= 0) {
-          endGame();
-        } else if (gameState.currentQuestion < 29) {
-          gameState.currentQuestion++;
-          feedback.classList.add('hidden');
-          gameState.gameActive = true;
-          showQuestion();
-        } else {
-          endGame();
+          setTimeout(showGameOver, 1500);
+          return;
         }
-      }, 1500);
-    }
-
-    function startQuestionTimer() {
-      let timeLeft = 30;
-      document.getElementById('question-timer').textContent = timeLeft;
-      
-      const interval = setInterval(() => {
-        timeLeft--;
-        document.getElementById('question-timer').textContent = timeLeft;
-        document.getElementById('question-progress').style.width = ((30 - timeLeft) / 30 * 100) + '%';
-        
-        if (timeLeft <= 0 || !gameState.gameActive) {
-          clearInterval(interval);
-          if (gameState.gameActive && timeLeft <= 0) {
-            checkAnswer(null, -1); // Wrong answer
-          }
-        }
-      }, 1000);
-    }
-
-    function startTimer() {
-      const interval = setInterval(() => {
-        const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
-        const mins = Math.floor(elapsed / 60);
-        const secs = elapsed % 60;
-        document.getElementById('timer').textContent = `⏱️ ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-        
-        if (!gameState.gameActive || gameState.currentQuestion >= 30) {
-          clearInterval(interval);
-        }
-      }, 1000);
-    }
-
-    function updateLivesDisplay() {
-      const hearts = '❤️'.repeat(gameState.lives);
-      document.getElementById('lives').textContent = hearts;
-    }
-
-    function endGame() {
-      gameState.gameActive = false;
-      const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
-      const mins = Math.floor(elapsed / 60);
-      const secs = elapsed % 60;
-
-      document.getElementById('correct-count').textContent = gameState.correct;
-      document.getElementById('total-time').textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-      
-      if (gameState.correct === 30) {
-        document.getElementById('end-message').textContent = '🏆';
-        document.getElementById('end-title').textContent = '¡Perfecto!';
-      } else if (gameState.correct >= 25) {
-        document.getElementById('end-message').textContent = '🌟';
-        document.getElementById('end-title').textContent = '¡Excelente!';
-      } else if (gameState.correct >= 20) {
-        document.getElementById('end-message').textContent = '😊';
-        document.getElementById('end-title').textContent = '¡Muy Bien!';
-      } else {
-        document.getElementById('end-message').textContent = '💪';
-        document.getElementById('end-title').textContent = 'Sigue Intentando';
       }
       
-      document.getElementById('game-over-modal').classList.remove('hidden');
+      // Mostrar botón siguiente
+      document.getElementById('next-btn').classList.remove('hidden');
     }
-
-    function restartGame() {
-      document.getElementById('game-over-modal').classList.add('hidden');
-      startGame();
+    
+    function showFeedback(isCorrect, explanation) {
+      const container = document.getElementById('feedback-container');
+      const text = document.getElementById('feedback-text');
+      const explanationEl = document.getElementById('feedback-explanation');
+      
+      container.classList.remove('hidden');
+      
+      if (isCorrect) {
+        container.className = 'mt-4 p-4 rounded-2xl text-center bg-green-100 border-2 border-green-400';
+        text.textContent = '¡Correcto! 🎉';
+        text.className = 'text-lg font-bold text-green-700';
+      } else {
+        container.className = 'mt-4 p-4 rounded-2xl text-center bg-red-100 border-2 border-red-400';
+        text.textContent = '¡Incorrecto! 😢';
+        text.className = 'text-lg font-bold text-red-700';
+      }
+      
+      explanationEl.textContent = explanation;
+      explanationEl.className = 'text-sm mt-2 text-gray-600';
     }
-
-    function goHome() {
-      document.getElementById('home-screen').classList.remove('hidden');
-      document.getElementById('fase3-screen').classList.add('hidden');
-      document.getElementById('calculo-screen').classList.add('hidden');
+    
+    function nextQuestion() {
+      gameState.questionIndex++;
+      
+      if (gameState.questionIndex >= gameState.questions.length) {
+        showResults();
+      } else {
+        loadQuestion();
+      }
     }
-
-    function goFase3() {
-      document.getElementById('home-screen').classList.add('hidden');
-      document.getElementById('fase3-screen').classList.remove('hidden');
-      document.getElementById('calculo-screen').classList.add('hidden');
+    
+    function showResults() {
+      document.getElementById('final-score').textContent = gameState.score;
+      document.getElementById('correct-count').textContent = gameState.correctAnswers;
+      document.getElementById('incorrect-count').textContent = gameState.incorrectAnswers;
+      
+      const percentage = (gameState.correctAnswers / gameState.questions.length) * 100;
+      const emoji = document.getElementById('result-emoji');
+      const title = document.getElementById('result-title');
+      const message = document.getElementById('result-message');
+      
+      if (percentage >= 90) {
+        emoji.textContent = '🏆';
+        title.textContent = '¡EXCELENTE!';
+        message.textContent = '¡Eres un genio! ¡Felicidades!';
+      } else if (percentage >= 70) {
+        emoji.textContent = '🌟';
+        title.textContent = '¡MUY BIEN!';
+        message.textContent = '¡Gran trabajo! Sigue así.';
+      } else if (percentage >= 50) {
+        emoji.textContent = '👍';
+        title.textContent = '¡BUEN INTENTO!';
+        message.textContent = 'Puedes mejorar, ¡sigue practicando!';
+      } else {
+        emoji.textContent = '💪';
+        title.textContent = '¡SIGUE INTENTANDO!';
+        message.textContent = 'La práctica hace al maestro.';
+      }
+      
+      showScreen('results-screen');
     }
-
-    // Script para manejar clics en los botones del inicio
-    document.addEventListener('DOMContentLoaded', function() {
-      const homeButtons = document.querySelectorAll('#home-screen main button');
-      homeButtons.forEach((button, index) => {
-        if (index === 0) { // FASE 3
-          button.addEventListener('click', goFase3);
+    
+    function showGameOver() {
+      document.getElementById('gameover-score').textContent = gameState.score;
+      showScreen('gameover-screen');
+    }
+    
+    function playAgain() {
+      startGame(gameState.currentCategory);
+    }
+    
+    // ============= FUNCIONES DE TEMPORIZADOR =============
+    
+    function startTimer() {
+      gameState.timeLeft = 100;
+      const timerBar = document.getElementById('timer-bar');
+      timerBar.style.width = '100%';
+      timerBar.className = 'progress-bar bg-gradient-to-r from-green-400 to-green-600 h-full rounded-full';
+      
+      gameState.timerInterval = setInterval(() => {
+        gameState.timeLeft -= 1;
+        timerBar.style.width = gameState.timeLeft + '%';
+        
+        if (gameState.timeLeft <= 30) {
+          timerBar.className = 'progress-bar bg-gradient-to-r from-yellow-400 to-orange-500 h-full rounded-full';
+        }
+        if (gameState.timeLeft <= 15) {
+          timerBar.className = 'progress-bar bg-gradient-to-r from-red-400 to-red-600 h-full rounded-full';
+        }
+        
+        if (gameState.timeLeft <= 0) {
+          stopTimer();
+          timeUp();
+        }
+      }, 150); // Aproximadamente 15 segundos por pregunta
+    }
+    
+    function stopTimer() {
+      if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+        gameState.timerInterval = null;
+      }
+    }
+    
+    function timeUp() {
+      const question = gameState.questions[gameState.questionIndex];
+      
+      // Marcar la respuesta correcta
+      const options = document.querySelectorAll('.option-btn');
+      options.forEach((btn, index) => {
+        btn.disabled = true;
+        if (index === question.correct) {
+          btn.classList.add('correct');
         }
       });
-
-      // Cálculo Mental button
-      const calculoBtn = document.querySelector('#fase3-screen main > div > div:first-child');
-      if (calculoBtn) {
-        calculoBtn.addEventListener('click', function() {
-          document.getElementById('fase3-screen').classList.add('hidden');
-          document.getElementById('calculo-screen').classList.remove('hidden');
-          startGame();
-        });
+      
+      gameState.lives--;
+      gameState.incorrectAnswers++;
+      updateLivesDisplay();
+      showFeedback(false, '⏱️ ¡Se acabó el tiempo! ' + question.explanation);
+      
+      if (gameState.lives <= 0) {
+        setTimeout(showGameOver, 1500);
+      } else {
+        document.getElementById('next-btn').classList.remove('hidden');
       }
-    });
+    }
+    
+    // ============= FUNCIONES DE UI =============
+    
+    function updateLivesDisplay() {
+      const hearts = document.querySelectorAll('.life-heart');
+      hearts.forEach((heart, index) => {
+        if (index < gameState.lives) {
+          heart.classList.remove('lost');
+        } else {
+          heart.classList.add('lost');
+        }
+      });
+    }
+    
+    function updateScoreDisplay() {
+      const scoreEl = document.getElementById('score-display');
+      scoreEl.textContent = gameState.score;
+      scoreEl.parentElement.classList.add('celebrate');
+      setTimeout(() => {
+        scoreEl.parentElement.classList.remove('celebrate');
+      }, 600);
+    }
+    
+    // ============= ELEMENT SDK =============
+    
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => {
+          const schoolTitle = document.getElementById('school-title');
+          const teacherTitle = document.getElementById('teacher-title');
+          
+          if (schoolTitle) {
+            schoolTitle.textContent = config.school_name || defaultConfig.school_name;
+          }
+          if (teacherTitle) {
+            teacherTitle.textContent = config.teacher_name || defaultConfig.teacher_name;
+          }
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["school_name", config.school_name || defaultConfig.school_name],
+          ["teacher_name", config.teacher_name || defaultConfig.teacher_name]
+        ])
+      });
+    }
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d02e988554f2efd',t:'MTc3MTQ3NDIwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0ad02450f96a2b',t:'MTc3MTU1NzA0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
